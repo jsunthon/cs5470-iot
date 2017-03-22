@@ -9,49 +9,70 @@ public class Node {
     private Date manufacturedDate;
 
     private Owner owner;
-    private HashSet<Feature> features;
-    private HashMap<Relationship, TreeSet<Edge>> relationshipMap;
+    private Set<Feature> features;
+    private Map<Relationship, TreeSet<Edge>> relationshipMap;
     private boolean share;
 
     private TimeToLive timeToLive;
-
     private Role role;
 
-    public Node() {
+    public static Integer NODE_ID_COUNTER = 0;
+
+    public Node(Manufacturer manufacturer, Role role, TimeToLive timeToLive) {
+        id = NODE_ID_COUNTER++;
+        manufacturer = manufacturer;
+        role = role;
+        timeToLive = timeToLive;
+
+        manufacturedDate = new Date();
+        features = new HashSet<Feature>();
+        relationshipMap = new HashMap<Relationship, TreeSet<Edge>>();
     }
 
-    public Node(Integer id, Manufacturer manufacturer, Role role, TimeToLive timeToLive) {}
-
     public Owner getOwner() {
-        return null;
+        return owner;
     }
 
     public void setOwner(Owner owner) {
+        this.owner = owner;
     }
 
-    public HashSet<Feature> getFeatures() {
-        return null;
+    public Set<Feature> getFeatures() {
+        return features;
+    }
+
+    public void addFeature(Feature feature) {
+        features.add(feature);
     }
 
     public void addRelationship(Node node, Relationship relationship) {
+        if (relationshipMap.containsKey(relationship)) {
+            relationshipMap.get(relationship)
+                    .add(new Edge(this, node, relationship));
+        } else {
+            relationshipMap.put(relationship, new TreeSet<Edge>());
+        }
     }
 
     public boolean getShare() {
-        return false;
+        return share;
     }
 
     public void setShare(boolean share) {
+        this.share = share;
     }
 
     public TimeToLive getTimeToLive() {
-        return null;
+        return timeToLive;
     }
 
     public Role getRole() {
-        return null;
+        return role;
     }
 
-    public Integer getCentrality() {return null;}
+    public Integer getCentrality() {
+        for(Map.Entry(Relationship, TreeSet<Edge>>))
+    }
 
     /*==================================================*/
 
