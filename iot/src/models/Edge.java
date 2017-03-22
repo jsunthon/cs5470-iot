@@ -1,15 +1,22 @@
 package models;
 
 public class Edge {
-    private Node node1;
-    private Node node2;
+    private Node src;
+    private Node dest;
     private Relationship relationship;
 
-    public Edge(Node node1, Node node2) {}
 
-    public Edge(Node node1, Node node2, Relationship relationship) {}
+    public Edge(Node src, Node dest, Relationship relationship) {
+        this.src = src;
+        this.dest = dest;
+        this.relationship = relationship;
+    }
 
-    public Node getNode2() {
-        return node2;
+    public Node getDest() {
+        return dest;
+    }
+
+    public Node getSrc() {
+        return src;
     }
 }

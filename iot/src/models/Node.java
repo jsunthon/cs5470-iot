@@ -23,9 +23,30 @@ public class Node {
         manufacturer = manufacturer;
         role = role;
         timeToLive = timeToLive;
+
         manufacturedDate = new Date();
         features = new HashSet<Feature>();
         relationshipMap = new HashMap<Relationship, TreeSet<Edge>>();
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public Manufacturer getManufacturer() {
+        return manufacturer;
+    }
+
+    public Date getManufacturedDate() {
+        return manufacturedDate;
+    }
+
+    public Map<Relationship, TreeSet<Edge>> getRelationshipMap() {
+        return relationshipMap;
+    }
+
+    public boolean isShare() {
+        return share;
     }
 
     public Owner getOwner() {
@@ -71,29 +92,63 @@ public class Node {
 
     public Integer getCentrality() {
         Integer centrality = 0;
-        for(Map.Entry<Relationship, TreeSet<Edge>> entry : relationshipMap.entrySet()) {
+        for (Map.Entry<Relationship, TreeSet<Edge>> entry : relationshipMap.entrySet()) {
             Set<Edge> edges = entry.getValue();
             centrality += edges.size();
         }
         return centrality;
     }
 
+    private List<Edge> getEdgeList() {
+        List<Edge> edgeList = new ArrayList<Edge>();
+
+        for (Map.Entry<Relationship, TreeSet<Edge>> entry : relationshipMap.entrySet()) {
+            edgeList.addAll(entry.getValue());
+        }
+
+        return edgeList;
+    }
+
+
+    public boolean hasFeature(Feature feature) {
+        return features.contains(feature);
+    }
+
     /*==================================================*/
 
-    //TODO
+    /* TODO: Implement discovery, find friends/relationship */
     public Node discover(Feature feature) {
+        Queue<Node> nodeQueue = new LinkedList<Node>();
+        Set<Node> visited = new HashSet<Node>();
+
+        /* Dummy values*/
+        nodeQueue.offer(this);
+
+        while (!nodeQueue.isEmpty()) {
+            Node current = nodeQueue.poll();
+            visited.add(current);
+
+            if (current.hasFeature(feature)) {
+                return current;
+            }
+            List<Edge> edgeList = current.getEdgeList();
+            for (Edge edge : edgeList) {
+
+                if (visited.contains(edge.getDest())) {
+                    /* Do nothing */
+                } else {
+                    nodeQueue.offer(edge.getDest());
+                }
+            }
+        }
         return null;
     }
 
 
-    private enum Role {SENDER, RECEIVER, BOTH}
-
-    private enum TimeToLive {LOW, MEDIUM, HIGH}
-
     private class NodeEdgeCentrality implements Comparator<Edge> {
         @Override
         public int compare(Edge e1, Edge e2) {
-            return e1.getNode2().getCentrality() - e2.getNode2().getCentrality();
+            return e1.getDest().getCentrality() - e2.getDest().getCentrality();
         }
     }
 }

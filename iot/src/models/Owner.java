@@ -8,11 +8,31 @@ public class Owner {
     private String name;
     private List<Node> nodes;
 
-    public Owner(Integer id, String name) {
-        this.id = id;
+    private static Integer ID_COUNTER = 0;
+
+    public Owner(String name) {
+        id = ID_COUNTER++;
         this.name = name;
+
         nodes = new ArrayList<>();
     }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public List<Node> getNodes() {
+        return nodes;
+    }
+
 
     public void add(Node node) {
         nodes.add(node);
@@ -23,8 +43,6 @@ public class Owner {
     }
 
     public void share(Node node, boolean share) {
-        if (node != null) {
-            node.setShare(share);
-        }
+        node.setShare(share);
     }
 }
