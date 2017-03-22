@@ -1,9 +1,6 @@
 package models;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-
+import java.util.*;
 
 public class Node {
 
@@ -12,17 +9,18 @@ public class Node {
     private Date manufacturedDate;
 
     private Owner owner;
-    private ArrayList<Feature> features;
-    private HashMap<Relationship, ArrayList<Edge>> relationshipMap;
+    private HashSet<Feature> features;
+    private HashMap<Relationship, TreeSet<Edge>> relationshipMap;
     private boolean share;
 
     private TimeToLive timeToLive;
-
 
     private Role role;
 
     public Node() {
     }
+
+    public Node(Integer id, Manufacturer manufacturer, Role role, TimeToLive timeToLive) {}
 
     public Owner getOwner() {
         return null;
@@ -31,7 +29,7 @@ public class Node {
     public void setOwner(Owner owner) {
     }
 
-    public ArrayList<Feature> getFeatures() {
+    public HashSet<Feature> getFeatures() {
         return null;
     }
 
@@ -53,6 +51,8 @@ public class Node {
         return null;
     }
 
+    public Integer getCentrality() {return null;}
+
     /*==================================================*/
 
     public Node discover(Feature feature) {
@@ -60,9 +60,14 @@ public class Node {
     }
 
 
-    private enum Role {SENDER, RECIEVER, BOTH}
+    private enum Role {SENDER, RECEIVER, BOTH}
 
-    private enum TimeToLive {LOW, MEDIUM, HIGHj}
+    private enum TimeToLive {LOW, MEDIUM, HIGH}
 
-
+    private class NodeEdgeCentrality implements Comparator<Edge> {
+        @Override
+        public int compare(Edge e1, Edge e2) {
+            return e1.getNode2().getCentrality() - e2.getNode2().getCentrality();
+        }
+    }
 }
