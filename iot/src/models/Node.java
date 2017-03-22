@@ -23,7 +23,6 @@ public class Node {
         manufacturer = manufacturer;
         role = role;
         timeToLive = timeToLive;
-
         manufacturedDate = new Date();
         features = new HashSet<Feature>();
         relationshipMap = new HashMap<Relationship, TreeSet<Edge>>();
@@ -50,7 +49,7 @@ public class Node {
             relationshipMap.get(relationship)
                     .add(new Edge(this, node, relationship));
         } else {
-            relationshipMap.put(relationship, new TreeSet<Edge>());
+            relationshipMap.put(relationship, new TreeSet<Edge>(new NodeEdgeCentrality()));
         }
     }
 
@@ -71,11 +70,17 @@ public class Node {
     }
 
     public Integer getCentrality() {
-        for(Map.Entry(Relationship, TreeSet<Edge>>))
+        Integer centrality = 0;
+        for(Map.Entry<Relationship, TreeSet<Edge>> entry : relationshipMap.entrySet()) {
+            Set<Edge> edges = entry.getValue();
+            centrality += edges.size();
+        }
+        return centrality;
     }
 
     /*==================================================*/
 
+    //TODO
     public Node discover(Feature feature) {
         return null;
     }

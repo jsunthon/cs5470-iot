@@ -1,6 +1,7 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Manufacturer {
     private Integer id;
@@ -15,7 +16,7 @@ public class Manufacturer {
     }
 
     public void addFeature(Feature feature) {
-        feature.add(feature);
+        features.add(feature);
     }
 
     public List<Feature> getFeatures() {
