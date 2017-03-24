@@ -1,7 +1,7 @@
 package models;
 
+/* TODO: add more features */
 public enum Feature {
-
 
     SMART_PARKING,
     STRCTURAL_HEALTH,
@@ -14,3 +14,6 @@ public enum Feature {
     SMART_ROAD,
     WASTE_MANAGEMENT,
 }
+
+
+/* TODO impl random enum methods and others*/
