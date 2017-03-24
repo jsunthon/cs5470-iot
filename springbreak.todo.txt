@@ -1,0 +1,15 @@
+James
+    Set up randomize environment
+    Performance test function/metrics
+    Centralized
+    Generate text file / parser
+Shay
+    Set up testing JUNIT
+    Impl history / diversity
+    Decentralize
+    Generate text file / parser
+others:
+    set up maven
+    rename class/ methods / enum
+    Get social network data
+
