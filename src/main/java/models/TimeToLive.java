@@ -1,6 +1,10 @@
 package models;
 
-public enum TimeToLive {LOW, MEDIUM, HIGH}
+public enum TimeToLive {
+    LOW, MEDIUM, HIGH;
 
-
-/* TODO: impl random methods */
+    public static TimeToLive randomTimeToLive() {
+        int randInd = (int) Math.random() * TimeToLive.values().length;
+        return TimeToLive.values() [randInd];
+    }
+}

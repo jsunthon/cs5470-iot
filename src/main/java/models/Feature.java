@@ -12,8 +12,10 @@ public enum Feature {
     SMART_LIGHTING,
     WASTE_MANAG,
     SMART_ROAD,
-    WASTE_MANAGEMENT,
+    WASTE_MANAGEMENT;
+
+    public static Feature randomFeature() {
+        int randInd = (int) Math.random() * Feature.values().length;
+        return Feature.values()[randInd];
+    }
 }
-
-
-/* TODO impl random enum methods and others*/
