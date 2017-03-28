@@ -13,7 +13,6 @@ public class Manufacturer {
     public Manufacturer(String name) {
         id = MANUFACTURER_ID_COUNTER++;
         this.name = name;
-
         features = new HashSet<Feature>();
     }
 
@@ -44,7 +43,10 @@ public class Manufacturer {
             this.features.add(feature);
             node.addFeature(feature);
         }
-
         return node;
+    }
+
+    public static Integer getIdCounter() {
+        return MANUFACTURER_ID_COUNTER;
     }
 }

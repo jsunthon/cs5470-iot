@@ -43,6 +43,12 @@ public class Owner {
     }
 
     public void share(Node node, boolean share) {
-        node.setShare(share);
+        if (nodes.contains(node)) {
+            node.setShare(share);
+        }
+    }
+
+    public static Integer getIdCounter() {
+        return ID_COUNTER;
     }
 }

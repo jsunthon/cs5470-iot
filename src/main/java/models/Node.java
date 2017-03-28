@@ -20,9 +20,9 @@ public class Node {
 
     public Node(Manufacturer manufacturer, Role role, TimeToLive timeToLive) {
         id = NODE_ID_COUNTER++;
-        manufacturer = manufacturer;
-        role = role;
-        timeToLive = timeToLive;
+        this.manufacturer = manufacturer;
+        this.role = role;
+        this.timeToLive = timeToLive;
 
         manufacturedDate = new Date();
         features = new HashSet<Feature>();
