@@ -17,3 +17,10 @@ gradle-app.setting
 
 ### Java template
 *.class
+/bin
+
+
+### Eclipse
+.settings/
+.classpath
+.project

@@ -42,10 +42,10 @@ public class RandEnvGenerator {
         return owners;
     }
 
-    public Node genRandomizeNode(int nodeFeatureCount) {
+    public Node genRandomizeNode(int id, int nodeFeatureCount) {
         if (owners.isEmpty() || manufacturers.isEmpty()) return null;
-        int ownerIndex = genRandNumber(0, owners.size());
-        int manufIndex = genRandNumber(0, manufacturers.size());
+        int ownerIndex = genRandNumber(0, owners.size() - 1);
+        int manufIndex = genRandNumber(0, manufacturers.size() - 1);
         int featureCount = genRandNumber(1, nodeFeatureCount);
         Owner owner = owners.get(ownerIndex);
         Manufacturer manufacturer = manufacturers.get(manufIndex);
@@ -55,7 +55,7 @@ public class RandEnvGenerator {
         for (int i = 0; i < features.length; i++) {
             features[i] = Feature.randomFeature();
         }
-        Node node = manufacturer.create(role, timeToLive, (Feature[]) features);
+        Node node = manufacturer.create(id, role, timeToLive, features);
         node.setOwner(owner);
         node.setShare(genRandomShare());
         nodes.add(node);

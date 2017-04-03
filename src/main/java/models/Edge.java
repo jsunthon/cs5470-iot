@@ -5,7 +5,6 @@ public class Edge {
     private Node dest;
     private Relationship relationship;
 
-
     public Edge(Node src, Node dest, Relationship relationship) {
         this.src = src;
         this.dest = dest;
