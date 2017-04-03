@@ -36,9 +36,8 @@ public class Manufacturer {
         return features;
     }
 
-    public Node create(Role role, TimeToLive ttl, Feature... features) {
-
-        Node node = new Node(this, role, ttl);
+    public Node create(int id, Role role, TimeToLive ttl, Feature... features) {
+        Node node = new Node(id, this, role, ttl);
         for (Feature feature : features) {
             this.features.add(feature);
             node.addFeature(feature);
