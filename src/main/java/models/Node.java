@@ -1,9 +1,10 @@
 package models;
 
-import java.util.*;
-
+import models.history.History;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.*;
 
 public class Node {
 	private static final Logger logger = LoggerFactory.getLogger(Node.class);
@@ -19,17 +20,22 @@ public class Node {
 	private TimeToLive timeToLive;
 	private Role role;
 
-	public static Integer NODE_ID_COUNTER = 0;
+    private History history;
+    public static Integer DEFAULT_MAX_HISTORY_SIZE = 5;
 
-	public Node(Integer id, Manufacturer manufacturer, Role role, TimeToLive timeToLive) {
-		this.id = id;
-		this.manufacturer = manufacturer;
-		this.role = role;
-		this.timeToLive = timeToLive;
-		manufacturedDate = new Date();
-		features = new HashSet<Feature>();
-		relationshipMap = new HashMap<Relationship, TreeSet<Edge>>();
-	}
+    public static Integer NODE_ID_COUNTER = 0;
+
+
+    public Node(Integer id, Manufacturer manufacturer, Role role, TimeToLive timeToLive) {
+        this.id = id;
+        this.manufacturer = manufacturer;
+        this.role = role;
+        this.timeToLive = timeToLive;
+        manufacturedDate = new Date();
+        features = new HashSet<Feature>();
+        relationshipMap = new HashMap<Relationship, TreeSet<Edge>>();
+        history = new History(Node.DEFAULT_MAX_HISTORY_SIZE);
+    }
 
 	public Integer getId() {
 		return id;
@@ -130,33 +136,35 @@ public class Node {
 
 	/* ================================================== */
 
-	/* TODO: Implement discovery, find friends/relationship */
-	public Node discover(Feature feature) {
-		Queue<Node> nodeQueue = new LinkedList<Node>();
-		Set<Node> visited = new HashSet<Node>();
+    /* TODO: Implement discovery, find friends/relationship */
+    public Node discover(Feature feature) {
+        Queue<Node> nodeQueue = new LinkedList<Node>();
+        Set<Node> visited = new HashSet<Node>();
 
 		/* Dummy values */
-		nodeQueue.offer(this);
+        nodeQueue.offer(this);
 
-		while (!nodeQueue.isEmpty()) {
-			Node current = nodeQueue.poll();
-			visited.add(current);
+        while (!nodeQueue.isEmpty()) {
+            Node current = nodeQueue.poll();
+            visited.add(current);
 
-			if (current.hasFeature(feature)) {
-				return current;
-			}
-			List<Edge> edgeList = current.getEdgeList();
-			for (Edge edge : edgeList) {
+            if (current.hasFeature(feature)) {
+                history.push(feature, current);
+                return current;
+            }
+            List<Edge> edgeList = current.getEdgeList();
+            for (Edge edge : edgeList) {
 
-				if (visited.contains(edge.getDest())) {
-					/* Do nothing */
-				} else {
-					nodeQueue.offer(edge.getDest());
-				}
-			}
-		}
-		return null;
-	}
+                if (visited.contains(edge.getDest())) {
+                    /* Do nothing */
+                } else {
+                    nodeQueue.offer(edge.getDest());
+                }
+            }
+        }
+        history.push(feature, null);
+        return null;
+    }
 
 	private class NodeEdgeCentrality implements Comparator<Edge> {
 		@Override
