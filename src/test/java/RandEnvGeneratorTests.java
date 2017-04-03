@@ -37,13 +37,13 @@ public class RandEnvGeneratorTests {
     @Test
     public void testGenRandomizeNode() {
         RandEnvGenerator randEnvGenerator = new RandEnvGenerator();
-        Assert.assertNull(randEnvGenerator.genRandomizeNode(1, 123));
+        Assert.assertNull(randEnvGenerator.genRandomizeNode(123));
         randEnvGenerator.genManufacturers(10, 5);
         randEnvGenerator.genOwners(100);
-        Node node = randEnvGenerator.genRandomizeNode(2, 3);
+        Node node = randEnvGenerator.genRandomizeNode(3);
         Assert.assertNotNull(node);
         Assert.assertEquals(1, randEnvGenerator.getNodes().size());
-        node = randEnvGenerator.genRandomizeNode(4, 5);
+        node = randEnvGenerator.genRandomizeNode(5);
         Assert.assertEquals(2, randEnvGenerator.getNodes().size());
     }
 }

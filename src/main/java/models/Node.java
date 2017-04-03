@@ -2,171 +2,153 @@ package models;
 
 import java.util.*;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class Node {
-	private static final Logger logger = LoggerFactory.getLogger(Node.class);
-	private int id;
-	private Manufacturer manufacturer;
-	private Date manufacturedDate;
 
-	private Owner owner;
-	private Set<Feature> features;
-	private Map<Relationship, TreeSet<Edge>> relationshipMap;
-	private boolean share;
+    private Integer id;
+    private Manufacturer manufacturer;
+    private Date manufacturedDate;
 
-	private TimeToLive timeToLive;
-	private Role role;
+    private Owner owner;
+    private Set<Feature> features;
+    private Map<Relationship, TreeSet<Edge>> relationshipMap;
+    private boolean share;
 
-	public static Integer NODE_ID_COUNTER = 0;
+    private TimeToLive timeToLive;
+    private Role role;
 
-	public Node(Integer id, Manufacturer manufacturer, Role role, TimeToLive timeToLive) {
-		this.id = id;
-		this.manufacturer = manufacturer;
-		this.role = role;
-		this.timeToLive = timeToLive;
-		manufacturedDate = new Date();
-		features = new HashSet<Feature>();
-		relationshipMap = new HashMap<Relationship, TreeSet<Edge>>();
-	}
+    public static Integer NODE_ID_COUNTER = 0;
 
-	public Integer getId() {
-		return id;
-	}
+    public Node(Manufacturer manufacturer, Role role, TimeToLive timeToLive) {
+        id = NODE_ID_COUNTER++;
+        this.manufacturer = manufacturer;
+        this.role = role;
+        this.timeToLive = timeToLive;
 
-	public Manufacturer getManufacturer() {
-		return manufacturer;
-	}
+        manufacturedDate = new Date();
+        features = new HashSet<Feature>();
+        relationshipMap = new HashMap<Relationship, TreeSet<Edge>>();
+    }
 
-	public Date getManufacturedDate() {
-		return manufacturedDate;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public Map<Relationship, TreeSet<Edge>> getRelationshipMap() {
-		return relationshipMap;
-	}
+    public Manufacturer getManufacturer() {
+        return manufacturer;
+    }
 
-	public boolean isShare() {
-		return share;
-	}
+    public Date getManufacturedDate() {
+        return manufacturedDate;
+    }
 
-	public Owner getOwner() {
-		return owner;
-	}
+    public Map<Relationship, TreeSet<Edge>> getRelationshipMap() {
+        return relationshipMap;
+    }
 
-	public void setOwner(Owner owner) {
-		this.owner = owner;
-	}
+    public boolean isShare() {
+        return share;
+    }
 
-	public Set<Feature> getFeatures() {
-		return features;
-	}
+    public Owner getOwner() {
+        return owner;
+    }
 
-	public void addFeature(Feature feature) {
-		features.add(feature);
-	}
+    public void setOwner(Owner owner) {
+        this.owner = owner;
+    }
 
-	public void addRelationship(Node node, Relationship relationship) {
-		if (edgeExists(node)) return;
-		Edge edge = new Edge(this, node, relationship);
-		if (relationshipMap.containsKey(relationship)) {
-			relationshipMap.get(relationship).add(edge);
-		} else {
-			Set<Edge> nodeSet = new TreeSet<Edge>(new NodeEdgeCentrality());
-			nodeSet.add(edge);
-			relationshipMap.put(relationship, (TreeSet<Edge>) nodeSet);
-		}
-	}
-	
-	public boolean edgeExists(Node dest) {
-		List<Edge> edges = getEdgeList();
-		for (Edge edge : edges) {
-			if (edge.getDest().equals(dest)) {
-				return true;
-			}
-		}
-		return false;
-	}
+    public Set<Feature> getFeatures() {
+        return features;
+    }
 
-	public boolean getShare() {
-		return share;
-	}
+    public void addFeature(Feature feature) {
+        features.add(feature);
+    }
 
-	public void setShare(boolean share) {
-		this.share = share;
-	}
+    public void addRelationship(Node node, Relationship relationship) {
+        if (relationshipMap.containsKey(relationship)) {
+            relationshipMap.get(relationship)
+                    .add(new Edge(this, node, relationship));
+        } else {
+            relationshipMap.put(relationship, new TreeSet<Edge>(new NodeEdgeCentrality()));
+        }
+    }
 
-	public TimeToLive getTimeToLive() {
-		return timeToLive;
-	}
+    public boolean getShare() {
+        return share;
+    }
 
-	public Role getRole() {
-		return role;
-	}
+    public void setShare(boolean share) {
+        this.share = share;
+    }
 
-	public Integer getCentrality() {
-		Integer centrality = 0;
-		for (Map.Entry<Relationship, TreeSet<Edge>> entry : relationshipMap.entrySet()) {
-			Set<Edge> edges = entry.getValue();
-			centrality += edges.size();
-		}
-		return centrality;
-	}
+    public TimeToLive getTimeToLive() {
+        return timeToLive;
+    }
 
-	private List<Edge> getEdgeList() {
-		List<Edge> edgeList = new ArrayList<Edge>();
+    public Role getRole() {
+        return role;
+    }
 
-		for (Map.Entry<Relationship, TreeSet<Edge>> entry : relationshipMap.entrySet()) {
-			edgeList.addAll(entry.getValue());
-		}
+    public Integer getCentrality() {
+        Integer centrality = 0;
+        for (Map.Entry<Relationship, TreeSet<Edge>> entry : relationshipMap.entrySet()) {
+            Set<Edge> edges = entry.getValue();
+            centrality += edges.size();
+        }
+        return centrality;
+    }
 
-		return edgeList;
-	}
+    private List<Edge> getEdgeList() {
+        List<Edge> edgeList = new ArrayList<Edge>();
 
-	public boolean hasFeature(Feature feature) {
-		return features.contains(feature);
-	}
+        for (Map.Entry<Relationship, TreeSet<Edge>> entry : relationshipMap.entrySet()) {
+            edgeList.addAll(entry.getValue());
+        }
 
-	/* ================================================== */
+        return edgeList;
+    }
 
-	/* TODO: Implement discovery, find friends/relationship */
-	public Node discover(Feature feature) {
-		Queue<Node> nodeQueue = new LinkedList<Node>();
-		Set<Node> visited = new HashSet<Node>();
 
-		/* Dummy values */
-		nodeQueue.offer(this);
+    public boolean hasFeature(Feature feature) {
+        return features.contains(feature);
+    }
 
-		while (!nodeQueue.isEmpty()) {
-			Node current = nodeQueue.poll();
-			visited.add(current);
+    /*==================================================*/
 
-			if (current.hasFeature(feature)) {
-				return current;
-			}
-			List<Edge> edgeList = current.getEdgeList();
-			for (Edge edge : edgeList) {
+    /* TODO: Implement discovery, find friends/relationship */
+    public Node discover(Feature feature) {
+        Queue<Node> nodeQueue = new LinkedList<Node>();
+        Set<Node> visited = new HashSet<Node>();
 
-				if (visited.contains(edge.getDest())) {
-					/* Do nothing */
-				} else {
-					nodeQueue.offer(edge.getDest());
-				}
-			}
-		}
-		return null;
-	}
+        /* Dummy values*/
+        nodeQueue.offer(this);
 
-	private class NodeEdgeCentrality implements Comparator<Edge> {
-		@Override
-		public int compare(Edge e1, Edge e2) {
-			int centralityDest1 = e1.getDest().getCentrality();
-			int centralityDest2 = e2.getDest().getCentrality();
-			if (centralityDest1 == centralityDest2) {
-				return (int) ((long) e1.getDest().getId() - e2.getDest().getId());
-			}
-			return centralityDest1 - centralityDest2;
-		}
-	}
+        while (!nodeQueue.isEmpty()) {
+            Node current = nodeQueue.poll();
+            visited.add(current);
+
+            if (current.hasFeature(feature)) {
+                return current;
+            }
+            List<Edge> edgeList = current.getEdgeList();
+            for (Edge edge : edgeList) {
+
+                if (visited.contains(edge.getDest())) {
+                    /* Do nothing */
+                } else {
+                    nodeQueue.offer(edge.getDest());
+                }
+            }
+        }
+        return null;
+    }
+
+
+    private class NodeEdgeCentrality implements Comparator<Edge> {
+        @Override
+        public int compare(Edge e1, Edge e2) {
+            return e1.getDest().getCentrality() - e2.getDest().getCentrality();
+        }
+    }
 }

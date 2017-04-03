@@ -15,7 +15,7 @@ public enum Feature {
     WASTE_MANAGEMENT;
 
     public static Feature randomFeature() {
-        int randInd = (int) (Math.random() * Feature.values().length);
+        int randInd = (int) Math.random() * Feature.values().length;
         return Feature.values()[randInd];
     }
 }
