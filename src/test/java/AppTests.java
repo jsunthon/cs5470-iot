@@ -6,7 +6,8 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import models.Node;
+import logic.App;
+import models.nodes.SocialNode;
 
 public class AppTests {
 	Logger logger = LoggerFactory.getLogger(AppTests.class);
@@ -14,9 +15,9 @@ public class AppTests {
 	public void testCreateOrGetNode() {
 		App app = new App();
 		app.init();
-		Node node1 = app.createOrGetNode(1);
+		SocialNode node1 = app.createOrGetSocialNode(1);
 		Assert.assertNotNull(node1);
-		Node node2 = app.createOrGetNode(2);
+		SocialNode node2 = app.createOrGetSocialNode(2);
 		Assert.assertNotNull(node2);
 	}
 	
@@ -24,7 +25,7 @@ public class AppTests {
 	public void testFormRelationship() {
 		App app = new App();
 		app.init();
-		Node node1 = app.createOrGetNode(1);
+		SocialNode node1 = app.createOrGetSocialNode(1);
 		List<Long> neighbors = new ArrayList<>();
 		neighbors.add(new Long(2));
 		neighbors.add(new Long(4));
@@ -35,7 +36,7 @@ public class AppTests {
 		Assert.assertEquals(4,  neighbors.size());
 		app.formRelationship(node1, neighbors.iterator());
 		Assert.assertEquals(4, (int) node1.getCentrality());
-		Node node2 = app.createOrGetNode(4);
+		SocialNode node2 = app.createOrGetSocialNode(4);
 		List<Long> neighbors2 = new ArrayList<>();
 		neighbors2.add(new Long(5));
 		neighbors2.add(new Long(10));

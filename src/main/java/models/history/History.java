@@ -1,7 +1,7 @@
 package models.history;
 
 import models.Feature;
-import models.Node;
+import models.nodes.SocialNode;
 
 import java.util.Stack;
 
@@ -36,7 +36,7 @@ public class History extends Stack<HistoryLog> {
         }
     }
 
-    public HistoryLog push(Feature feature, Node node) {
+    public HistoryLog push(Feature feature, SocialNode node) {
         return this.push(new HistoryLog(feature, node));
     }
 }

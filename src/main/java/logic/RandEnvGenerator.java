@@ -1,4 +1,8 @@
+package logic;
 import models.*;
+import models.nodes.Node;
+import models.nodes.NodeType;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -46,8 +50,8 @@ public class RandEnvGenerator {
         return owners;
     }
 
-    public Node genRandomizeNode(int id, int nodeFeatureCount) {
-        if (owners.isEmpty() || manufacturers.isEmpty()) return null;
+    public Node genRandomizeNode(NodeType nodeType, int id, int nodeFeatureCount) {
+        if (owners.isEmpty() || manufacturers.isEmpty() || nodeType == null) return null;
         int ownerIndex = genRandNumber(0, owners.size() - 1);
         int manufIndex = genRandNumber(0, manufacturers.size() - 1);
         int featureCount = genRandNumber(1, nodeFeatureCount);
@@ -59,7 +63,7 @@ public class RandEnvGenerator {
         for (int i = 0; i < features.length; i++) {
             features[i] = Feature.randomFeature();
         }
-        Node node = manufacturer.create(id, role, timeToLive, features);
+        Node node = manufacturer.create(nodeType, id, role, timeToLive, features);
         node.setOwner(owner);
         node.setShare(genRandomShare());
         nodes.add(node);

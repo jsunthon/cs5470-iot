@@ -1,8 +1,12 @@
 import models.Manufacturer;
-import models.Node;
 import models.Owner;
+import models.nodes.SocialNode;
+
 import org.junit.Assert;
 import org.junit.Test;
+
+import logic.RandEnvGenerator;
+
 import java.util.List;
 
 /**
@@ -41,7 +45,7 @@ public class RandEnvGeneratorTests {
         Assert.assertNull(randEnvGenerator.genRandomizeNode(1, 123));
         randEnvGenerator.genManufacturers(10, 5);
         randEnvGenerator.genOwners(100);
-        Node node = randEnvGenerator.genRandomizeNode(2, 3);
+        SocialNode node = randEnvGenerator.genRandomizeNode(2, 3);
         Assert.assertNotNull(node);
         Assert.assertEquals(1, randEnvGenerator.getNodes().size());
         node = randEnvGenerator.genRandomizeNode(4, 5);
