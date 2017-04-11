@@ -19,7 +19,7 @@ public class App {
 	
 	public App() {
 		nodeMap = new HashMap<>();
-		randEnvGen = new RandEnvGenerator(); 
+		randEnvGen = RandEnvGenerator.getInstance();
 	}
 	
 	public Map<Integer, Node> getNodeMap() {

@@ -6,14 +6,18 @@ import java.util.concurrent.ThreadLocalRandom;
 public class RandEnvGenerator {
     private static final String MANUFACTURER_PREFIX = "manufacturer_";
     private static final String OWNER_PREFIX = "owner_";
-    private List<Manufacturer> manufacturers;
-    private List<Owner> owners;
-    private List<Node> nodes;
-
-    public RandEnvGenerator() {
-        manufacturers = new ArrayList<>();
-        owners = new ArrayList<>();
-        nodes = new ArrayList<>();
+    private final List<Manufacturer> manufacturers = new ArrayList<>();
+    private final List<Owner> owners = new ArrayList<>();
+    private final List<Node> nodes = new ArrayList<>();
+    private static RandEnvGenerator randEnvGenerator;
+    
+    private RandEnvGenerator() {}
+    
+    public static RandEnvGenerator getInstance() {
+    	if (randEnvGenerator == null) {
+    		randEnvGenerator  = new RandEnvGenerator();
+    	}
+    	return randEnvGenerator;
     }
 
     public List<Manufacturer> genManufacturers(int manufCount,
@@ -80,5 +84,11 @@ public class RandEnvGenerator {
 
     public List<Node> getNodes() {
         return nodes;
+    }
+    
+    public void reset() {
+    	manufacturers.clear();
+    	owners.clear();
+    	nodes.clear();
     }
 }
