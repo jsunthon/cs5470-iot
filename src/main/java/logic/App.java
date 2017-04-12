@@ -27,9 +27,9 @@ public class App {
 		parser.parseAndGenSocial();
 		parser.parseAndGenDecentral();
 		parser.parseAndGenCentral();
-		TopologyTest<Node> socialTest = new TopologyTest<>(parser.getSocialMap());
-		TopologyTest<Node> decentralTest = new TopologyTest<>(parser.getDecentralMap());
-		TopologyTest<Node> centralTest = new TopologyTest<>(parser.getCentralMap());
+		Topology<Node> socialTest = new Topology<>(parser.getSocialMap());
+		Topology<Node> decentralTest = new Topology<>(parser.getDecentralMap());
+		Topology<Node> centralTest = new Topology<>(parser.getCentralMap());
 		socialTest.start(100, 0, Feature.randomFeature());
 //		decentralTest.start(100, 0, Feature.randomFeature());
 		centralTest.start(100, 0, Feature.randomFeature());

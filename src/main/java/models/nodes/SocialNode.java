@@ -3,7 +3,7 @@ package models.nodes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import logic.TopologyTest;
+import logic.Topology;
 import models.Edge;
 import models.Feature;
 import models.Manufacturer;

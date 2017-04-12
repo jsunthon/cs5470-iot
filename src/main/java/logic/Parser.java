@@ -70,8 +70,8 @@ public class Parser {
 		}
 	}
 	
+	//TODO:
 	public void parseAndGenDecentral() {
-		
 	}
 	
 	public void bindMasterSlaves(int id, Iterator<Long> slaves) {

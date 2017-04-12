@@ -8,7 +8,7 @@ import models.Feature;
 import models.Search;
 import models.nodes.Node;
 
-public class TopologyTest<T extends Node> {
+public class Topology<T extends Node> {
 	private Map<Integer, T> nodeMap;
 	private int successes;
 	private int failures;
@@ -17,7 +17,7 @@ public class TopologyTest<T extends Node> {
 	private List<Search> searches;
 	private DecimalFormat df;
 	
-	public TopologyTest(Map<Integer, T> nodeMap) {
+	public Topology(Map<Integer, T> nodeMap) {
 		this.nodeMap = nodeMap;
 		this.searches = new ArrayList<>();
 		this.df = new DecimalFormat("0.00");
@@ -40,7 +40,7 @@ public class TopologyTest<T extends Node> {
 		finish();
 	}
 	
-	private void finish() {
+	public void finish() {
 		for (Search search : searches) {
 			bandwidth += search.getBandwidth();
 			if (search.isSuccess()) {
@@ -52,17 +52,14 @@ public class TopologyTest<T extends Node> {
 		}
 	}
 	
-	private void doSearch(T source, Feature feature) {
+	public Search doSearch(T source, Feature feature) {
 		Search search = source.discover(feature);
 		searches.add(search);
-	}
-	
-	public int bandwidth() {
-		return bandwidth;
+		return search;
 	}
 	
 	public double successRate() {
-		double unformattedRate = (successes / (successes + failures)) * 100;
+		double unformattedRate = ((1.0 * successes) / (successes + failures)) * 100;
 		String formattedRate = df.format(unformattedRate);
 		return Double.valueOf(formattedRate);
 	}
@@ -71,5 +68,29 @@ public class TopologyTest<T extends Node> {
 		double unformattedPerf = totalPerformance / searches.size();
 		String formattedPerf = df.format(unformattedPerf);
 		return Double.valueOf(formattedPerf);
+	}
+
+	public void setSearches(List<Search> searches) {
+		this.searches = searches;
+	}
+
+	public int getSuccesses() {
+		return successes;
+	}
+
+	public int getFailures() {
+		return failures;
+	}
+
+	public int getBandwidth() {
+		return bandwidth;
+	}
+
+	public long getTotalPerformance() {
+		return totalPerformance;
+	}
+
+	public List<Search> getSearches() {
+		return searches;
 	}
 }

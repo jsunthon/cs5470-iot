@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import logic.TopologyTest;
+import logic.Topology;
 import models.Feature;
 import models.Manufacturer;
 import models.Owner;
