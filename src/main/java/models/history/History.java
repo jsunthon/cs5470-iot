@@ -1,15 +1,16 @@
 package models.history;
 
 import models.Feature;
-import models.nodes.SocialNode;
+import models.Search;
 
-import java.util.Stack;
+import java.util.ArrayDeque;
+import java.util.Iterator;
 
 /**
  * A stack of HistoryLogs. Represent
  * a collection of pass discovery results
  */
-public class History extends Stack<HistoryLog> {
+public class History extends ArrayDeque<Search> {
     private int maxSize;
 
     public History(int maxSize) {
@@ -27,16 +28,36 @@ public class History extends Stack<HistoryLog> {
      * then pop (remove) the older logs;
      */
     @Override
-    public HistoryLog push(HistoryLog item) {
+    public void push(Search search) {
         if (this.size() < maxSize) {
-            return super.push(item);
+            super.push(search);
         } else {
             this.pop();
-            return this.push(item);
+            this.push(search);
         }
     }
 
-    public HistoryLog push(Feature feature, SocialNode node) {
-        return this.push(new HistoryLog(feature, node));
+    /**
+     * Check if there a history search with this feature
+     */
+    public Search contains(Feature feature) {
+        Iterator<Search> it = this.iterator();
+        Search search = null;
+
+        while (it.hasNext()) {
+            Search itSearch = it.next();
+            if (itSearch.getFeature().equals(feature)) {
+                search = itSearch;
+                break;
+            }
+        }
+
+        if (search == null) {
+            return null;
+        } else {
+            this.remove(search);
+            this.push(search);
+            return search;
+        }
     }
 }

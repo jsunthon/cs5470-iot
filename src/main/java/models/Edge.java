@@ -21,9 +21,11 @@ public class Edge {
         return src;
     }
 
-	public Relationship getRelationship() {
-		return relationship;
-	}
-    
-    
+    public Relationship getRelationship() {
+        return relationship;
+    }
+
+    public int getDiversityScore() {
+        return dest.getRelationshipMap().size();
+    }
 }

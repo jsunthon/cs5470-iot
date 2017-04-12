@@ -1,49 +1,73 @@
 package models;
 
+import models.nodes.Node;
+
 public class Search {
-	private long start;
-	private long end;
-	private int bandwidth;
-	private boolean success;
-	
-	public Search(long start) {
-		this.start = start;
-		this.success = false;
-	}
-	
-	public void setEnd(long end) {
-		this.end = end;
-	}
+    private long start;
+    private long end;
+    private int bandwidth;
+    private boolean success;
 
-	public int getBandwidth() {
-		return bandwidth;
-	}
+    /*  The feature that a Node searched for */
+    private Feature feature;
 
-	public void setBandwidth(int bandwidth) {
-		this.bandwidth = bandwidth;
-	}
+    /* The result Node from the discovery search.
+      Null if search yield no result */
+    private Node node;
 
-	public long getStart() {
-		return start;
-	}
+    public Search(Feature feature, long start) {
+        this.start = start;
+        this.success = false;
 
-	public void setStart(long start) {
-		this.start = start;
-	}
+        this.feature = feature;
+    }
 
-	public long getEnd() {
-		return end;
-	}
+    public void setEnd(long end) {
+        this.end = end;
+    }
 
-	public boolean isSuccess() {
-		return success;
-	}
+    public int getBandwidth() {
+        return bandwidth;
+    }
 
-	public void setSuccess(boolean success) {
-		this.success = success;
-	}
-	
-	public void addBandwidth() {
-		bandwidth++;
-	}
+    public void setBandwidth(int bandwidth) {
+        this.bandwidth = bandwidth;
+    }
+
+    public long getStart() {
+        return start;
+    }
+
+    public void setStart(long start) {
+        this.start = start;
+    }
+
+    public long getEnd() {
+        return end;
+    }
+
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public void setSuccess(boolean success) {
+        this.success = success;
+    }
+
+    public void setSuccess(Node node) {
+        this.node = node;
+    }
+
+    public void addBandwidth() {
+        bandwidth++;
+    }
+
+    public Feature getFeature() {
+        return feature;
+    }
+
+    public Node getNode() {
+        return node;
+    }
+
 }

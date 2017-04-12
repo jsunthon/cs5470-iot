@@ -1,15 +1,17 @@
 James
-    Set up randomize environment
-    Performance test function/metrics
-    Centralized
-    Generate text file / parser
+    X Set up randomize environment
+    X Performance test function/metrics
+    X Centralized
+    X Generate text file / parser
 Shay
-    Set up testing JUNIT
-    Impl history / diversity
+    X Set up testing JUNIT
+    X Impl history /
+    X diversity
     Decentralize
     Generate text file / parser
 others:
-    set up maven
-    rename class/ methods / enum
+    X set up maven (Gradle)
+    X rename class/ methods / enum
     Get social network data
-
+    create single JSON file for all test to uses
+    --(https://www.mkyong.com/java/json-simple-example-read-and-write-json/)
