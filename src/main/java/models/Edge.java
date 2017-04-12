@@ -1,21 +1,29 @@
 package models;
 
+import models.nodes.SocialNode;
+
 public class Edge {
-    private Node src;
-    private Node dest;
+    private SocialNode src;
+    private SocialNode dest;
     private Relationship relationship;
 
-    public Edge(Node src, Node dest, Relationship relationship) {
+    public Edge(SocialNode src, SocialNode dest, Relationship relationship) {
         this.src = src;
         this.dest = dest;
         this.relationship = relationship;
     }
 
-    public Node getDest() {
+    public SocialNode getDest() {
         return dest;
     }
 
-    public Node getSrc() {
+    public SocialNode getSrc() {
         return src;
     }
+
+	public Relationship getRelationship() {
+		return relationship;
+	}
+    
+    
 }

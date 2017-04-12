@@ -1,7 +1,7 @@
 package models.history;
 
 import models.Feature;
-import models.Node;
+import models.nodes.SocialNode;
 
 import java.util.Date;
 
@@ -15,13 +15,13 @@ public class HistoryLog {
 
     /* The result Node from the discovery search.
       Null if search yield no result */
-    private Node node;
+    private SocialNode node;
 
     /*  The date of the search. */
     private Date dateSearch;
 
 
-    public HistoryLog(Feature feature, Node node) {
+    public HistoryLog(Feature feature, SocialNode node) {
         this.feature = feature;
         this.node = node;
         this.dateSearch = new Date();
@@ -31,7 +31,7 @@ public class HistoryLog {
         return feature;
     }
 
-    public Node getNode() {
+    public SocialNode getNode() {
         return node;
     }
 

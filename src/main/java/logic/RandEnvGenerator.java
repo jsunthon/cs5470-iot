@@ -1,4 +1,8 @@
+package logic;
 import models.*;
+import models.nodes.Node;
+import models.nodes.NodeType;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -6,14 +10,18 @@ import java.util.concurrent.ThreadLocalRandom;
 public class RandEnvGenerator {
     private static final String MANUFACTURER_PREFIX = "manufacturer_";
     private static final String OWNER_PREFIX = "owner_";
-    private List<Manufacturer> manufacturers;
-    private List<Owner> owners;
-    private List<Node> nodes;
-
-    public RandEnvGenerator() {
-        manufacturers = new ArrayList<>();
-        owners = new ArrayList<>();
-        nodes = new ArrayList<>();
+    private final List<Manufacturer> manufacturers = new ArrayList<>();
+    private final List<Owner> owners = new ArrayList<>();
+    private final List<Node> nodes = new ArrayList<>();
+    private static RandEnvGenerator randEnvGenerator;
+    
+    private RandEnvGenerator() {}
+    
+    public static RandEnvGenerator getInstance() {
+    	if (randEnvGenerator == null) {
+    		randEnvGenerator  = new RandEnvGenerator();
+    	}
+    	return randEnvGenerator;
     }
 
     public List<Manufacturer> genManufacturers(int manufCount,
@@ -42,8 +50,8 @@ public class RandEnvGenerator {
         return owners;
     }
 
-    public Node genRandomizeNode(int id, int nodeFeatureCount) {
-        if (owners.isEmpty() || manufacturers.isEmpty()) return null;
+    public Node genRandomizeNode(NodeType nodeType, int id, int nodeFeatureCount) {
+        if (owners.isEmpty() || manufacturers.isEmpty() || nodeType == null) return null;
         int ownerIndex = genRandNumber(0, owners.size() - 1);
         int manufIndex = genRandNumber(0, manufacturers.size() - 1);
         int featureCount = genRandNumber(1, nodeFeatureCount);
@@ -55,7 +63,22 @@ public class RandEnvGenerator {
         for (int i = 0; i < features.length; i++) {
             features[i] = Feature.randomFeature();
         }
-        Node node = manufacturer.create(id, role, timeToLive, features);
+        Node node = manufacturer.create(nodeType, id, role, timeToLive, features);
+        node.setOwner(owner);
+        node.setShare(genRandomShare());
+        nodes.add(node);
+        return node;
+    }
+    
+    public Node genRandomizeNode(NodeType nodeType, int id, Feature[] nodeFeatures) {
+        if (owners.isEmpty() || manufacturers.isEmpty() || nodeType == null) return null;
+        int ownerIndex = genRandNumber(0, owners.size() - 1);
+        int manufIndex = genRandNumber(0, manufacturers.size() - 1);
+        Owner owner = owners.get(ownerIndex);
+        Manufacturer manufacturer = manufacturers.get(manufIndex);
+        Role role = Role.randomRole();
+        TimeToLive timeToLive = TimeToLive.randomTimeToLive();
+        Node node = manufacturer.create(nodeType, id, role, timeToLive, nodeFeatures);
         node.setOwner(owner);
         node.setShare(genRandomShare());
         nodes.add(node);
@@ -80,5 +103,11 @@ public class RandEnvGenerator {
 
     public List<Node> getNodes() {
         return nodes;
+    }
+    
+    public void reset() {
+    	manufacturers.clear();
+    	owners.clear();
+    	nodes.clear();
     }
 }

@@ -3,10 +3,12 @@ package models;
 import java.util.ArrayList;
 import java.util.List;
 
+import models.nodes.SocialNode;
+
 public class Owner {
     private Integer id;
     private String name;
-    private List<Node> nodes;
+    private List<SocialNode> nodes;
 
     private static Integer ID_COUNTER = 0;
 
@@ -29,20 +31,20 @@ public class Owner {
         this.name = name;
     }
 
-    public List<Node> getNodes() {
+    public List<SocialNode> getNodes() {
         return nodes;
     }
 
 
-    public void add(Node node) {
+    public void add(SocialNode node) {
         nodes.add(node);
     }
 
-    public void remove(Node node) {
+    public void remove(SocialNode node) {
         nodes.remove(node);
     }
 
-    public void share(Node node, boolean share) {
+    public void share(SocialNode node, boolean share) {
         if (nodes.contains(node)) {
             node.setShare(share);
         }

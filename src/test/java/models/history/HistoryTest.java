@@ -1,6 +1,8 @@
 package models.history;
 
 import models.*;
+import models.nodes.SocialNode;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -44,12 +46,12 @@ public class HistoryTest {
 
     private static HistoryLog getTestLog() {
         Feature feature = Feature.randomFeature();
-        Node node = getTestNode();
+        SocialNode node = getTestNode();
         return new HistoryLog(feature, node);
     }
 
-    private static Node getTestNode() {
-        return new Node(1, getTestManufacture(), Role.BOTH, TimeToLive.LOW);
+    private static SocialNode getTestNode() {
+        return new SocialNode(1, getTestManufacture(), Role.BOTH, TimeToLive.LOW);
     }
 
     private static Manufacturer getTestManufacture() {

@@ -1,79 +1,40 @@
-package models;
+package models.nodes;
 
-import models.history.History;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import logic.Topology;
+import models.Edge;
+import models.Feature;
+import models.Manufacturer;
+import models.Relationship;
+import models.Role;
+import models.Search;
+import models.TimeToLive;
+import models.history.History;
+
 import java.util.*;
 
-public class Node {
-	private static final Logger logger = LoggerFactory.getLogger(Node.class);
-	private int id;
-	private Manufacturer manufacturer;
-	private Date manufacturedDate;
-
-	private Owner owner;
-	private Set<Feature> features;
+public class SocialNode extends Node {
+	private static final Logger logger = LoggerFactory.getLogger(SocialNode.class);
+	
 	private Map<Relationship, TreeSet<Edge>> relationshipMap;
-	private boolean share;
-
-	private TimeToLive timeToLive;
-	private Role role;
-
     private History history;
+    
+    public static Integer NODE_ID_COUNTER = 0;
     public static Integer DEFAULT_MAX_HISTORY_SIZE = 5;
 
-    public static Integer NODE_ID_COUNTER = 0;
-
-
-    public Node(Integer id, Manufacturer manufacturer, Role role, TimeToLive timeToLive) {
-        this.id = id;
-        this.manufacturer = manufacturer;
-        this.role = role;
-        this.timeToLive = timeToLive;
-        manufacturedDate = new Date();
-        features = new HashSet<Feature>();
+    public SocialNode(Integer id, Manufacturer manufacturer, Role role, TimeToLive timeToLive) {
+    	super(id, manufacturer, role, timeToLive);
         relationshipMap = new HashMap<Relationship, TreeSet<Edge>>();
-        history = new History(Node.DEFAULT_MAX_HISTORY_SIZE);
+        history = new History(SocialNode.DEFAULT_MAX_HISTORY_SIZE);
     }
-
-	public Integer getId() {
-		return id;
-	}
-
-	public Manufacturer getManufacturer() {
-		return manufacturer;
-	}
-
-	public Date getManufacturedDate() {
-		return manufacturedDate;
-	}
 
 	public Map<Relationship, TreeSet<Edge>> getRelationshipMap() {
 		return relationshipMap;
 	}
 
-	public boolean isShare() {
-		return share;
-	}
-
-	public Owner getOwner() {
-		return owner;
-	}
-
-	public void setOwner(Owner owner) {
-		this.owner = owner;
-	}
-
-	public Set<Feature> getFeatures() {
-		return features;
-	}
-
-	public void addFeature(Feature feature) {
-		features.add(feature);
-	}
-
-	public void addRelationship(Node node, Relationship relationship) {
+	public void addRelationship(SocialNode node, Relationship relationship) {
 		if (edgeExists(node)) return;
 		Edge edge = new Edge(this, node, relationship);
 		if (relationshipMap.containsKey(relationship)) {
@@ -85,7 +46,7 @@ public class Node {
 		}
 	}
 	
-	public boolean edgeExists(Node dest) {
+	public boolean edgeExists(SocialNode dest) {
 		List<Edge> edges = getEdgeList();
 		for (Edge edge : edges) {
 			if (edge.getDest().equals(dest)) {
@@ -93,22 +54,6 @@ public class Node {
 			}
 		}
 		return false;
-	}
-
-	public boolean getShare() {
-		return share;
-	}
-
-	public void setShare(boolean share) {
-		this.share = share;
-	}
-
-	public TimeToLive getTimeToLive() {
-		return timeToLive;
-	}
-
-	public Role getRole() {
-		return role;
 	}
 
 	public Integer getCentrality() {
@@ -137,24 +82,25 @@ public class Node {
 	/* ================================================== */
 
     /* TODO: Implement discovery, find friends/relationship */
-    public Node discover(Feature feature) {
-        Queue<Node> nodeQueue = new LinkedList<Node>();
-        Set<Node> visited = new HashSet<Node>();
-
+	@Override
+    public Search discover(Feature feature) {
+		Search search = new Search(System.currentTimeMillis());
+        Queue<SocialNode> nodeQueue = new LinkedList<SocialNode>();
+        Set<SocialNode> visited = new HashSet<SocialNode>();
 		/* Dummy values */
         nodeQueue.offer(this);
-
+        
         while (!nodeQueue.isEmpty()) {
-            Node current = nodeQueue.poll();
+            SocialNode current = nodeQueue.poll();
+            search.addBandwidth();
             visited.add(current);
-
             if (current.hasFeature(feature)) {
                 history.push(feature, current);
-                return current;
+                search.setSuccess(true);
+                break;
             }
             List<Edge> edgeList = current.getEdgeList();
             for (Edge edge : edgeList) {
-
                 if (visited.contains(edge.getDest())) {
                     /* Do nothing */
                 } else {
@@ -163,7 +109,8 @@ public class Node {
             }
         }
         history.push(feature, null);
-        return null;
+        search.setEnd(System.currentTimeMillis());
+        return search;
     }
 
 	private class NodeEdgeCentrality implements Comparator<Edge> {
