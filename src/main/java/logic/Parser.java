@@ -14,8 +14,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import models.Relationship;
+import models.nodes.MasterNode;
 import models.nodes.Node;
 import models.nodes.NodeType;
+import models.nodes.SlaveNode;
 import models.nodes.SocialNode;
 
 public class Parser {
@@ -27,23 +29,15 @@ public class Parser {
 	private Map<Integer, Node> decentralMap;
 	private RandEnvGenerator randEnvGen;
 	private JSONParser jsonParser;
-	private static Parser parser;
 	
-	private Parser() {
+	public Parser() {
 		socialMap = new HashMap<>();
 		centralMap = new HashMap<>();
 		decentralMap = new HashMap<>();
 		randEnvGen = RandEnvGenerator.getInstance();
 		jsonParser = new JSONParser();
 	}
-	
-	public static Parser getInstance() {
-		if (parser == null) {
-			parser = new Parser();
-		}
-		return parser;
-	}
-	
+
 	public void parseAndGenSocial() {
 		try {
 			FileReader fileReader = new FileReader("social-network.json");
@@ -55,7 +49,7 @@ public class Parser {
 				Long longId = (Long) jsonNode.get("id"); //json-simple parses numbers as Longs and not ints...
 				int id =  new Integer(longId.intValue());
 				JSONArray neighbors = (JSONArray) jsonNode.get("neighbors");
-				Iterator<Long> neighborIterator = neighbors.iterator();
+				Iterator<JSONObject> neighborIterator = neighbors.iterator();
 				SocialNode mappedNode = createOrGetSocialNode(id);
 				formRelationship(mappedNode, neighborIterator);
 			}
@@ -65,13 +59,34 @@ public class Parser {
 	}
 	
 	public void parseAndGenCentral() {
+		try {
+			FileReader fileReader = new FileReader("central-network.json");
+			JSONObject jsonObject = (JSONObject) jsonParser.parse(fileReader);
+			Long id = (Long) jsonObject.get("id");
+			JSONArray neighbors = (JSONArray) jsonObject.get("neighbors");
+			bindMasterSlaves(id.intValue(), neighbors.iterator());
+		} catch (IOException|ParseException e) {
+			logger.error(e.getMessage());
+		}
 	}
 	
 	public void parseAndGenDecentral() {
 		
 	}
 	
-	private SocialNode createOrGetSocialNode(int id) {
+	public void bindMasterSlaves(int id, Iterator<Long> slaves) {
+		MasterNode master = (MasterNode) randEnvGen.genRandomizeNode(NodeType.MASTER, id, NODE_FEATURE_COUNT);
+		centralMap.put(id, master);
+		while (slaves.hasNext()) {
+			SlaveNode slave = (SlaveNode) randEnvGen.genRandomizeNode(NodeType.SLAVE,
+					slaves.next().intValue(), 
+					NODE_FEATURE_COUNT);
+			centralMap.put(slave.getId(), slave);
+			master.addSlaveNode(slave);
+		}
+	}
+	
+	public SocialNode createOrGetSocialNode(int id) {
 		SocialNode node = null;
 		if (socialMap.containsKey(id)) {
 			node = (SocialNode) socialMap.get(id);
@@ -82,11 +97,41 @@ public class Parser {
 		return node;
 	}
 	
-	private void formRelationship(SocialNode src, Iterator<Long> neighbors) {
+	/**
+	 * Forms a random relationshhip between src and each of the neighbor in neighbors
+	 * @param src
+	 * @param neighbors
+	 */
+	public void formRandomRelationship(SocialNode src, Iterator<Long> neighbors) {
 		if (src == null || !neighbors.hasNext()) return;
 		while (neighbors.hasNext()) {
 			SocialNode neighbor = createOrGetSocialNode(neighbors.next().intValue());
 			src.addRelationship(neighbor, Relationship.randomRelationship());
+		}
+	}
+	
+	/**
+	 * Call this method if each neighbor has a specified relationship in the JSON file.
+	 * @param src
+	 * @param neighbors
+	 */
+	public void formRelationship(SocialNode src, Iterator<JSONObject> neighbors) {
+		if (src == null || !neighbors.hasNext()) return;
+		while (neighbors.hasNext()) {
+			JSONObject jsonObject = neighbors.next();
+			int id;
+			try {
+				id = (int) jsonObject.get("id");
+			} catch (ClassCastException e) {
+				id = ((Long) jsonObject.get("id")).intValue();
+			}
+			try {
+				Relationship relationship = Relationship.valueOf((String) jsonObject.get("relationship"));
+				SocialNode neighbor = createOrGetSocialNode(id);
+				src.addRelationship(neighbor, relationship);
+			} catch (IllegalArgumentException ex) {
+				logger.error(ex.getMessage());
+			}
 		}
 	}
 

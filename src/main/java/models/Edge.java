@@ -20,4 +20,10 @@ public class Edge {
     public SocialNode getSrc() {
         return src;
     }
+
+	public Relationship getRelationship() {
+		return relationship;
+	}
+    
+    
 }

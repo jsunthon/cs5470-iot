@@ -1,15 +1,47 @@
 [
 	{
 		"id": 0,
-		"neighbors": [1, 3]
+		"neighbors": [
+			{
+				"id": 1,
+				"relationship": "CO_WORKER"
+			}, {
+				"id": 3,
+				"relationship": "FAMILY"
+			}
+		]
 	}, {
 		"id": 1,
-		"neighbors": [0]
+		"neighbors": [
+			{
+				"id": 0,
+				"relationship": "CO_WORKER"
+			}
+		]
 	}, {
 		"id": 3,
-		"neighbors": [0, 4]
+		"neighbors": [
+			{
+				"id": 0,
+				"relationship": "FAMILY"
+			}, {
+				"id": 4,
+				"relationship": "FAMILY"
+			}
+		]
 	}, {
 		"id": 4,
-		"neighbors": [5, 6, 7]
+		"neighbors": [
+			{
+				"id": 5,
+				"relationship": "FRIEND"
+			}, {
+				"id": 6,
+				"relationship": "ACQUAINTANCE"
+			}, {
+				"id": 7,
+				"relationship": "ACQUAINTANCE"
+			}
+		]
 	}
 ]

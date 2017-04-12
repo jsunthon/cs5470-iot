@@ -69,6 +69,21 @@ public class RandEnvGenerator {
         nodes.add(node);
         return node;
     }
+    
+    public Node genRandomizeNode(NodeType nodeType, int id, Feature[] nodeFeatures) {
+        if (owners.isEmpty() || manufacturers.isEmpty() || nodeType == null) return null;
+        int ownerIndex = genRandNumber(0, owners.size() - 1);
+        int manufIndex = genRandNumber(0, manufacturers.size() - 1);
+        Owner owner = owners.get(ownerIndex);
+        Manufacturer manufacturer = manufacturers.get(manufIndex);
+        Role role = Role.randomRole();
+        TimeToLive timeToLive = TimeToLive.randomTimeToLive();
+        Node node = manufacturer.create(nodeType, id, role, timeToLive, nodeFeatures);
+        node.setOwner(owner);
+        node.setShare(genRandomShare());
+        nodes.add(node);
+        return node;
+    }
 
     private boolean genRandomShare() {
         return genRandNumber(0, 1) == 1;
