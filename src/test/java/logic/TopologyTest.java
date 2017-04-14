@@ -17,17 +17,17 @@ public class TopologyTest {
 	public void testFinish() {
 		Topology<Node> test = new Topology<>(new HashMap<>());
 		List<Search> searches = new ArrayList<>();
-		Search search1 = new Search(System.currentTimeMillis());
+		Search search1 = new Search(null,System.currentTimeMillis());
 		search1.setStart(0);
 		search1.setEnd(500);
 		search1.setSuccess(true);
 		search1.setBandwidth(8);
-		Search search2 = new Search(System.currentTimeMillis());
+		Search search2 = new Search(null,System.currentTimeMillis());
 		search2.setStart(0);
 		search2.setEnd(700);
 		search2.setSuccess(false);
 		search2.setBandwidth(4);
-		Search search3 = new Search(System.currentTimeMillis());
+		Search search3 = new Search(null,System.currentTimeMillis());
 		search3.setStart(0);
 		search3.setEnd(150);
 		search3.setSuccess(true);

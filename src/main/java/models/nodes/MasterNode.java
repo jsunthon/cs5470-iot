@@ -31,7 +31,7 @@ public class MasterNode extends Node {
 
 	@Override
 	public Search discover(Feature feature) {
-		Search search = new Search(System.currentTimeMillis());
+		Search search = new Search(feature, System.currentTimeMillis());
 		search.addBandwidth();
 		if (slaveNodeMap.containsKey(feature)) {
 			LinkedList<SlaveNode> slaveNodeList = slaveNodeMap.get(feature);
