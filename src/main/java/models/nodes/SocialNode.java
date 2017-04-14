@@ -5,6 +5,7 @@ import models.history.History;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.management.relation.Relation;
 import java.util.*;
 
 public class SocialNode extends Node {
@@ -14,11 +15,11 @@ public class SocialNode extends Node {
     private History history;
 
     public static Integer NODE_ID_COUNTER = 0;
-    public static Integer DEFAULT_MAX_HISTORY_SIZE = 5;
+    public static Integer DEFAULT_MAX_HISTORY_SIZE = 10;
 
     public SocialNode(Integer id, Manufacturer manufacturer, Role role, TimeToLive timeToLive) {
         super(id, manufacturer, role, timeToLive);
-        relationshipMap = new HashMap<Relationship, TreeSet<Edge>>();
+        relationshipMap = new TreeMap<Relationship, TreeSet<Edge>>();
         history = new History(SocialNode.DEFAULT_MAX_HISTORY_SIZE);
     }
 
@@ -48,8 +49,14 @@ public class SocialNode extends Node {
         return false;
     }
 
-    public Integer getCentrality() {
-        Integer centrality = 0;
+    /**
+     * Centrality refers to how "popular" a node is. The more relationship this
+     * node has, the higher the centrality is.
+     *
+     * @return The total number of relationships this Node has.
+     */
+    public int getCentrality() {
+        int centrality = 0;
         for (Map.Entry<Relationship, TreeSet<Edge>> entry : relationshipMap.entrySet()) {
             Set<Edge> edges = entry.getValue();
             centrality += edges.size();
@@ -57,10 +64,33 @@ public class SocialNode extends Node {
         return centrality;
     }
 
-    private List<Edge> getEdgeList() {
+    /**
+     * An edge represent a relationship between this node and another Node.
+     * And edgeList therefore, is a list of all the relatipnship with this node.
+     *
+     * @return A list of edge  (relationship to this node) group by the
+     * most occuring relatiship. e.g. (B B B B A A A D D C). If there is a
+     * tie then it is group  alphabetically. e .g. (X X X X A A A B B B A Z Z C).
+     * Within those group, it is sort by Centrality (again) and used diversity as
+     * a tie break. (X-4-2, X-3-4, X-3-2, X-1-4, ... )
+     */
+    public List<Edge> getEdgeList() {
         List<Edge> edgeList = new ArrayList<Edge>();
+        List<Map.Entry<Relationship, TreeSet<Edge>>> list =
+                new LinkedList<Map.Entry<Relationship, TreeSet<Edge>>>(relationshipMap.entrySet());
+        Collections.sort(list, new Comparator<Map.Entry<Relationship, TreeSet<Edge>>>() {
+            @Override
+            public int compare(Map.Entry<Relationship, TreeSet<Edge>> o1, Map.Entry<Relationship, TreeSet<Edge>> o2) {
+                int byCentralality = o2.getValue().size() - o1.getValue().size();
+                if (byCentralality == 0) {
+                    return 1;
+                } else {
+                    return byCentralality;
+                }
+            }
+        });
 
-        for (Map.Entry<Relationship, TreeSet<Edge>> entry : relationshipMap.entrySet()) {
+        for (Map.Entry<Relationship, TreeSet<Edge>> entry : list) {
             edgeList.addAll(entry.getValue());
         }
 
@@ -118,16 +148,19 @@ public class SocialNode extends Node {
         public int compare(Edge e1, Edge e2) {
             int centralityDest1 = e1.getDest().getCentrality();
             int centralityDest2 = e2.getDest().getCentrality();
-            if (centralityDest1 == centralityDest2) {
+
+            int diff = centralityDest2 - centralityDest1;
+            if (diff == 0) {
                 /* Use diversity score for tie breaker/ but if the
                 * score are equal, pick whatever ... for now */
                 if (e2.getDiversityScore() == e1.getDiversityScore()) {
-                    return -1;
+                    return 1;
                 } else {
                     return e2.getDiversityScore() - e1.getDiversityScore();
                 }
+            } else {
+                return diff;
             }
-            return centralityDest2 - centralityDest1;
         }
     }
 }

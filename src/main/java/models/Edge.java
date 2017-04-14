@@ -28,4 +28,10 @@ public class Edge {
     public int getDiversityScore() {
         return dest.getRelationshipMap().size();
     }
+
+    public String toString() {
+        return "{src:" + src.getId() + ",dest:" + dest.getId() +
+                ",rel:" + relationship + ",cen:" + dest.getCentrality() +
+                ",div:" + getDiversityScore() + "}";
+    }
 }
