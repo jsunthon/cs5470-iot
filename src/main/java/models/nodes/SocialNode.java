@@ -10,9 +10,9 @@ import java.util.*;
 
 public class SocialNode extends Node {
     private static final Logger logger = LoggerFactory.getLogger(SocialNode.class);
-    
-    private Set<Edge> sortedEdges = new TreeSet<>(new NodeEdgeCentrality()); //sorted edges
-    
+
+    private Set<Edge> sortedEdges;
+
     private Map<Relationship, LinkedList<Edge>> relationshipMap;
     private History history;
 
@@ -23,6 +23,7 @@ public class SocialNode extends Node {
         super(id, manufacturer, role, timeToLive);
         relationshipMap = new HashMap<Relationship, LinkedList<Edge>>();
         history = new History(SocialNode.DEFAULT_MAX_HISTORY_SIZE);
+        sortedEdges = new TreeSet<>(new NodeEdgeCentrality()); //sorted edges
     }
 
     public Map<Relationship, LinkedList<Edge>> getRelationshipMap() {
@@ -66,56 +67,22 @@ public class SocialNode extends Node {
         return centrality;
     }
 
-    /**
-     * An edge represent a relationship between this node and another Node.
-     * And edgeList therefore, is a list of all the relatipnship with this node.
-     *
-     * @return A list of edge  (relationship to this node) group by the
-     * most occuring relatiship. e.g. (B B B B A A A D D C). If there is a
-     * tie then it is group  alphabetically. e .g. (X X X X A A A B B B A Z Z C).
-     * Within those group, it is sort by Centrality (again) and used diversity as
-     * a tie break. (X-4-2, X-3-4, X-3-2, X-1-4, ... )
-//     */
-//    public List<Edge> getEdgeList() {
-//        List<Edge> edgeList = new ArrayList<Edge>();
-//        List<Map.Entry<Relationship, TreeSet<Edge>>> list =
-//                new LinkedList<Map.Entry<Relationship, TreeSet<Edge>>>(relationshipMap.entrySet());
-//        Collections.sort(list, new Comparator<Map.Entry<Relationship, TreeSet<Edge>>>() {
-//            @Override
-//            public int compare(Map.Entry<Relationship, TreeSet<Edge>> o1, Map.Entry<Relationship, TreeSet<Edge>> o2) {
-//                int byCentralality = o2.getValue().size() - o1.getValue().size();
-//                if (byCentralality == 0) {
-//                    return 1;
-//                } else {
-//                    return byCentralality;
-//                }
-//            }
-//        });
-//
-//        for (Map.Entry<Relationship, TreeSet<Edge>> entry : list) {
-//            edgeList.addAll(entry.getValue());
-//        }
-//
-//        return edgeList;
-//    }
-       
     public boolean hasFeature(Feature feature) {
         return features.contains(feature);
     }
-    
     
 
 	/* ================================================== */
 
     public Set<Edge> getSortedEdges() {
-		return sortedEdges;
-	}
+        return sortedEdges;
+    }
 
-	public void setSortedEdges(Set<Edge> sortedEdges) {
-		this.sortedEdges = sortedEdges;
-	}
+    public void setSortedEdges(Set<Edge> sortedEdges) {
+        this.sortedEdges = sortedEdges;
+    }
 
-	/* TODO: Implement discovery, find friends/relationship */
+    /* TODO: Implement discovery, find friends/relationship */
     @Override
     public Search discover(Feature feature) {
         /* If this feature was recently searched for and was successfully,
