@@ -5,7 +5,6 @@ import models.history.History;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.management.relation.Relation;
 import java.util.*;
 
 public class SocialNode extends Node {
@@ -96,7 +95,7 @@ public class SocialNode extends Node {
         Search search = new Search(feature, System.currentTimeMillis());
         history.push(search);
 
-        /* Keep Track of the queue and the visted nodes */
+        /* Keep Track of the queue and the visited nodes */
         Queue<SocialNode> nodeQueue = new LinkedList<SocialNode>();
         Set<SocialNode> visited = new HashSet<SocialNode>();
 
@@ -111,7 +110,7 @@ public class SocialNode extends Node {
                 continue;
             }
 
-            /* Mark node as visted and udpate search metadata */
+            /* Mark node as visited and update search metadata */
             visited.add(current);
             search.addBandwidth();
             search.addVisited(current);
