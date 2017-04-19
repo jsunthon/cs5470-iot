@@ -1,0 +1,29 @@
+James
+* central search by id, return node with id
+* central search  by feature, return nodes
+
+Shay
+* decentralize by id, return node with id
+* decentralize search  by feature, return nodes
+* social search by id, return node with id
+* social search  by feature, return nodes
+https://en.wikipedia.org/wiki/Iterative_deepening_depth-first_search
+
+
+SHAY write / James read
+generate 1,000,000 -> 10,000_000 nodes
+100 features
+each node can have 1-3 features
+
+each social node can have 1 - 500 relationship
+
+depth = 10
+2-way relationship graph
+
+[
+ {id, [features]}
+ {id, [features]}
+ {id, [features]}
+ {id, [features]}
+ {id, [features]}
+]
