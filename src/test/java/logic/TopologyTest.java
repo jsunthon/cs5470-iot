@@ -78,7 +78,7 @@ public class TopologyTest {
 		SlaveNode slaveNode3 = (SlaveNode) randEnvGenerator.genRandomizeNode(
 				NodeType.SLAVE, 3, feature3);
 		slaveNode3.setMaster(masterNode);
-		Feature[] feature4 = {Feature.ELETRONMAGENTIC_FIELD_LEVELS, Feature.SMARTPHONE_DECTECTION}; 
+		Feature[] feature4 = {Feature.ELECTROMAGNETIC_FIELD_LEVELS, Feature.SMARTPHONE_DETECTION};
 		SlaveNode slaveNode4 = (SlaveNode) randEnvGenerator.genRandomizeNode(
 				NodeType.SLAVE, 4, feature4);
 		slaveNode4.setMaster(masterNode);
@@ -96,7 +96,7 @@ public class TopologyTest {
 		Assert.assertNotNull(search1);
 		Assert.assertTrue(search1.isSuccess());
 		Assert.assertEquals((Integer) 1, (Integer) search1.getBandwidth()); 
-		Search search2 = centralized.doSearch(masterNode, Feature.STRCTURAL_HEALTH);
+		Search search2 = centralized.doSearch(masterNode, Feature.STRUCTURAL_HEALTH);
 		Assert.assertFalse(search2.isSuccess());
 		Search search3 = centralized.doSearch(slaveNode3, Feature.NOISE);
 		Assert.assertTrue(search3.isSuccess());

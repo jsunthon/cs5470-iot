@@ -2,6 +2,9 @@ package models;
 
 import models.nodes.Node;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class Search {
     private long start;
     private long end;
@@ -15,11 +18,16 @@ public class Search {
       Null if search yield no result */
     private Node node;
 
+    /* Keep track of all the nodes searched for, used for debugging. */
+    private List<Node> nodeVisited;
+
     public Search(Feature feature, long start) {
         this.start = start;
         this.success = false;
 
         this.feature = feature;
+
+        nodeVisited = new LinkedList<>();
     }
 
     public void setEnd(long end) {
@@ -46,6 +54,18 @@ public class Search {
         return end;
     }
 
+    public long getTotalTime() {
+        return end - start;
+    }
+
+    public void addVisited(Node node) {
+        nodeVisited.add(node);
+    }
+
+    public List<Node> getNodeVisited() {
+        return nodeVisited;
+    }
+
     public boolean isSuccess() {
         return success;
     }
@@ -70,4 +90,10 @@ public class Search {
         return node;
     }
 
+    @Override
+    public String toString() {
+        return "{totalTime:" + getTotalTime() + ", bandwidth:" + bandwidth
+                + ", success:" + success + ", feature:" + feature + ", node:" + node
+                + "}";
+    }
 }

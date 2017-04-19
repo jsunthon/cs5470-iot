@@ -92,27 +92,40 @@ public class SocialNode extends Node {
             return recentResult;
         }
 
+        /* Initialized the search meta data */
         Search search = new Search(feature, System.currentTimeMillis());
         history.push(search);
 
+        /* Keep Track of the queue and the visted nodes */
         Queue<SocialNode> nodeQueue = new LinkedList<SocialNode>();
         Set<SocialNode> visited = new HashSet<SocialNode>();
-        /* Dummy values */
+
+        /* Dummy values: add self to the queue (first one) */
         nodeQueue.offer(this);
 
         while (!nodeQueue.isEmpty()) {
             SocialNode current = nodeQueue.poll();
-            search.addBandwidth();
+
+            /* Don't check the same node twice! */
+            if (visited.contains(current)) {
+                continue;
+            }
+
+            /* Mark node as visted and udpate search metadata */
             visited.add(current);
+            search.addBandwidth();
+            search.addVisited(current);
+
             if (current.hasFeature(feature)) {
                 search.setSuccess(true);
                 search.setSuccess(current);
                 break;
             }
-            for (Edge edge : sortedEdges) {
-                if (visited.contains(edge.getDest())) {
-                    /* Do nothing */
-                } else {
+
+            /* Add the all the relationship on to the queue if it has
+            * not been visited before */
+            for (Edge edge : current.sortedEdges) {
+                if (!visited.contains(edge.getDest())) {
                     nodeQueue.offer(edge.getDest());
                 }
             }
@@ -140,5 +153,11 @@ public class SocialNode extends Node {
                 return diff;
             }
         }
+    }
+
+
+    @Override
+    public String toString() {
+        return "{id:" + id + "}";
     }
 }
