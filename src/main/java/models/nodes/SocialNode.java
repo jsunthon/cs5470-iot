@@ -81,6 +81,13 @@ public class SocialNode extends Node {
         this.sortedEdges = sortedEdges;
     }
 
+    /**
+     * Search for node(s) with this feature.
+     *
+     * @param feature the feature to search for
+     * @param limits  limit the search result to this number (e.g. 5)
+     * @return Search
+     */
     @Override
     public Search discover(Feature feature) {
         /* If this feature was recently searched for and was successfully,
@@ -111,13 +118,33 @@ public class SocialNode extends Node {
 
             /* Mark node as visited and update search metadata */
             visited.add(current);
-            search.addBandwidth();
             search.addVisited(current);
+
+            /* First bandwidth deals with finding the first node that
+             * contains the feature, total bandwidth deals with finding nodes
+             * until the search.limit have been reach. */
+            if (!search.isSuccess()) {
+                search.addBandwidth();
+            }
+            search.addTotalBandwidth();
+
 
             if (current.hasFeature(feature)) {
                 search.setSuccess(true);
-                search.setSuccess(current);
-                break;
+
+                /* Additonals nodes that contains the feature
+                 * are stored in a seperate varaibles */
+                if (search.getNode() == null) {
+                    search.setSuccess(current);
+                } else {
+                    search.addSuccess(current);
+                }
+
+                search.addSuccess(current);
+
+                if (search.getNodes().size() == search.getLimit()) {
+                    break;
+                }
             }
 
             /* Add the all the relationship on to the queue if it has

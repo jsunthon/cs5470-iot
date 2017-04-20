@@ -2,13 +2,19 @@ package models;
 
 import models.nodes.Node;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class Search {
     private long start;
     private long end;
+
+    /* Number of nodes contacted to discover the FIRST node*/
     private int bandwidth;
+
+    /* Used for discovery by feature where multiple nodes can be the result. Used
+    * to avoid conflicts with existing code. */
+    private int totalBandwidth;
+
     private boolean success;
 
     /*  The feature that a Node searched for */
@@ -16,12 +22,19 @@ public class Search {
 
     private int idToSearch;
 
-    /* The result Node from the discovery search.
-      Null if search yield no result */
+    /* Other nodes resulted from discovery by feature which does not include the
+     * "first" main node. Used to avoid conflict with existing code */
+    private List<Node> nodes;
+
+    /* First discovered node, "main node" */
     private Node node;
 
     /* Keep track of all the nodes searched for, used for debugging. */
     private List<Node> nodeVisited;
+
+    /* Limit feature search result by this value */
+    private static int DEFAULT_LIMIT = 3;
+    private int limit;
 
     public Search(Feature feature, long start) {
         this.start = start;
@@ -30,6 +43,8 @@ public class Search {
         this.feature = feature;
 
         nodeVisited = new LinkedList<>();
+        nodes = new ArrayList<Node>();
+        limit = DEFAULT_LIMIT;
     }
 
     public Search(int idToSearch, long start) {
@@ -88,8 +103,22 @@ public class Search {
         this.node = node;
     }
 
+    public void addSuccess(Node node) {
+        if (!nodes.contains(node)) {
+            nodes.add(node);
+        }
+    }
+
     public void addBandwidth() {
         bandwidth++;
+    }
+
+    public int getTotalBandwidth() {
+        return totalBandwidth;
+    }
+
+    public void addTotalBandwidth() {
+        totalBandwidth++;
     }
 
     public Feature getFeature() {
@@ -102,6 +131,14 @@ public class Search {
 
     public Node getNode() {
         return node;
+    }
+
+    public List<Node> getNodes() {
+        return nodes;
+    }
+
+    public int getLimit() {
+        return limit;
     }
 
     @Override
