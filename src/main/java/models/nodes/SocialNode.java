@@ -81,7 +81,6 @@ public class SocialNode extends Node {
         this.sortedEdges = sortedEdges;
     }
 
-    /* TODO: Implement discovery, find friends/relationship */
     @Override
     public Search discover(Feature feature) {
         /* If this feature was recently searched for and was successfully,
@@ -122,6 +121,59 @@ public class SocialNode extends Node {
             }
 
             /* Add the all the relationship on to the queue if it has
+            * not been visited before */
+            for (Edge edge : current.sortedEdges) {
+                if (!visited.contains(edge.getDest())) {
+                    nodeQueue.offer(edge.getDest());
+                }
+            }
+        }
+        search.setEnd(System.currentTimeMillis());
+        return search;
+    }
+
+    /**
+     * Search a node for its id
+     */
+    public Search discover(int idToSearch) {
+        /* If this ID was recently searched for and was successfully,
+         return the cached result instead */
+        Search recentResult = history.contains(idToSearch);
+        if (recentResult != null) {
+            return recentResult;
+        }
+
+        /* Initialized the search meta data */
+        Search search = new Search(id, System.currentTimeMillis());
+        history.push(search);
+
+        /* Keep Track of the queue and the visited nodes */
+        Queue<SocialNode> nodeQueue = new LinkedList<SocialNode>();
+        Set<SocialNode> visited = new HashSet<SocialNode>();
+
+        /* Dummy values: add self to the queue (first one) */
+        nodeQueue.offer(this);
+
+        while (!nodeQueue.isEmpty()) {
+            SocialNode current = nodeQueue.poll();
+
+            /* Don't check the same node twice! */
+            if (visited.contains(current)) {
+                continue;
+            }
+
+            /* Mark node as visited and update search metadata */
+            visited.add(current);
+            search.addBandwidth();
+            search.addVisited(current);
+
+            if (current.getId() == idToSearch) {
+                search.setSuccess(true);
+                search.setSuccess(current);
+                break;
+            }
+
+            /* Add all the relationship on to the queue if it has
             * not been visited before */
             for (Edge edge : current.sortedEdges) {
                 if (!visited.contains(edge.getDest())) {

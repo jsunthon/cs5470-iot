@@ -14,6 +14,8 @@ public class Search {
     /*  The feature that a Node searched for */
     private Feature feature;
 
+    private int idToSearch;
+
     /* The result Node from the discovery search.
       Null if search yield no result */
     private Node node;
@@ -27,6 +29,14 @@ public class Search {
 
         this.feature = feature;
 
+        nodeVisited = new LinkedList<>();
+    }
+
+    public Search(int idToSearch, long start) {
+        this.start = start;
+        this.success = false;
+
+        this.idToSearch = idToSearch;
         nodeVisited = new LinkedList<>();
     }
 
@@ -84,6 +94,10 @@ public class Search {
 
     public Feature getFeature() {
         return feature;
+    }
+
+    public int getIdToSearch() {
+        return idToSearch;
     }
 
     public Node getNode() {

@@ -60,4 +60,25 @@ public class History extends ArrayDeque<Search> {
             return search;
         }
     }
+
+    public Search contains(int id) {
+        Iterator<Search> it = this.iterator();
+        Search search = null;
+
+        while (it.hasNext()) {
+            Search itSearch = it.next();
+            if (itSearch.getNode() != null && itSearch.getNode().getId() == id) {
+                search = itSearch;
+                break;
+            }
+        }
+
+        if (search == null) {
+            return null;
+        } else {
+            this.remove(search);
+            this.push(search);
+            return search;
+        }
+    }
 }
