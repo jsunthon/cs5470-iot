@@ -5,9 +5,9 @@ class Node {
   constructor(id, feature) {
     this.id = id;
     /* A number represent an IOT feature,
-     * e.g. RAIN_MEASUREMENT, STEP_TRRACKER, etc... */
+     * e.g. RAIN_MEASUREMENT, STEP_TRACKER, etc... */
     this.feature = feature;
-    /* Arrays of node's id, eaiser  to deal with a primitive value then object */
+    /* Arrays of node's id, easier  to deal with a primitive value then object */
     this.relationships = [];
   }
 
@@ -19,39 +19,46 @@ class Node {
     }
   }
 
-  hasRelationship(node) {
-    return this.relationships.some(edge => {
-      return edge.id === node.id || node.id == this.id;
-    })
-  }
 }
 /* *********************************************************************** */
 /* ***********************  CONFIGURABLE OPTIONS ************************* */
 /* *********************************************************************** */
-const NUM_OF_NODES = 1000;
+const NUM_OF_NODES = 20000;
 
 /* These two values are used to generate the number of
  * relationship a node can have, but does not include relationship
- * added due to reciprocality. (All relationship are two way) */
-const LOWER_RELATIONSHIP = 5;
-const UPPER_RELATIONSHP  = 10;
+ * added due to reciprocity. (All relationship are two way) */
+const LOWER_RELATIONSHIP = 1;
+const UPPER_RELATIONSHIP = 10;
 
-const MAX_FEATURES = 100;
+const MAX_FEATURES = 2000;
 
-/* The chance that a relationshp on a node will contain the same feature */
-const FEATURE_RELATIONSHP_CHANCE = .25;
+/* The number of features that a single feature can be group with it
+ * e.g. feature 2 tends to have nodes with feature 5, 6, 7, and 8;
+ */
+const RELATED_FEATURES = 6;
+
+/* The chance that a relationship on a node will contain the same feature */
+const FEATURE_RELATIONSHIP_CHANCE = .10;
 
 const NODES = [];
+
+/* {feature: [array of features]}. Each feature tends to be group with
+ * the array of features. */
+const FEATURE_INDEX = featureIndex();
 
 /* *********************************************************************** */
 /* ****************************  MAIN ************************************ */
 /* *********************************************************************** */
 
+console.log('-------------------- feature index -------------------- ');
+console.log(FEATURE_INDEX);
+console.log('-----------------------------------------------------');
 
 generateNodes();
 generateRelationship();
 writeToFile('nodes.json');
-// displayRelationshpStatus();
+displayRelationshipStatus();
 
 
 /* *********************************************************************** */
@@ -67,39 +74,59 @@ function generateNodes() {
 
 function generateRelationship() {
   for (let node of NODES) {
-    const numOfRelationshp = random(LOWER_RELATIONSHIP, UPPER_RELATIONSHP);
+    // Determine the number of relationship this node should have
+    const numbOfRelationships = random(LOWER_RELATIONSHIP, UPPER_RELATIONSHIP);
 
-    for (let i = 0; i < numOfRelationshp; i++) {
+    for (let i = 0; i < numbOfRelationships; i++) {
       const relationship = randomRelationship(node);
-      addRelationshp(node, relationship);
+      addRelationship(node, relationship);
     }
   }
 }
 
 function writeToFile(filename) {
-  const json = {NODES};
+  const json = {NODES, FEATURE_INDEX};
   fs.writeFile(filename, JSON.stringify(json, null, 2), 'utf8', () => {
     console.log('done');
   })
 }
 
-function displayRelationshpStatus() {
+/**
+ * Returns an object that display the max, min, total, avg relationship of NODES
+ */
+function displayRelationshipStatus() {
   /* Calculate nodes highest/smallest relationship length, */
-  const obj = NODES.reduce((accumulator, node) => {
-    const max = node.relationships.length > accumulator.max
-        ? node.relationship.length : accumulator.max;
-    const min = node.relationships.length < accumulator.min
+  const obj = NODES.reduce((accumulator, node, index) => {
+    const max   = node.relationships.length > accumulator.max
+        ? node.relationships.length : accumulator.max;
+    const min   = node.relationships.length < accumulator.min
         ? node.relationships.length : accumulator.min;
-    return {max, min}
-  }, {max: -Infinity, min: Infinity})
+    const total = accumulator.total + node.relationships.length;
+    const avg   = total / (index + 1);
+    let maxNode = accumulator.maxNode;
+
+    if (maxNode) {
+      maxNode = maxNode.relationships.length >= node.relationships.length ? maxNode : node;
+    } else {
+      maxNode = node;
+    }
+    return {max, min, total, avg, maxNode};
+  }, {max: -Infinity, min: Infinity, total: 0, maxNode: null});
   console.log('obj', obj);
 }
-function random(min, max) {
-  return Math.floor(Math.random() * (max + min - 1) + min);
+
+function random(min, max, exclude) {
+  let value = Math.floor(Math.random() * (max - min + 1)) + min;
+  if (!exclude) return value;
+
+  while (value === exclude) {
+    value = Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+  return value;
 }
 
-function randomNode(nodes) {
-  return nodes[random(0, nodes.length)];
+function randomElement(array) {
+  return array[random(0, array.length - 1)];
 }
 
 function randomFeature() {
@@ -107,22 +134,21 @@ function randomFeature() {
 }
 
 function randomRelationship(node) {
-
-  if (Math.random() <= .60) {
+  if (Math.random() <= FEATURE_RELATIONSHIP_CHANCE) {
     const byFeature  = getNodesByFeature(NODES, node.feature);
-    let relationship = randomNode(byFeature);
+    let relationship = randomElement(byFeature);
     return relationship;
   }
   else {
-    let relationshipId = random(1, NUM_OF_NODES);
-    while (relationshipId === node.id) {
-      relationshipId = random(1, NUM_OF_NODES);
-    }
-    return NODES[relationshipId - 1];
+    let featureGroup       = FEATURE_INDEX[node.feature];
+    let randomFeature      = randomElement(featureGroup);
+    let nodesWithFeature   = getNodesByFeature(NODES, randomFeature);
+    let randomRelationship = randomElement(nodesWithFeature);
+    return randomRelationship;
   }
 }
 
-function addRelationshp(node1, node2) {
+function addRelationship(node1, node2) {
   node1.addRelationship(node2, relationshipType(1, 4));
   node2.addRelationship(node1, relationshipType(1, 4));
 }
@@ -133,4 +159,16 @@ function relationshipType() {
 
 function getNodesByFeature(nodes, feature) {
   return nodes.filter(node => node.feature === feature)
+}
+
+function featureIndex() {
+  const result = {};
+  for (let currentFeature = 1; currentFeature <= MAX_FEATURES; currentFeature++) {
+    result[currentFeature] = [];
+    for (let i = 0; i < RELATED_FEATURES; i++) {
+      const r = random(1, MAX_FEATURES);
+      result[currentFeature].push(r);
+    }
+  }
+  return result;
 }
