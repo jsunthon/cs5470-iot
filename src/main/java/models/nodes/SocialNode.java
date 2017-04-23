@@ -50,18 +50,18 @@ public class SocialNode extends Node {
         }
         return false;
     }
-    
+
     public boolean edgeExists(int id, Set<Integer> features, int type) {
-    	for (Edge edge : sortedEdges) {
-    		if (edge.getRelationship().equals(Relationship.getRelationship(type))) {
-        		Node node = edge.getDest();
-        		if (node.getId() == id && 
-        				node.getFeatures().equals(features)) {
-        			return true;
-        		}
-    		}
-    	}
-    	return false;
+        for (Edge edge : sortedEdges) {
+            if (edge.getRelationship().equals(Relationship.getRelationship(type))) {
+                Node node = edge.getDest();
+                if (node.getId() == id &&
+                        node.getFeatures().equals(features)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -105,7 +105,7 @@ public class SocialNode extends Node {
     public Search discover(Integer feature) {
         /* If this feature was recently searched for and was successfully,
          return  the cached result instead */
-        Search recentResult = history.contains(feature);
+        Search recentResult = history.containsFeature(feature);
         if (recentResult != null) {
             return recentResult;
         }
@@ -145,15 +145,15 @@ public class SocialNode extends Node {
             if (current.hasFeature(feature)) {
                 search.setSuccess(true);
 
-                /* Additonals nodes that contains the feature
-                 * are stored in a seperate varaibles */
+                /* Additional nodes that contains the feature
+                 * are stored in a separate variables */
                 if (search.getNode() == null) {
                     search.setSuccess(current);
+                    search.addSuccess(current);
                 } else {
                     search.addSuccess(current);
                 }
 
-                search.addSuccess(current);
 
                 if (search.getNodes().size() == search.getLimit()) {
                     break;
@@ -175,10 +175,10 @@ public class SocialNode extends Node {
     /**
      * Search a node for its id
      */
-    public Search discoverById(int idToSearch) {
+    public Search discoverById(Integer idToSearch) {
         /* If this ID was recently searched for and was successfully,
          return the cached result instead */
-        Search recentResult = history.contains(idToSearch);
+        Search recentResult = history.containsId(idToSearch);
         if (recentResult != null) {
             return recentResult;
         }
@@ -247,8 +247,4 @@ public class SocialNode extends Node {
     }
 
 
-    @Override
-    public String toString() {
-        return "{id:" + id + "}";
-    }
 }

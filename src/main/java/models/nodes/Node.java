@@ -1,17 +1,11 @@
 package models.nodes;
 
+import models.*;
+import models.history.History;
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-
-import logic.Topology;
-import models.Feature;
-import models.Manufacturer;
-import models.Owner;
-import models.Role;
-import models.Search;
-import models.TimeToLive;
-import models.history.History;
 
 public abstract class Node {
     protected int id;
@@ -81,5 +75,10 @@ public abstract class Node {
 
     public Role getRole() {
         return role;
+    }
+
+    @Override
+    public String toString() {
+        return "{id:" + id + "}";
     }
 }

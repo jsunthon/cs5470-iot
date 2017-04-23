@@ -1,5 +1,6 @@
-package models;
+package models.socialNode;
 
+import models.*;
 import models.nodes.Node;
 import models.nodes.NodeType;
 import models.nodes.SocialNode;
@@ -37,7 +38,7 @@ public class DiscoverTests {
 
 
     @Test()
-    /* Test if node 2 immediate relationship contains the feature.
+    /* Test if node 2 immediate relationship containsFeature the feature.
      * Should return  true */
     public void discoverTestImmediateRelationship1() {
         SocialNode main = getFeatureNode(0, -1);
@@ -57,7 +58,7 @@ public class DiscoverTests {
 
     @Test()
     /* Should return false if the two immediate relationships does not
-    * contains the feature */
+    * containsFeature the feature */
     public void discoverTestImmediateRelationship2() {
         SocialNode main = getFeatureNode(0, -1);
 
@@ -78,7 +79,7 @@ public class DiscoverTests {
     @Test()
     /* Should check the node with the higher centrality of the node's
      * three immediate relationships FIRST to see if it
-     * contains the features */
+     * containsFeature the features */
     public void discoverTestImmediateRelationship3() {
         SocialNode main = getFeatureNode(0, -15);
 
@@ -112,7 +113,7 @@ public class DiscoverTests {
     /* Should check the node with the higher diversity score
      * when the centrality are equal of the node's
      * three immediate relationships FIRST to see if it
-     * contains the features */
+     * containsFeature the features */
     public void discoverTestImmediateRelationship4() {
         SocialNode main = getFeatureNode(0, -15);
 
