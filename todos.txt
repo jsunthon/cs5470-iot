@@ -5,8 +5,8 @@ James
 Shay
 * decentralize by id, return node with id
 * decentralize search  by feature, return nodes
-* social search by id, return node with id
-* social search  by feature, return nodes
+X * social search by id, return node with id
+X * social search  by feature, return nodes
 https://en.wikipedia.org/wiki/Iterative_deepening_depth-first_search
 
 

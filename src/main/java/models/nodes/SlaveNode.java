@@ -15,7 +15,7 @@ public class SlaveNode extends Node {
 	}
 	
 	@Override
-	public Search discover(Feature feature) {
+	public Search discover(Integer feature) {
 		return master.discover(feature);
 	}
 

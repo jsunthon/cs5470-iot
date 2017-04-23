@@ -9,7 +9,7 @@ import models.Search;
 import models.nodes.Node;
 
 public class Topology<T extends Node> {
-	private Map<Integer, T> nodeMap;
+	private T[] nodes;
 	private int successes;
 	private int failures;
 	private int bandwidth;
@@ -17,23 +17,21 @@ public class Topology<T extends Node> {
 	private List<Search> searches;
 	private DecimalFormat df;
 	
-	public Topology(Map<Integer, T> nodeMap) {
-		this.nodeMap = nodeMap;
+	public Topology(T[] nodes) {
+		this.nodes = nodes;
 		this.searches = new ArrayList<>();
 		this.df = new DecimalFormat("0.00");
 	}
 	
 	/**
-	 * This method should start the test, performing number of searches.
-	 * We also need to decide which node should be the source for each of the searches and 
-	 * also what feature is to be searched...
+	 * Performs a certain number of searches from some nodeid as the src
 	 * @param searchNumber
 	 * @param nodeId
 	 * @param feature
 	 */
-	public void start(int searchNumber, int nodeId, Feature feature) {
+	public void start(int searchNumber, int nodeId, Integer feature) {
 		while (searchNumber > 0) {
-			T source = nodeMap.get(nodeId);
+			T source = nodes[nodeId];
 			doSearch(source, feature);
 			searchNumber--;
 		}
@@ -52,7 +50,7 @@ public class Topology<T extends Node> {
 		}
 	}
 	
-	public Search doSearch(T source, Feature feature) {
+	public Search doSearch(T source, Integer feature) {
 		Search search = source.discover(feature);
 		searches.add(search);
 		return search;

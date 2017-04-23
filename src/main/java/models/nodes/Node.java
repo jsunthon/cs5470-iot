@@ -22,7 +22,7 @@ public abstract class Node {
     protected Role role;
     protected History history;
     protected Owner owner;
-    protected Set<Feature> features;
+    protected Set<Integer> features;
 
     public Node(Integer id, Manufacturer manufacturer, Role role, TimeToLive timeToLive) {
         this.id = id;
@@ -30,10 +30,10 @@ public abstract class Node {
         this.role = role;
         this.timeToLive = timeToLive;
         manufacturedDate = new Date();
-        features = new HashSet<Feature>();
+        features = new HashSet<Integer>();
     }
 
-    public abstract Search discover(Feature feature);
+    public abstract Search discover(Integer feature);
 
     public int getId() {
         return id;
@@ -59,11 +59,11 @@ public abstract class Node {
         this.owner = owner;
     }
 
-    public Set<Feature> getFeatures() {
+    public Set<Integer> getFeatures() {
         return features;
     }
 
-    public void addFeature(Feature feature) {
+    public void addFeature(Integer feature) {
         features.add(feature);
     }
 

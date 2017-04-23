@@ -50,6 +50,19 @@ public class SocialNode extends Node {
         }
         return false;
     }
+    
+    public boolean edgeExists(int id, Set<Integer> features, int type) {
+    	for (Edge edge : sortedEdges) {
+    		if (edge.getRelationship().equals(Relationship.getRelationship(type))) {
+        		Node node = edge.getDest();
+        		if (node.getId() == id && 
+        				node.getFeatures().equals(features)) {
+        			return true;
+        		}
+    		}
+    	}
+    	return false;
+    }
 
     /**
      * Centrality refers to how "popular" a node is. The more relationship this
@@ -66,7 +79,7 @@ public class SocialNode extends Node {
         return centrality;
     }
 
-    public boolean hasFeature(Feature feature) {
+    public boolean hasFeature(Integer feature) {
         return features.contains(feature);
     }
     
@@ -81,9 +94,15 @@ public class SocialNode extends Node {
         this.sortedEdges = sortedEdges;
     }
 
-    /* TODO: Implement discovery, find friends/relationship */
+    /**
+     * Search for node(s) with this feature.
+     *
+     * @param feature the feature to search for
+     * @param limits  limit the search result to this number (e.g. 5)
+     * @return Search
+     */
     @Override
-    public Search discover(Feature feature) {
+    public Search discover(Integer feature) {
         /* If this feature was recently searched for and was successfully,
          return  the cached result instead */
         Search recentResult = history.contains(feature);
@@ -92,7 +111,80 @@ public class SocialNode extends Node {
         }
 
         /* Initialized the search meta data */
-        Search search = new Search(feature, System.currentTimeMillis());
+        Search search = new Search(feature, System.currentTimeMillis(), true);
+        history.push(search);
+
+        /* Keep Track of the queue and the visited nodes */
+        Queue<SocialNode> nodeQueue = new LinkedList<SocialNode>();
+        Set<SocialNode> visited = new HashSet<SocialNode>();
+
+        /* Dummy values: add self to the queue (first one) */
+        nodeQueue.offer(this);
+
+        while (!nodeQueue.isEmpty()) {
+            SocialNode current = nodeQueue.poll();
+
+            /* Don't check the same node twice! */
+            if (visited.contains(current)) {
+                continue;
+            }
+
+            /* Mark node as visited and update search metadata */
+            visited.add(current);
+            search.addVisited(current);
+
+            /* First bandwidth deals with finding the first node that
+             * contains the feature, total bandwidth deals with finding nodes
+             * until the search.limit have been reach. */
+            if (!search.isSuccess()) {
+                search.addBandwidth();
+            }
+            search.addTotalBandwidth();
+
+
+            if (current.hasFeature(feature)) {
+                search.setSuccess(true);
+
+                /* Additonals nodes that contains the feature
+                 * are stored in a seperate varaibles */
+                if (search.getNode() == null) {
+                    search.setSuccess(current);
+                } else {
+                    search.addSuccess(current);
+                }
+
+                search.addSuccess(current);
+
+                if (search.getNodes().size() == search.getLimit()) {
+                    break;
+                }
+            }
+
+            /* Add the all the relationship on to the queue if it has
+            * not been visited before */
+            for (Edge edge : current.sortedEdges) {
+                if (!visited.contains(edge.getDest())) {
+                    nodeQueue.offer(edge.getDest());
+                }
+            }
+        }
+        search.setEnd(System.currentTimeMillis());
+        return search;
+    }
+
+    /**
+     * Search a node for its id
+     */
+    public Search discoverById(int idToSearch) {
+        /* If this ID was recently searched for and was successfully,
+         return the cached result instead */
+        Search recentResult = history.contains(idToSearch);
+        if (recentResult != null) {
+            return recentResult;
+        }
+
+        /* Initialized the search meta data */
+        Search search = new Search(id, System.currentTimeMillis(), false);
         history.push(search);
 
         /* Keep Track of the queue and the visited nodes */
@@ -115,13 +207,13 @@ public class SocialNode extends Node {
             search.addBandwidth();
             search.addVisited(current);
 
-            if (current.hasFeature(feature)) {
+            if (current.getId() == idToSearch) {
                 search.setSuccess(true);
                 search.setSuccess(current);
                 break;
             }
 
-            /* Add the all the relationship on to the queue if it has
+            /* Add all the relationship on to the queue if it has
             * not been visited before */
             for (Edge edge : current.sortedEdges) {
                 if (!visited.contains(edge.getDest())) {

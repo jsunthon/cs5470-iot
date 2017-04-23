@@ -8,12 +8,11 @@ import models.Feature;
 
 public class App {
 	private static final Logger logger = LoggerFactory.getLogger(App.class);
-	
 	public static void main(String[] args) {
 		logger.info("Initializing app.");
 		App app = new App(); 
 		app.start();
-		logger.info("Finished parsing json file and generating node relationships.");
+		logger.info("App finished executing.");
 	}
 	
 	/**
@@ -24,14 +23,14 @@ public class App {
 		randEnvGen.genManufacturers(10, 4);
 		randEnvGen.genOwners(2);
 		Parser parser = new Parser();
-		parser.parseAndGenSocial();
-		parser.parseAndGenDecentral();
-		parser.parseAndGenCentral();
-		Topology<Node> socialTest = new Topology<>(parser.getSocialMap());
-		Topology<Node> decentralTest = new Topology<>(parser.getDecentralMap());
-		Topology<Node> centralTest = new Topology<>(parser.getCentralMap());
-		socialTest.start(100, 0, Feature.randomFeature());
-//		decentralTest.start(100, 0, Feature.randomFeature());
-		centralTest.start(100, 0, Feature.randomFeature());
+		parser.parseAndGenSocial("./src/main/javascript/nodes-1.json");
+		parser.genCentral();
+		//TODO: parser.genDecentral()
+		Topology<Node> socialTest = new Topology<>(parser.getSocialNodes());
+		Topology<Node> centralTest = new Topology<>(parser.getCentralNodes());
+//		TODO: Topology<Node> decentralTest = new Topology<>(parser.getDecentralMap());
+//		socialTest.start(100, 0, Feature.randomFeature());
+////		decentralTest.start(100, 0, Feature.randomFeature());
+//		centralTest.start(100, 0, Feature.randomFeature());
 	}
 }
