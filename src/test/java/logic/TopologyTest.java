@@ -1,67 +1,63 @@
 package logic;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import models.Feature;
 import models.Search;
-import models.nodes.MasterNode;
 import models.nodes.Node;
-import models.nodes.NodeType;
-import models.nodes.SlaveNode;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TopologyTest {
-	@Test
-	public void testFinish() {
-		Topology<Node> test = new Topology<>(new HashMap<>());
-		List<Search> searches = new ArrayList<>();
-		Search search1 = new Search(null,System.currentTimeMillis());
-		search1.setStart(0);
-		search1.setEnd(500);
-		search1.setSuccess(true);
-		search1.setBandwidth(8);
-		Search search2 = new Search(null,System.currentTimeMillis());
-		search2.setStart(0);
-		search2.setEnd(700);
-		search2.setSuccess(false);
-		search2.setBandwidth(4);
-		Search search3 = new Search(null,System.currentTimeMillis());
-		search3.setStart(0);
-		search3.setEnd(150);
-		search3.setSuccess(true);
-		search3.setBandwidth(2);
-		searches.add(search1);
-		searches.add(search2);
-		searches.add(search3);
-		test.setSearches(searches);
-		test.finish();
-		Assert.assertEquals(14, test.getBandwidth());
-		Assert.assertEquals(2, test.getSuccesses());
-		Assert.assertEquals(1, test.getFailures());
-		Assert.assertEquals(66.67, 0.1, test.successRate());
-		Assert.assertEquals(450.00, 0.0, test.performance());
-	}
-	
-	//TODO: doSearch for social and decentralized node
-	@Test
-	public void testDoSearch() {
-		searchCentral();
-		searchSocial();
-	}
-	
-	private static void searchSocial() {
-		RandEnvGenerator randEnvGenerator = RandEnvGenerator.getInstance();
-		randEnvGenerator.reset();
-		randEnvGenerator.genManufacturers(5, 5);
-		randEnvGenerator.genOwners(3);
-	}
-	
-	private static void searchCentral() {
-		RandEnvGenerator randEnvGenerator = RandEnvGenerator.getInstance();
-		randEnvGenerator.reset();
-		randEnvGenerator.genManufacturers(5, 5);
+    @Test
+    public void testFinish() {
+        Topology<Node> test = new Topology<Node>(new Node[1]);
+        List<Search> searches = new ArrayList<>();
+        Search search1 = new Search(null, System.currentTimeMillis(), true);
+        search1.setStart(0);
+        search1.setEnd(500);
+        search1.setSuccess(true);
+        search1.setBandwidth(8);
+        Search search2 = new Search(null, System.currentTimeMillis(), true);
+        search2.setStart(0);
+        search2.setEnd(700);
+        search2.setSuccess(false);
+        search2.setBandwidth(4);
+        Search search3 = new Search(null, System.currentTimeMillis(), true);
+        search3.setStart(0);
+        search3.setEnd(150);
+        search3.setSuccess(true);
+        search3.setBandwidth(2);
+        searches.add(search1);
+        searches.add(search2);
+        searches.add(search3);
+        test.setSearches(searches);
+        test.finish();
+        Assert.assertEquals(14, test.getBandwidth());
+        Assert.assertEquals(2, test.getSuccesses());
+        Assert.assertEquals(1, test.getFailures());
+        Assert.assertEquals(66.67, 0.1, test.successRate());
+        Assert.assertEquals(450.00, 0.0, test.performance());
+    }
+
+    //TODO: doSearch for social and decentralized node
+    @Test
+    public void testDoSearch() {
+        searchCentral();
+        searchSocial();
+    }
+
+    private static void searchSocial() {
+        RandEnvGenerator randEnvGenerator = RandEnvGenerator.getInstance();
+        randEnvGenerator.reset();
+        randEnvGenerator.genManufacturers(5, 5);
+        randEnvGenerator.genOwners(3);
+    }
+
+    private static void searchCentral() {
+        RandEnvGenerator randEnvGenerator = RandEnvGenerator.getInstance();
+        randEnvGenerator.reset();
+        randEnvGenerator.genManufacturers(5, 5);
 //		randEnvGenerator.genOwners(3);
 //		MasterNode masterNode = (MasterNode) randEnvGenerator.genRandomizeNode(
 //				NodeType.MASTER, 0, 3);
@@ -95,11 +91,11 @@ public class TopologyTest {
 //		Search search1 = centralized.doSearch(masterNode, Feature.SMART_LIGHTING);
 //		Assert.assertNotNull(search1);
 //		Assert.assertTrue(search1.isSuccess());
-//		Assert.assertEquals((Integer) 1, (Integer) search1.getBandwidth()); 
+//		Assert.assertEquals((Integer) 1, (Integer) search1.getBandwidth());
 //		Search search2 = centralized.doSearch(masterNode, Feature.STRUCTURAL_HEALTH);
 //		Assert.assertFalse(search2.isSuccess());
 //		Search search3 = centralized.doSearch(slaveNode3, Feature.NOISE);
 //		Assert.assertTrue(search3.isSuccess());
 //		Assert.assertEquals((Integer) 1, (Integer) search3.getBandwidth());
-	}
+    }
 }

@@ -1,14 +1,13 @@
 package models.nodes;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-
-import models.Feature;
 import models.Manufacturer;
 import models.Role;
 import models.Search;
 import models.TimeToLive;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
 
 public class MasterNode extends Node {
 	private HashMap<Integer, LinkedList<SlaveNode>> slaveNodeMap;
@@ -33,7 +32,7 @@ public class MasterNode extends Node {
 
 	@Override
 	public Search discover(Integer feature) {
-		Search search = new Search(feature, System.currentTimeMillis());
+		Search search = new Search(feature, System.currentTimeMillis(), true);
 		search.addBandwidth();
 		if (slaveNodeMap.containsKey(feature)) {
 			LinkedList<SlaveNode> slaveNodeList = slaveNodeMap.get(feature);

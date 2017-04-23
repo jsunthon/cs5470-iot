@@ -18,9 +18,9 @@ public class Search {
     private boolean success;
 
     /*  The feature that a Node searched for */
-    private Feature feature;
+    private Integer feature;
 
-    private int idToSearch;
+    private Integer idToSearch;
 
     /* Other nodes resulted from discovery by feature which does not include the
      * "first" main node. Used to avoid conflict with existing code */
@@ -36,23 +36,24 @@ public class Search {
     private static int DEFAULT_LIMIT = 3;
     private int limit;
 
-    public Search(Feature feature, long start) {
-        this.start = start;
-        this.success = false;
 
-        this.feature = feature;
+    public Search(Integer search, long start, boolean byFeature) {
+        if (byFeature) {
+            this.start = start;
+            this.success = false;
 
-        nodeVisited = new LinkedList<>();
-        nodes = new ArrayList<Node>();
-        limit = DEFAULT_LIMIT;
-    }
+            this.feature = search;
 
-    public Search(int idToSearch, long start) {
-        this.start = start;
-        this.success = false;
+            nodeVisited = new LinkedList<>();
+            nodes = new ArrayList<Node>();
+            limit = DEFAULT_LIMIT;
+        } else {
+            this.start = start;
+            this.success = false;
 
-        this.idToSearch = idToSearch;
-        nodeVisited = new LinkedList<>();
+            this.idToSearch = search;
+            nodeVisited = new LinkedList<>();
+        }
     }
 
     public void setEnd(long end) {
@@ -121,7 +122,7 @@ public class Search {
         totalBandwidth++;
     }
 
-    public Feature getFeature() {
+    public Integer getFeature() {
         return feature;
     }
 

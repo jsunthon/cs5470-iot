@@ -111,7 +111,7 @@ public class SocialNode extends Node {
         }
 
         /* Initialized the search meta data */
-        Search search = new Search(feature, System.currentTimeMillis());
+        Search search = new Search(feature, System.currentTimeMillis(), true);
         history.push(search);
 
         /* Keep Track of the queue and the visited nodes */
@@ -175,7 +175,7 @@ public class SocialNode extends Node {
     /**
      * Search a node for its id
      */
-    public Search discover(int idToSearch) {
+    public Search discoverById(int idToSearch) {
         /* If this ID was recently searched for and was successfully,
          return the cached result instead */
         Search recentResult = history.contains(idToSearch);
@@ -184,7 +184,7 @@ public class SocialNode extends Node {
         }
 
         /* Initialized the search meta data */
-        Search search = new Search(id, System.currentTimeMillis());
+        Search search = new Search(id, System.currentTimeMillis(), false);
         history.push(search);
 
         /* Keep Track of the queue and the visited nodes */

@@ -1,13 +1,12 @@
 package models;
 
 import models.nodes.SocialNode;
+import org.junit.Assert;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
-
-import org.junit.Assert;
-import org.junit.Test;
 
 public class SocialNodeTest {
     @Test
@@ -218,7 +217,7 @@ public class SocialNodeTest {
 
     public Manufacturer getTestManufacturer() {
         Manufacturer mf = new Manufacturer("test-mf");
-        mf.addFeature(Feature.NOISE);
+        mf.addFeature(1);
         return mf;
     }
 
