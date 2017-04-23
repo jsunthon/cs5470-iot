@@ -19,6 +19,8 @@ gradle-app.setting
 *.class
 /bin
 
+# Node/npm stuff
+node_modules/
 
 ### Eclipse
 .settings/

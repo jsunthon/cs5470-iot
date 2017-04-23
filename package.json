@@ -1,0 +1,24 @@
+{
+  "name": "cs5470",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jsunthon/cs5470-iot.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jsunthon/cs5470-iot/issues"
+  },
+  "homepage": "https://github.com/jsunthon/cs5470-iot#readme"
+}
