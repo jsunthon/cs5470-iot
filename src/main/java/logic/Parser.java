@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -15,7 +16,11 @@ import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import models.Manufacturer;
+import models.Owner;
 import models.Relationship;
+import models.Role;
+import models.TimeToLive;
 import models.nodes.MasterNode;
 import models.nodes.Node;
 import models.nodes.NodeType;
@@ -36,7 +41,11 @@ public class Parser {
 		randEnvGen = RandEnvGenerator.getInstance();
 		jsonParser = new JSONParser();
 	}
-
+	
+	/**
+	 * Generates the social topology from a json file
+	 * @param path
+	 */
 	public void parseAndGenSocial(String path) {
 		try {
 			FileReader fileReader = new FileReader(path);
@@ -58,6 +67,73 @@ public class Parser {
 		} catch (IOException|ParseException e) {
 			logger.error(e.getMessage());
 		}
+	}
+	
+	/**
+	 * Returns true if the central topology could be generated from social topology
+	 * @return
+	 */
+	public boolean genCentral() {
+		if (socialNodes.length > 1 && socialNodes.length == centralNodes.length) {
+			//start at i = 1 since a node's id can only be as low as 1.
+			for (int i = 1; i < centralNodes.length; i++) {
+				SocialNode socialNode = (SocialNode) socialNodes[i];
+				if (i == 1) {
+					//node at index 1 will be MasterNode. All nodes at other indexes are slave nodes
+					//maybe not the best practice. will have to make sure that we perform
+					//checks for casting any node at index 1 in centralNodes to be MasterNode
+					centralNodes[i] = (MasterNode) genNodeFromSocial(socialNode, NodeType.MASTER);
+				} else {
+					//master node always the first node, aka node with id = 1
+					MasterNode masterNode = (MasterNode) centralNodes[1];
+					SlaveNode slaveNode = (SlaveNode) genNodeFromSocial(socialNode, NodeType.SLAVE);
+					centralNodes[i] = slaveNode;
+					masterNode.addSlaveNode(slaveNode);
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+	
+	//TODO: Generate the decentral network from the social network
+	public boolean genDecentral() {
+		return false;
+	}
+	
+	/**
+	 * Created a node of nodeType that shares the same properties as the socialNode
+	 * passed in. These properties are id, share, time to live, role, manufacturer, and owner
+	 * @param socialNode
+	 * @param nodeType
+	 * @return
+	 */
+	public Node genNodeFromSocial(SocialNode socialNode, NodeType nodeType) {
+		int id = socialNode.getId();
+		TimeToLive ttl = socialNode.getTimeToLive();
+		Role role = socialNode.getRole();
+		Set<Integer> featureSet = socialNode.getFeatures();
+		Integer[] featureArr = featureSet.toArray(new Integer[featureSet.size()]);
+		boolean share = socialNode.getShare();
+		Owner owner = socialNode.getOwner();
+		Manufacturer manuf = socialNode.getManufacturer();
+		Node createdNode = null;
+		switch (nodeType) {
+		case MASTER:
+			createdNode = (MasterNode) manuf.create(NodeType.MASTER, id, role, ttl, featureArr);
+			break;
+		case SLAVE:
+			createdNode = (SlaveNode) manuf.create(NodeType.SLAVE, id, role, ttl, featureArr);
+			break;
+		case DECENTRAL:
+			//TODO: implement decentral node
+			break;
+		}
+		if (createdNode != null) {
+			createdNode.setOwner(owner);
+			createdNode.setShare(share);
+		}
+		return createdNode;
 	}
 	
 	public void initNodeArrays(int length) {

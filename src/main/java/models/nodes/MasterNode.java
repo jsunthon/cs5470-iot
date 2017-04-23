@@ -2,6 +2,8 @@ package models.nodes;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
+
 import models.Feature;
 import models.Manufacturer;
 import models.Role;
@@ -49,5 +51,16 @@ public class MasterNode extends Node {
 
 	public void setSlaveNodeMap(HashMap<Integer, LinkedList<SlaveNode>> slaveNodeMap) {
 		this.slaveNodeMap = slaveNodeMap;
+	}
+	
+	public boolean hasSlaveNode(SlaveNode slaveNode) {
+		for (Map.Entry<Integer, LinkedList<SlaveNode>> entry : slaveNodeMap.entrySet()) {
+			for (SlaveNode currentNode : entry.getValue()) {
+				if (slaveNode.equals(currentNode)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

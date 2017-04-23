@@ -11,17 +11,23 @@ import org.slf4j.LoggerFactory;
 
 import logic.App;
 import models.Edge;
+import models.Feature;
+import models.Manufacturer;
+import models.Owner;
 import models.Relationship;
+import models.Role;
+import models.TimeToLive;
+import models.nodes.MasterNode;
 import models.nodes.Node;
 import models.nodes.NodeType;
+import models.nodes.SlaveNode;
 import models.nodes.SocialNode;
 
 public class ParserTests {
 	
 	@Test
 	public void testGetOrCreateNode() {
-		initRandGen();
-		Parser parser = new Parser();
+		Parser parser = initParser();
 		Node[] nodes = new Node[5];
 		Node node1 = parser.getOrCreateNode(nodes, NodeType.SOCIAL, 3, 6);
 		Assert.assertEquals(3, node1.getId());
@@ -35,8 +41,7 @@ public class ParserTests {
 	
 	@Test
 	public void testGenSocialNode() {
-		initRandGen();
-		Parser parser = new Parser();
+		Parser parser = initParser();
 		parser.initNodeArrays(10000);
 		JSONObject relation1 = genRelationObj(9137, 1215, 2);
 		JSONObject relation2 = genRelationObj(934, 24, 1);
@@ -56,8 +61,7 @@ public class ParserTests {
 	
 	@Test
 	public void testParseAndGenSocial() {
-		initRandGen();
-		Parser parser = new Parser();
+		Parser parser = initParser();
 		parser.parseAndGenSocial("./src/main/javascript/nodes_4_22_2017.json");
 		Node[] nodes = parser.getSocialNodes();
 		Assert.assertEquals(20001, nodes.length);
@@ -80,14 +84,80 @@ public class ParserTests {
 		}
 	}
 	
-	private static void initRandGen() {
+	@Test
+	public void testGenNodeFromSocial() {
+		Parser parser = initParser();
+		SocialNode socialNode1 = genSocialNode(1, 3, "J", "M");
+		MasterNode masterNode = (MasterNode) parser.genNodeFromSocial(socialNode1, NodeType.MASTER);
+		testSocialCopy(socialNode1, masterNode);
+		SocialNode socialNode2 = genSocialNode(100, 50, "S", "L");
+		Assert.assertNotNull(socialNode2);
+		SlaveNode slaveNode = (SlaveNode) parser.genNodeFromSocial(socialNode2, NodeType.SLAVE);
+		testSocialCopy(socialNode2, slaveNode);
+		masterNode.addSlaveNode(slaveNode);
+		Assert.assertTrue(masterNode.hasSlaveNode(slaveNode));
+	}
+	
+	@Test
+	public void testGenCentral() {
+		Parser parser = initParser();
+		parser.parseAndGenSocial("./src/main/javascript/nodes_4_22_2017.json");
+		Assert.assertTrue(parser.genCentral());
+		Node[] socialNodes = parser.getSocialNodes();
+		Node[] centralNodes = parser.getCentralNodes();
+		Assert.assertNotNull(socialNodes);
+		Assert.assertNotNull(centralNodes);
+		Assert.assertEquals(socialNodes.length, centralNodes.length);
+		MasterNode masterNode = null;
+		for (int i = 1; i < socialNodes.length; i++) {
+			SocialNode socialNode = (SocialNode) socialNodes[i];
+			if (i == 1) {
+				masterNode = (MasterNode) centralNodes[i];
+				testSocialCopy(socialNode, masterNode);
+			} else {
+				Assert.assertNotNull(masterNode);
+				SlaveNode slaveNode = (SlaveNode) centralNodes[i];
+				masterNode.addSlaveNode(slaveNode);
+				testSocialCopy(socialNode, slaveNode);
+				Assert.assertTrue(masterNode.hasSlaveNode(slaveNode));
+			}
+		}
+	}
+	
+	private static void testSocialCopy(SocialNode socialNode, Node node) {
+		Assert.assertEquals(socialNode.getId(), node.getId());
+		Assert.assertEquals(socialNode.getFeatures(), node.getFeatures());
+		Assert.assertEquals(socialNode.getOwner(), node.getOwner());
+		Assert.assertEquals(socialNode.getManufacturer(), node.getManufacturer());
+		Assert.assertEquals(socialNode.getShare(), node.getShare());
+		Assert.assertEquals(socialNode.getOwner(), node.getOwner());
+		Assert.assertEquals(socialNode.getTimeToLive(), node.getTimeToLive());
+		Assert.assertEquals(socialNode.getRole(), node.getRole());
+	}
+	
+	private static SocialNode genSocialNode(
+			int id, 
+			int feature,
+			String ownerName, 
+			String manufName) {
+		RandEnvGenerator randEnvGen = RandEnvGenerator.getInstance();
+		Owner owner = new Owner(ownerName);
+		Manufacturer manuf = new Manufacturer(manufName);
+		SocialNode socialNode = (SocialNode) randEnvGen.genNode(NodeType.SOCIAL, 
+				id, owner, manuf, Role.randomRole(), TimeToLive.randomTimeToLive(),
+				feature, true);
+		return socialNode;
+	}
+	
+	private static Parser initParser() {
 		RandEnvGenerator randEnvGen = RandEnvGenerator.getInstance();
 		randEnvGen.reset();
 		randEnvGen.genManufacturers(10, 4);
 		randEnvGen.genOwners(2);
+		return new Parser();
 	}
 	
-	private JSONObject genRelationObj(int id, int feature, int type) {
+	private static JSONObject genRelationObj(int id, int feature, int type) {
 		JSONObject relationObj = new JSONObject();
 		relationObj.put("id", new Long(id));
 		relationObj.put("feature", new Long(feature));

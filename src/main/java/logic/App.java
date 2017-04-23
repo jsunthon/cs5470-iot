@@ -8,7 +8,6 @@ import models.Feature;
 
 public class App {
 	private static final Logger logger = LoggerFactory.getLogger(App.class);
-	
 	public static void main(String[] args) {
 		logger.info("Initializing app.");
 		App app = new App(); 
@@ -24,7 +23,7 @@ public class App {
 		randEnvGen.genManufacturers(10, 4);
 		randEnvGen.genOwners(2);
 		Parser parser = new Parser();
-		parser.parseAndGenSocial();
+		parser.parseAndGenSocial("./src/main/javascript/nodes_4_22_2017.json");
 //		Topology<Node> socialTest = new Topology<>(parser.getSocialMap());
 //		Topology<Node> decentralTest = new Topology<>(parser.getDecentralMap());
 //		Topology<Node> centralTest = new Topology<>(parser.getCentralMap());
