@@ -51,7 +51,10 @@ public class ParserTests {
 		relations.add(relation2);
 		relations.add(relation3);
 		SocialNode node1 = parser.genSocialNode(1, 1413, relations.iterator());
+		SocialNode node2 = parser.genSocialNode(10000, 1413, relations.iterator());
 		Assert.assertEquals(node1, parser.getSocialNodes()[1]);
+		Assert.assertEquals(node2, parser.getSocialNodes()[10000]);
+		Assert.assertNull(parser.getSocialNodes()[0]);
 		Assert.assertEquals(1, node1.getId());
 		Assert.assertNull(parser.getSocialNodes()[1001]);
 		Assert.assertTrue(node1.getFeatures().contains(1413));

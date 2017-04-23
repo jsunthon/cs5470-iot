@@ -24,9 +24,11 @@ public class App {
 		randEnvGen.genOwners(2);
 		Parser parser = new Parser();
 		parser.parseAndGenSocial("./src/main/javascript/nodes_4_22_2017.json");
-//		Topology<Node> socialTest = new Topology<>(parser.getSocialMap());
-//		Topology<Node> decentralTest = new Topology<>(parser.getDecentralMap());
-//		Topology<Node> centralTest = new Topology<>(parser.getCentralMap());
+		parser.genCentral();
+		//TODO: parser.genDecentral()
+		Topology<Node> socialTest = new Topology<>(parser.getSocialNodes());
+		Topology<Node> centralTest = new Topology<>(parser.getCentralNodes());
+//		TODO: Topology<Node> decentralTest = new Topology<>(parser.getDecentralMap());
 //		socialTest.start(100, 0, Feature.randomFeature());
 ////		decentralTest.start(100, 0, Feature.randomFeature());
 //		centralTest.start(100, 0, Feature.randomFeature());
