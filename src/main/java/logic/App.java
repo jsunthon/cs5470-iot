@@ -23,7 +23,7 @@ public class App {
 		randEnvGen.genManufacturers(10, 4);
 		randEnvGen.genOwners(2);
 		Parser parser = new Parser();
-		parser.parseAndGenSocial("./src/main/javascript/nodes_4_22_2017.json");
+		parser.parseAndGenSocial("./src/main/javascript/nodes-1.json");
 		parser.genCentral();
 		//TODO: parser.genDecentral()
 		Topology<Node> socialTest = new Topology<>(parser.getSocialNodes());

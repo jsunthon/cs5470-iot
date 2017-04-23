@@ -51,12 +51,12 @@ public class SocialNode extends Node {
         return false;
     }
     
-    public boolean edgeExists(int id, int feature, int type) {
+    public boolean edgeExists(int id, Set<Integer> features, int type) {
     	for (Edge edge : sortedEdges) {
     		if (edge.getRelationship().equals(Relationship.getRelationship(type))) {
         		Node node = edge.getDest();
         		if (node.getId() == id && 
-        				node.getFeatures().contains(feature)) {
+        				node.getFeatures().equals(features)) {
         			return true;
         		}
     		}

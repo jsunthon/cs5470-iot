@@ -110,9 +110,9 @@ public class RandEnvGenerator {
     					Manufacturer manufacturer,
     					Role role,
     					TimeToLive timeToLive,
-    					Integer feature,
+    					Integer[] features,
     					boolean share) {
-    	Node node = manufacturer.create(nodeType, id, role, timeToLive, feature);
+    	Node node = manufacturer.create(nodeType, id, role, timeToLive, features);
     	node.setOwner(owner);
     	node.setShare(share);
     	nodes.add(node);

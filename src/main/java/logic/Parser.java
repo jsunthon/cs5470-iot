@@ -51,18 +51,17 @@ public class Parser {
 			FileReader fileReader = new FileReader(path);
 			Object object = jsonParser.parse(fileReader);
 			JSONObject jsonObject = (JSONObject) object;
-			JSONArray jsonArray = (JSONArray) jsonObject.get("NODES");
+			JSONArray jsonArray = (JSONArray) jsonObject.get("nodes");
 			initNodeArrays(jsonArray.size());
 			Iterator<JSONObject> iterator = jsonArray.iterator();
 			while (iterator.hasNext()) {
 				JSONObject jsonNode = iterator.next();
 				Long longId = (Long) jsonNode.get("id"); //json-simple parses numbers as Longs and not ints...
 				int id =  new Integer(longId.intValue());
-				Long featureLong = (Long) jsonNode.get("feature");
-				int featureInt = new Integer(featureLong.intValue()); 
+				JSONArray features = (JSONArray) jsonNode.get("features");
 				JSONArray relationships = (JSONArray) jsonNode.get("relationships");
 				Iterator<JSONObject> relationsIterator = relationships.iterator();
-				socialNodes[id] = genSocialNode(id, featureInt, relationsIterator);
+				socialNodes[id] = genSocialNode(id, features, relationsIterator);
 			}
 		} catch (IOException|ParseException e) {
 			logger.error(e.getMessage());
@@ -149,17 +148,18 @@ public class Parser {
 	 * @param relationships
 	 * @return
 	 */
-	public SocialNode genSocialNode(int id, int feature, Iterator<JSONObject> relationships) {
-		SocialNode srcNode = (SocialNode) getOrCreateNode(socialNodes, NodeType.SOCIAL, id, feature);
+	public SocialNode genSocialNode(int id, JSONArray featuresArr, Iterator<JSONObject> relationships) {
+		Integer[] features = featureJsonToArr(featuresArr);
+		SocialNode srcNode = (SocialNode) getOrCreateNode(socialNodes, NodeType.SOCIAL, id, features);
 		while (relationships.hasNext()) {
 			JSONObject jsonNode = relationships.next();
 			Long longId = (Long) jsonNode.get("id");
 			int intId = longId.intValue();
-			Long longFeature = (Long) jsonNode.get("feature");
-			int intFeature = longFeature.intValue();
+			JSONArray neighborFeatJson = (JSONArray) jsonNode.get("features");
+			Integer[] neighborFeatArr = featureJsonToArr(neighborFeatJson); 
 			Long longType = (Long) jsonNode.get("type");
 			int intType = longType.intValue();
-			SocialNode neighbor = (SocialNode) getOrCreateNode(socialNodes, NodeType.SOCIAL, intId, intFeature);
+			SocialNode neighbor = (SocialNode) getOrCreateNode(socialNodes, NodeType.SOCIAL, intId, neighborFeatArr);
 			srcNode.addRelationship(neighbor, Relationship.getRelationship(intType));
 		}
 		return srcNode;
@@ -174,17 +174,23 @@ public class Parser {
 	 * @param feature
 	 * @return
 	 */
-	public Node getOrCreateNode(Node[] nodes, NodeType nodeType, int id, int feature) {
+	public Node getOrCreateNode(Node[] nodes, NodeType nodeType, int id, Integer[] features) {
 		Node node = nodes[id];
 		if (node == null) {
-			node = randEnvGen.genRandomizeNode(nodeType, id, feature);
+			node = randEnvGen.genRandomizeNode(nodeType, id, features);
 			nodes[id] = node;
 		}
 		return node;
 	}
 	
-	
-	
+	public Integer[] featureJsonToArr(JSONArray featuresJSON) {
+		Integer[] features = new Integer[featuresJSON.size()];
+		for (int i = 0; i < featuresJSON.size(); i++) {
+			features[i] = ((Long) featuresJSON.get(i)).intValue();
+		}
+		return features;
+	}
+
 //	public void parseAndGenCentral() {
 //		try {
 //			FileReader fileReader = new FileReader("central-network.json");
