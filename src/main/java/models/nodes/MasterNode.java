@@ -9,7 +9,7 @@ import models.Search;
 import models.TimeToLive;
 
 public class MasterNode extends Node {
-	private HashMap<Feature, LinkedList<SlaveNode>> slaveNodeMap;
+	private HashMap<Integer, LinkedList<SlaveNode>> slaveNodeMap;
 	
 	public MasterNode(Integer id, Manufacturer manufacturer, Role role, TimeToLive timeToLive) {
 		super(id, manufacturer, role, timeToLive);
@@ -17,7 +17,7 @@ public class MasterNode extends Node {
 	}
 	
 	public void addSlaveNode(SlaveNode slaveNode) {
-		for (Feature feature : slaveNode.getFeatures()) {
+		for (Integer feature : slaveNode.getFeatures()) {
 			LinkedList<SlaveNode> slaveNodeList;
 			if (!slaveNodeMap.containsKey(feature)) {
 				slaveNodeList = new LinkedList<>();
@@ -30,7 +30,7 @@ public class MasterNode extends Node {
 	}
 
 	@Override
-	public Search discover(Feature feature) {
+	public Search discover(Integer feature) {
 		Search search = new Search(feature, System.currentTimeMillis());
 		search.addBandwidth();
 		if (slaveNodeMap.containsKey(feature)) {
@@ -43,11 +43,11 @@ public class MasterNode extends Node {
 		return search;
 	}
 
-	public HashMap<Feature, LinkedList<SlaveNode>> getSlaveNodeMap() {
+	public HashMap<Integer, LinkedList<SlaveNode>> getSlaveNodeMap() {
 		return slaveNodeMap;
 	}
 
-	public void setSlaveNodeMap(HashMap<Feature, LinkedList<SlaveNode>> slaveNodeMap) {
+	public void setSlaveNodeMap(HashMap<Integer, LinkedList<SlaveNode>> slaveNodeMap) {
 		this.slaveNodeMap = slaveNodeMap;
 	}
 }

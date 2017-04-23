@@ -13,7 +13,7 @@ public class App {
 		logger.info("Initializing app.");
 		App app = new App(); 
 		app.start();
-		logger.info("Finished parsing json file and generating node relationships.");
+		logger.info("App finished executing.");
 	}
 	
 	/**
@@ -25,13 +25,11 @@ public class App {
 		randEnvGen.genOwners(2);
 		Parser parser = new Parser();
 		parser.parseAndGenSocial();
-		parser.parseAndGenDecentral();
-		parser.parseAndGenCentral();
-		Topology<Node> socialTest = new Topology<>(parser.getSocialMap());
-		Topology<Node> decentralTest = new Topology<>(parser.getDecentralMap());
-		Topology<Node> centralTest = new Topology<>(parser.getCentralMap());
-		socialTest.start(100, 0, Feature.randomFeature());
-//		decentralTest.start(100, 0, Feature.randomFeature());
-		centralTest.start(100, 0, Feature.randomFeature());
+//		Topology<Node> socialTest = new Topology<>(parser.getSocialMap());
+//		Topology<Node> decentralTest = new Topology<>(parser.getDecentralMap());
+//		Topology<Node> centralTest = new Topology<>(parser.getCentralMap());
+//		socialTest.start(100, 0, Feature.randomFeature());
+////		decentralTest.start(100, 0, Feature.randomFeature());
+//		centralTest.start(100, 0, Feature.randomFeature());
 	}
 }

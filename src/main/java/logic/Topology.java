@@ -31,7 +31,7 @@ public class Topology<T extends Node> {
 	 * @param nodeId
 	 * @param feature
 	 */
-	public void start(int searchNumber, int nodeId, Feature feature) {
+	public void start(int searchNumber, int nodeId, Integer feature) {
 		while (searchNumber > 0) {
 			T source = nodeMap.get(nodeId);
 			doSearch(source, feature);
@@ -52,7 +52,7 @@ public class Topology<T extends Node> {
 		}
 	}
 	
-	public Search doSearch(T source, Feature feature) {
+	public Search doSearch(T source, Integer feature) {
 		Search search = source.discover(feature);
 		searches.add(search);
 		return search;

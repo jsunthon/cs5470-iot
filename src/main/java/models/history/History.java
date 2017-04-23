@@ -40,7 +40,7 @@ public class History extends ArrayDeque<Search> {
     /**
      * Check if there a history search with this feature
      */
-    public Search contains(Feature feature) {
+    public Search contains(Integer feature) {
         Iterator<Search> it = this.iterator();
         Search search = null;
 

@@ -50,6 +50,19 @@ public class SocialNode extends Node {
         }
         return false;
     }
+    
+    public boolean edgeExists(int id, int feature, int type) {
+    	for (Edge edge : sortedEdges) {
+    		if (edge.getRelationship().equals(Relationship.getRelationship(type))) {
+        		Node node = edge.getDest();
+        		if (node.getId() == id && 
+        				node.getFeatures().contains(feature)) {
+        			return true;
+        		}
+    		}
+    	}
+    	return false;
+    }
 
     /**
      * Centrality refers to how "popular" a node is. The more relationship this
@@ -66,7 +79,7 @@ public class SocialNode extends Node {
         return centrality;
     }
 
-    public boolean hasFeature(Feature feature) {
+    public boolean hasFeature(Integer feature) {
         return features.contains(feature);
     }
     
@@ -89,7 +102,7 @@ public class SocialNode extends Node {
      * @return Search
      */
     @Override
-    public Search discover(Feature feature) {
+    public Search discover(Integer feature) {
         /* If this feature was recently searched for and was successfully,
          return  the cached result instead */
         Search recentResult = history.contains(feature);

@@ -29,11 +29,10 @@ public class RandEnvGenerator {
         while (manufCount > 0) {
             Manufacturer manufacturer = new Manufacturer(
                     MANUFACTURER_PREFIX + Manufacturer.getIdCounter());
-            int featureCount = genRandNumber(1, manufFeatureCount);
-            while (featureCount > 0) {
-                Feature feature = Feature.randomFeature();
+            while (manufFeatureCount > 0) {
+                int feature = genRandNumber(1, manufFeatureCount);
                 manufacturer.addFeature(feature);
-                featureCount--;
+                manufFeatureCount--;
             }
             manufacturers.add(manufacturer);
             manufCount--;
@@ -50,27 +49,35 @@ public class RandEnvGenerator {
         return owners;
     }
 
-    public Node genRandomizeNode(NodeType nodeType, int id, int nodeFeatureCount) {
-        if (owners.isEmpty() || manufacturers.isEmpty() || nodeType == null) return null;
-        int ownerIndex = genRandNumber(0, owners.size() - 1);
-        int manufIndex = genRandNumber(0, manufacturers.size() - 1);
-        int featureCount = genRandNumber(1, nodeFeatureCount);
-        Owner owner = owners.get(ownerIndex);
-        Manufacturer manufacturer = manufacturers.get(manufIndex);
-        Role role = Role.randomRole();
-        TimeToLive timeToLive = TimeToLive.randomTimeToLive();
-        Feature[] features = new Feature[featureCount];
-        for (int i = 0; i < features.length; i++) {
-            features[i] = Feature.randomFeature();
-        }
-        Node node = manufacturer.create(nodeType, id, role, timeToLive, features);
-        node.setOwner(owner);
-        node.setShare(genRandomShare());
-        nodes.add(node);
-        return node;
-    }
+//    public Node genRandomizeNode(NodeType nodeType, int id, int nodeFeatureCount) {
+//        if (owners.isEmpty() || manufacturers.isEmpty() || nodeType == null) return null;
+//        int ownerIndex = genRandNumber(0, owners.size() - 1);
+//        int manufIndex = genRandNumber(0, manufacturers.size() - 1);
+//        int featureCount = genRandNumber(1, nodeFeatureCount);
+//        Owner owner = owners.get(ownerIndex);
+//        Manufacturer manufacturer = manufacturers.get(manufIndex);
+//        Role role = Role.randomRole();
+//        TimeToLive timeToLive = TimeToLive.randomTimeToLive();
+//        Feature[] features = new Feature[featureCount];
+//        for (int i = 0; i < features.length; i++) {
+//            features[i] = Feature.randomFeature();
+//        }
+//        Node node = manufacturer.create(nodeType, id, role, timeToLive, features);
+//        node.setOwner(owner);
+//        node.setShare(genRandomShare());
+//        nodes.add(node);
+//        return node;
+//    }
     
-    public Node genRandomizeNode(NodeType nodeType, int id, Feature[] nodeFeatures) {
+    /** 
+     * Used to generate node with random attributes, such as manuf, owner, role, ttl, share, ect.
+     * This will usually used to generate the social nodes first from the JSON file.
+     * @param nodeType
+     * @param id
+     * @param nodeFeatures
+     * @return
+     */
+    public Node genRandomizeNode(NodeType nodeType, int id, Integer... nodeFeatures) {
         if (owners.isEmpty() || manufacturers.isEmpty() || nodeType == null) return null;
         int ownerIndex = genRandNumber(0, owners.size() - 1);
         int manufIndex = genRandNumber(0, manufacturers.size() - 1);
@@ -84,7 +91,34 @@ public class RandEnvGenerator {
         nodes.add(node);
         return node;
     }
-
+    
+    /**
+     * Used to generate a node given non-random attributes
+     * @param nodeType
+     * @param id
+     * @param owner
+     * @param manufacturer
+     * @param role
+     * @param timeToLive
+     * @param nodeFeatures
+     * @param share
+     * @return
+     */
+    public Node genNode(NodeType nodeType,
+    					int id,
+    					Owner owner,
+    					Manufacturer manufacturer,
+    					Role role,
+    					TimeToLive timeToLive,
+    					Integer feature,
+    					boolean share) {
+    	Node node = manufacturer.create(nodeType, id, role, timeToLive, feature);
+    	node.setOwner(owner);
+    	node.setShare(share);
+    	nodes.add(node);
+    	return node;
+    }
+    					
     private boolean genRandomShare() {
         return genRandNumber(0, 1) == 1;
     }

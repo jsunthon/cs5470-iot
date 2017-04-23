@@ -12,14 +12,14 @@ import models.nodes.SocialNode;
 public class Manufacturer {
     private Integer id;
     private String name;
-    private Set<Feature> features;
+    private Set<Integer> features;
 
     private static Integer MANUFACTURER_ID_COUNTER = 0;
 
     public Manufacturer(String name) {
         id = MANUFACTURER_ID_COUNTER++;
         this.name = name;
-        features = new HashSet<Feature>();
+        features = new HashSet<Integer>();
     }
 
     public Integer getId() {
@@ -34,15 +34,15 @@ public class Manufacturer {
         this.name = name;
     }
 
-    public void addFeature(Feature feature) {
+    public void addFeature(Integer feature) {
         features.add(feature);
     }
 
-    public Set<Feature> getFeatures() {
+    public Set<Integer> getFeatures() {
         return features;
     }
 
-    public Node create(NodeType nodeType, int id, Role role, TimeToLive ttl, Feature... features) {
+    public Node create(NodeType nodeType, int id, Role role, TimeToLive ttl, Integer... features) {
         Node node = null;
         switch (nodeType) {
             case SOCIAL:
@@ -60,7 +60,7 @@ public class Manufacturer {
                 break;
         }
         if (node != null) {
-            for (Feature feature : features) {
+            for (Integer feature : features) {
                 this.features.add(feature);
                 node.addFeature(feature);
             }
@@ -68,14 +68,14 @@ public class Manufacturer {
         return node;
     }
 
-    public SocialNode create(int id, Role role, TimeToLive ttl, Feature... features) {
-        SocialNode socialNode = new SocialNode(id, this, role, ttl);
-        for (Feature feature : features) {
-            this.features.add(feature);
-            socialNode.addFeature(feature);
-        }
-        return socialNode;
-    }
+//    public SocialNode create(int id, Role role, TimeToLive ttl, Integer... features) {
+//        SocialNode socialNode = new SocialNode(id, this, role, ttl);
+//        for (Feature feature : features) {
+//            this.features.add(feature);
+//            socialNode.addFeature(feature);
+//        }
+//        return socialNode;
+//    }
 
     public static Integer getIdCounter() {
         return MANUFACTURER_ID_COUNTER;
