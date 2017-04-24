@@ -1,6 +1,5 @@
 package models.history;
 
-import models.Feature;
 import models.Search;
 
 import java.util.ArrayDeque;
@@ -40,7 +39,7 @@ public class History extends ArrayDeque<Search> {
     /**
      * Check if there a history search with this feature
      */
-    public Search contains(Integer feature) {
+    public Search containsFeature(Integer feature) {
         Iterator<Search> it = this.iterator();
         Search search = null;
 
@@ -61,7 +60,7 @@ public class History extends ArrayDeque<Search> {
         }
     }
 
-    public Search contains(int id) {
+    public Search containsId(int id) {
         Iterator<Search> it = this.iterator();
         Search search = null;
 

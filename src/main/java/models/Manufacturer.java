@@ -1,13 +1,9 @@
 package models;
 
+import models.nodes.*;
+
 import java.util.HashSet;
 import java.util.Set;
-
-import models.nodes.MasterNode;
-import models.nodes.Node;
-import models.nodes.NodeType;
-import models.nodes.SlaveNode;
-import models.nodes.SocialNode;
 
 public class Manufacturer {
     private Integer id;
@@ -55,6 +51,7 @@ public class Manufacturer {
                 node = new SlaveNode(id, this, role, ttl);
                 break;
             case DECENTRAL:
+                node = new DecentralizedNode(id, this, role, ttl);
                 break;
             default:
                 break;
@@ -67,15 +64,6 @@ public class Manufacturer {
         }
         return node;
     }
-
-//    public SocialNode create(int id, Role role, TimeToLive ttl, Integer... features) {
-//        SocialNode socialNode = new SocialNode(id, this, role, ttl);
-//        for (Feature feature : features) {
-//            this.features.add(feature);
-//            socialNode.addFeature(feature);
-//        }
-//        return socialNode;
-//    }
 
     public static Integer getIdCounter() {
         return MANUFACTURER_ID_COUNTER;

@@ -1,5 +1,6 @@
-package models;
+package models.socialNode;
 
+import models.*;
 import models.nodes.SocialNode;
 import org.junit.Assert;
 import org.junit.Test;
