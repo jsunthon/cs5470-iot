@@ -3,6 +3,7 @@ package logic;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -16,11 +17,13 @@ import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import models.Edge;
 import models.Manufacturer;
 import models.Owner;
 import models.Relationship;
 import models.Role;
 import models.TimeToLive;
+import models.nodes.DecentralizedNode;
 import models.nodes.MasterNode;
 import models.nodes.Node;
 import models.nodes.NodeType;
@@ -68,6 +71,12 @@ public class Parser {
 		}
 	}
 	
+	public void initNodeArrays(int length) {
+		socialNodes = new Node[length + 1];
+		centralNodes = new Node[length + 1];
+		decentralNodes = new Node[length + 1];
+	}
+	
 	/**
 	 * Returns true if the central topology could be generated from social topology
 	 * @return
@@ -77,6 +86,7 @@ public class Parser {
 			//start at i = 1 since a node's id can only be as low as 1.
 			for (int i = 1; i < centralNodes.length; i++) {
 				SocialNode socialNode = (SocialNode) socialNodes[i];
+				if (socialNode == null) return false;
 				if (i == 1) {
 					//node at index 1 will be MasterNode. All nodes at other indexes are slave nodes
 					//maybe not the best practice. will have to make sure that we perform
@@ -91,13 +101,44 @@ public class Parser {
 				}
 			}
 			return true;
+		} else {
+			return false;
 		}
-		return false;
 	}
 	
-	//TODO: Generate the decentral network from the social network
+	/**
+	 * Generates the decentral node topology from existing social node topology.
+	 * @return
+	 */
 	public boolean genDecentral() {
-		return false;
+		if (socialNodes.length > 1 && socialNodes.length == decentralNodes.length) {
+			for (int i = 1; i < decentralNodes.length; i++) {
+				SocialNode socialSrc = (SocialNode) socialNodes[i];
+				if (socialSrc == null) return false;
+				DecentralizedNode decenSrc = (DecentralizedNode) getOrCreateDecenNode(socialSrc);
+				List<Edge> shuffledEdges = shuffleSortedEdges(socialSrc.getSortedEdges());
+				for (Edge relationEdge : shuffledEdges) {
+					SocialNode socialNeighbor = relationEdge.getDest();
+					DecentralizedNode decenNeighbor = (DecentralizedNode) getOrCreateDecenNode(socialNeighbor);
+					decenSrc.addNeighbor(decenNeighbor);
+				}
+			}
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * Takes a set of edges, and shuffles them to make sure they're not longer sorted.
+	 * @param sortedEdges
+	 * @return
+	 */
+	public List<Edge> shuffleSortedEdges(Set<Edge> sortedEdges) {
+		List<Edge> unshuffledEdges = new ArrayList<>();
+		unshuffledEdges.addAll(sortedEdges);
+		Collections.shuffle(unshuffledEdges);
+		return unshuffledEdges;
 	}
 	
 	/**
@@ -108,6 +149,7 @@ public class Parser {
 	 * @return
 	 */
 	public Node genNodeFromSocial(SocialNode socialNode, NodeType nodeType) {
+		if (socialNode == null) return null;
 		int id = socialNode.getId();
 		TimeToLive ttl = socialNode.getTimeToLive();
 		Role role = socialNode.getRole();
@@ -125,7 +167,7 @@ public class Parser {
 			createdNode = (SlaveNode) manuf.create(NodeType.SLAVE, id, role, ttl, featureArr);
 			break;
 		case DECENTRAL:
-			//TODO: implement decentral node
+			createdNode = (DecentralizedNode) manuf.create(NodeType.DECENTRAL, id, role, ttl, featureArr);
 			break;
 		}
 		if (createdNode != null) {
@@ -133,12 +175,6 @@ public class Parser {
 			createdNode.setShare(share);
 		}
 		return createdNode;
-	}
-	
-	public void initNodeArrays(int length) {
-		socialNodes = new Node[length + 1];
-		centralNodes = new Node[length + 1];
-		decentralNodes = new Node[length + 1];
 	}
 	
 	/**
@@ -166,7 +202,7 @@ public class Parser {
 	}
 	
 	/**
-	 * Gets a node from the list of nodes, creating the node if it doesn't already exist.
+	 * Gets a node from the list of nodes, creating the node with random props if it doesn't already exist.
 	 * Also adds created node to the passed in node array.
 	 * @param nodes
 	 * @param nodeType
@@ -183,12 +219,38 @@ public class Parser {
 		return node;
 	}
 	
+	public Node getOrCreateDecenNode(SocialNode socialNode) {
+		int decenNodeIndex = socialNode.getId();
+		Node node = decentralNodes[decenNodeIndex];
+		if (node == null) {
+			node = genNodeFromSocial(socialNode, NodeType.DECENTRAL);
+			decentralNodes[decenNodeIndex] = node;
+		}
+		return node;
+	}
+	
 	public Integer[] featureJsonToArr(JSONArray featuresJSON) {
 		Integer[] features = new Integer[featuresJSON.size()];
 		for (int i = 0; i < featuresJSON.size(); i++) {
 			features[i] = ((Long) featuresJSON.get(i)).intValue();
 		}
 		return features;
+	}
+	
+	public Node[] getSocialNodes() {
+		return socialNodes;
+	}
+
+	public Node[] getCentralNodes() {
+		return centralNodes;
+	}
+
+	public Node[] getDecentralNodes() {
+		return decentralNodes;
+	}
+	
+	public RandEnvGenerator getRandEnvGen() {
+		return randEnvGen;
 	}
 
 //	public void parseAndGenCentral() {
@@ -240,18 +302,6 @@ public class Parser {
 		}
 	}*/
 	
-	public Node[] getSocialNodes() {
-		return socialNodes;
-	}
-
-	public Node[] getCentralNodes() {
-		return centralNodes;
-	}
-
-	public Node[] getDecentralNodes() {
-		return decentralNodes;
-	}
-
 	/**
 	 * Call this method if each neighbor has a specified relationship in the JSON file.
 	 * @param src
@@ -277,7 +327,4 @@ public class Parser {
 //		}
 //	}
 
-	public RandEnvGenerator getRandEnvGen() {
-		return randEnvGen;
-	}
 }
