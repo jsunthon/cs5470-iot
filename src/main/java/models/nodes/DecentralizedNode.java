@@ -147,4 +147,8 @@ public class DecentralizedNode extends Node {
         search.setEnd(System.currentTimeMillis());
         return search;
     }
+    
+    public Set<DecentralizedNode> getNeighbors() {
+    	return neighbors;
+    }
 }

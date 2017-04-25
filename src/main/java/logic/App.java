@@ -25,10 +25,10 @@ public class App {
 		Parser parser = new Parser();
 		parser.parseAndGenSocial("./src/main/javascript/nodes-1.json");
 		parser.genCentral();
-		//TODO: parser.genDecentral()
+		parser.genDecentral();
 		Topology<Node> socialTest = new Topology<>(parser.getSocialNodes());
 		Topology<Node> centralTest = new Topology<>(parser.getCentralNodes());
-//		TODO: Topology<Node> decentralTest = new Topology<>(parser.getDecentralMap());
+		Topology<Node> decentralTest = new Topology<>(parser.getDecentralNodes());
 //		socialTest.start(100, 0, Feature.randomFeature());
 ////		decentralTest.start(100, 0, Feature.randomFeature());
 //		centralTest.start(100, 0, Feature.randomFeature());
