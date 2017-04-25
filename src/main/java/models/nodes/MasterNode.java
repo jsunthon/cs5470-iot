@@ -38,6 +38,7 @@ public class MasterNode extends Node {
 			LinkedList<SlaveNode> slaveNodeList = slaveNodeMap.get(feature);
 			if (slaveNodeList != null && !slaveNodeList.isEmpty()) {
 				search.setSuccess(true);
+				search.setSuccess(slaveNodeList.getFirst());
 			}
 		}
 		search.setEnd(System.currentTimeMillis());

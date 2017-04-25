@@ -98,7 +98,6 @@ public class SocialNode extends Node {
      * Search for node(s) with this feature.
      *
      * @param feature the feature to search for
-     * @param limits  limit the search result to this number (e.g. 5)
      * @return Search
      */
     @Override
@@ -246,5 +245,11 @@ public class SocialNode extends Node {
         }
     }
 
+    // Used after parsing nodes. Hacky solution
+    public void resortEdges() {
+        Set<Edge> setEdges = new TreeSet<>(new NodeEdgeCentrality()); //sorted edges
+        setEdges.addAll(sortedEdges);
+        sortedEdges = setEdges;
+    }
 
 }

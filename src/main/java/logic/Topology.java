@@ -1,12 +1,11 @@
 package logic;
+
+import models.Search;
+import models.nodes.Node;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
-import models.Feature;
-import models.Search;
-import models.nodes.Node;
 
 public class Topology<T extends Node> {
 	private T[] nodes;
