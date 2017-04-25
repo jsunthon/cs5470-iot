@@ -13,15 +13,18 @@ class Node {
       this.features = features;
     }
 
-    // Arrays of node's id, easier  to deal with a primitive value then object
+    // Array of object {id, feature, type}.
+    // Essentially a node object but minus the relationship property
+    // because it is easier to read without relationship.
     this.relationships = [];
   }
 
   /**
-   * Add node to relationship. Return true if added, false otherwise.
-   * type is a number (1-4) and it refers to.
+   * Add node to relationship. Type is a number there refers to
+   * the relationship type (e.g. friends, co-worker, etc...)
    */
   addRelationship(node, type) {
+    // Don't add duplicates are itself to relationships.
     if (!this.hasRelationship(node) && node.id !== this.id) {
       this.relationships.push({
         id      : node.id,
@@ -29,12 +32,12 @@ class Node {
         type    : type
       });
 
-      // Every relationship is two way
+      // Every relationship is two way.
       node.addRelationship(this, type);
     }
   }
 
-  /** Return true if the node is not contain in this relationship */
+  /** Return true if relationship already contain the <node> */
   hasRelationship(node) {
     return this.relationships.findIndex(relation => {
           return relation.id === node.id;
@@ -45,28 +48,30 @@ class Node {
 /* *********************************************************************** */
 /* ***********************  CONFIGURABLE OPTIONS ************************* */
 /* *********************************************************************** */
-const NUM_OF_NODES = 20000;
+let config = {
+  NUM_OF_NODES: 20000,
 
-// These two values are used to generate the number of
-// relationship a node can have, but does not include relationship
-// added due to reciprocity. (All relationship are two way)
-const LOWER_RELATIONSHIP = 1;
-const UPPER_RELATIONSHIP = 10;
+  // These two values are used to generate the number of
+  // relationship a node can have, but does not include relationship
+  // added due to reciprocity. (All relationship are two way)
+  LOWER_RELATIONSHIP: 1,
+  UPPER_RELATIONSHIP: 10,
 
-const NUM_FEATURES = 1000;
+  NUM_FEATURES: 1000,
 
 // The number of features that a single feature can be group with it
 // e.g. feature 2 tends to have nodes with feature 5, 6, 7, and 8;
-const FEATURE_GROUP_SIZE = 6;
+  FEATURE_GROUP_SIZE: 6,
 
 // The chance that a relationship on a node will contain the same feature */
-const FEATURE_RELATIONSHIP_CHANCE = .10;
+  FEATURE_RELATIONSHIP_CHANCE: .10,
 
 // ACQUAINTANCE, CO_WORKER, FAMILY, FRIEND
-const NUM_RELATIONSHIP_TYPE = 4;
+  NUM_RELATIONSHIP_TYPE: 4,
 
 // How much features a node can have.
-const NUM_FEATURES_PER_NODE = 2;
+  NUM_FEATURES_PER_NODE: 2,
+};
 
 /* *********************************************************************** */
 /* ****************************  MAIN  ************************************ */
@@ -74,19 +79,19 @@ const NUM_FEATURES_PER_NODE = 2;
 
 
 function writeToFile(fileName) {
-  const featureObj = featureIndex(NUM_FEATURES, FEATURE_GROUP_SIZE);
+  const featureObj = featureIndex(config.NUM_FEATURES, config.FEATURE_GROUP_SIZE);
 
   console.log('-------------------- feature index -------------------- ');
   console.log(featureObj);
   console.log('-----------------------------------------------------');
 
-  const nodes = randomNodes(NUM_OF_NODES, NUM_FEATURES);
-  generateRelationship(nodes, FEATURE_RELATIONSHIP_CHANCE, featureObj);
+  const nodes = randomNodes(config.NUM_OF_NODES);
+  generateRelationship(nodes, config.FEATURE_RELATIONSHIP_CHANCE, featureObj);
 
-  const json = {nodes}
+  const json = {nodes};
   fs.writeFile(fileName, JSON.stringify(json, null, 2), 'utf8', () => {
     console.log('done');
-  })
+  });
 
   displayRelationshipStatus(nodes);
 }
@@ -94,11 +99,11 @@ function writeToFile(fileName) {
 /* *********************************************************************** */
 /* *****************************  FUNCTIONS  ***************************** */
 /* *********************************************************************** */
-/** Return a list of random nodes (with random featurs) */
-function randomNodes(numOfNodes, numOfFeatures) {
+/** Return a list of random nodes (with random feature) */
+function randomNodes(numOfNodes) {
   const nodes = [];
   for (let i = 1; i <= numOfNodes; i++) {
-    const features = randomFeatures(NUM_FEATURES_PER_NODE, NUM_FEATURES)
+    const features = randomFeatures(config.NUM_FEATURES_PER_NODE, config.NUM_FEATURES);
     const node     = new Node(i, features);
     nodes.push(node);
   }
@@ -110,24 +115,30 @@ function randomNodes(numOfNodes, numOfFeatures) {
 function generateRelationship(nodes, sameFeatureChance, featureObj) {
   for (let node of nodes) {
     // Determine the number of relationship this node should have
-    const numbOfRelationships = random(LOWER_RELATIONSHIP, UPPER_RELATIONSHIP);
+    const numbOfRelationships = random(config.LOWER_RELATIONSHIP, config.UPPER_RELATIONSHIP);
 
     for (let i = 0; i < numbOfRelationships; i++) {
       const relationship = randomRelationship(node.features, sameFeatureChance, nodes, featureObj);
       if (relationship) {
-        node.addRelationship(relationship, randomRelationshipType(NUM_RELATIONSHIP_TYPE));
+        node.addRelationship(relationship, randomRelationshipType(config.NUM_RELATIONSHIP_TYPE));
       }
     }
     console.log('done:', node.id);
   }
 }
 
-function randomFeatures(featuresPerArray, numOfFeatures) {
+/** Return a random array of features */
+function randomFeatures(lengthOfArray, numOfFeatures) {
   const features = new Set();
-  for (let i = 0; i < featuresPerArray; i++) {
+  for (let i = 0; i < lengthOfArray; i++) {
     features.add(randomFeature(numOfFeatures));
   }
   return Array.from(features);
+}
+
+/** Return a random feature from 1 to input value */
+function randomFeature(numOfFeatures) {
+  return random(1, numOfFeatures);
 }
 /**
  * Returns an object that display the max, min, total, avg relationship of NODES
@@ -169,10 +180,6 @@ function randomElement(array) {
   }
 }
 
-/** Return a random feature from 1 to input value */
-function randomFeature(numOfFeatures) {
-  return random(1, numOfFeatures);
-}
 function randomRelationship(features, sameFeatureChance, nodes, featureObject) {
   if (Math.random() <= sameFeatureChance) {
     return randomElement(
@@ -193,10 +200,9 @@ function randomRelationship(features, sameFeatureChance, nodes, featureObject) {
 /** Return a random node with a random feature based on a list of feature.
  * May return null if no node in <nodes> contain the randomFeature*/
 function randomNodeByFeatureArray(featureArray, nodes) {
-  let features        = [randomElement(featureArray)];
-  let nodesByFeature  = getNodesByFeatures(nodes, features);
-  let nodeWithFeature = randomElement(nodesByFeature);
-  return nodeWithFeature;
+  let features       = [randomElement(featureArray)];
+  let nodesByFeature = getNodesByFeatures(nodes, features);
+  return randomElement(nodesByFeature);
 }
 
 /** Return a random relationship type (1-4) */
@@ -212,17 +218,6 @@ function getNodesByFeatures(nodes, features) {
       return features.indexOf(feature) > -1;
     })
   });
-}
-
-
-function randomNodeSameFeature(feature, nodes) {
-  if (nodes.length === 0) {
-    console.error('Cannot return random node with the same feature if nodes is empty');
-    throw 'Operation on Empty List Exception';
-  }
-
-  const nodesByFeature = getNodesByFeatures(nodes, feature);
-  return randomElement(nodesByFeature);
 }
 
 /** Return an object where the keys are FEATURE value (1,2,3)
@@ -255,5 +250,6 @@ module.exports = {
   featureIndex,
   getNodesByFeatures,
 
+  config,
   writeToFile
-}
+};
