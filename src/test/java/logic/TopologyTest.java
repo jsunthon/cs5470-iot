@@ -33,7 +33,6 @@ public class TopologyTest {
         searches.add(search3);
         test.setSearches(searches);
         test.finish();
-        Assert.assertEquals(14, test.getBandwidth());
         Assert.assertEquals(2, test.getSuccesses());
         Assert.assertEquals(1, test.getFailures());
         Assert.assertEquals(66.67, 0.1, test.successRate());

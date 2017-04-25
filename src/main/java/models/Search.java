@@ -7,6 +7,8 @@ import java.util.*;
 public class Search {
     private long start;
     private long end;
+    private static final long DEFAULT_TIMEOUT = 5;
+    private static final int MAX_BANDWIDTH = 500;
 
     /* Number of nodes contacted to discover the FIRST node*/
     private int bandwidth;
@@ -35,6 +37,8 @@ public class Search {
     /* Limit feature search result by this value */
     private static int DEFAULT_LIMIT = 3;
     private int limit;
+    
+    private String failureReason = "";
 
 
     public Search(Integer search, long start, boolean byFeature) {
@@ -141,11 +145,35 @@ public class Search {
     public int getLimit() {
         return limit;
     }
+    
+    public long getCurrentTime() {
+    	return System.currentTimeMillis() - start;
+    }
+    
+    public boolean hasTimeOuted() {
+    	return getCurrentTime() > DEFAULT_TIMEOUT;
+    }
+    
+    public boolean hasFailed() {
+    	boolean bandwidthExceeded = bandwidth > MAX_BANDWIDTH;
+    	if (hasTimeOuted() && bandwidthExceeded) {
+    		failureReason = "timeout and bandwidth exceed";
+    	} else if (hasTimeOuted()) {
+    		failureReason = "timeout exceeeded";
+    	} else if (bandwidthExceeded) {
+    		failureReason = "bandwidth exceeded";
+    	}
+    	return (bandwidth > MAX_BANDWIDTH || hasTimeOuted());
+    }
+    
+    public void addAllNodes(List<Node> nodesToAdd) {
+    	nodes.addAll(nodesToAdd);
+    }
 
     @Override
     public String toString() {
         return "{totalTime:" + getTotalTime() + ", bandwidth:" + bandwidth
                 + ", success:" + success + ", feature:" + feature + ", node:" + node
-                + "}";
+                + ", failReason: " + failureReason + "}";
     }
 }

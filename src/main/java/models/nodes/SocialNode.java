@@ -122,7 +122,10 @@ public class SocialNode extends Node {
 
         while (!nodeQueue.isEmpty()) {
             SocialNode current = nodeQueue.poll();
-
+            if (search.hasFailed()) {
+            	search.setSuccess(false);
+            	break;
+            }
             /* Don't check the same node twice! */
             if (visited.contains(current)) {
                 continue;
@@ -195,7 +198,10 @@ public class SocialNode extends Node {
 
         while (!nodeQueue.isEmpty()) {
             SocialNode current = nodeQueue.poll();
-
+            if (search.hasFailed()) {
+            	search.setSuccess(false);
+            	break;
+            }
             /* Don't check the same node twice! */
             if (visited.contains(current)) {
                 continue;

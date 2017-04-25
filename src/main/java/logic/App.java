@@ -23,15 +23,24 @@ public class App {
         randEnvGen.genManufacturers(10, 4);
         randEnvGen.genOwners(2);
         Parser parser = new Parser();
-        parser.parseAndGenSocial("./src/main/javascript/nodes-1.json");
+        parser.parseAndGenSocial("./src/main/javascript/nodes-20000.json");
+        System.out.println(parser.getFeatures().size());
         parser.genCentral();
         parser.genDecentral();
         Topology<Node> socialTest = new Topology<>(parser.getSocialNodes());
         Topology<Node> centralTest = new Topology<>(parser.getCentralNodes());
         Topology<Node> decentralTest = new Topology<>(parser.getDecentralNodes());
-        centralTest.start(1, 1, 15);
-        decentralTest.start(1, 1, 15);
-        socialTest.start(1, 1, 15);
+        socialTest.start(55, 10, 45, 500, 700, 200, 104, 5);
+        System.out.println("-----------");
+//        socialTest.printBandwidth();
+        centralTest.start(55, 10, 45, 500, 700, 200, 104, 5);
+        System.out.println("-----------");
+        decentralTest.start(55, 10, 45, 500, 700, 200, 104, 5);
+        decentralTest.printBandwidth();
+        
+//        centralTest.start(1, 1, 15);
+//        decentralTest.start(1, 1, 15);
+//        socialTest.start(1, 1, 15);
 
     }
 }

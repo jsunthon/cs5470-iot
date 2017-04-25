@@ -7,6 +7,7 @@ import models.TimeToLive;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 public class MasterNode extends Node {
@@ -39,6 +40,9 @@ public class MasterNode extends Node {
 			if (slaveNodeList != null && !slaveNodeList.isEmpty()) {
 				search.setSuccess(true);
 				search.setSuccess(slaveNodeList.getFirst());
+				List<Node> nodeList = new LinkedList<>();
+				nodeList.addAll(slaveNodeList);
+				search.addAllNodes(nodeList);
 			}
 		}
 		search.setEnd(System.currentTimeMillis());

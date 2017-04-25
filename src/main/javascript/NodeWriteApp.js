@@ -27,4 +27,4 @@ config.NUM_FEATURES_PER_NODE = 2;
 
 //--------------------------------------------------
 //------------------------- main --------------------
-writer.writeToFile('nodes.json');
+writer.writeToFile('nodes-20000.json');

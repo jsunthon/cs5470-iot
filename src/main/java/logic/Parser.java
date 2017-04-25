@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -38,11 +39,13 @@ public class Parser {
     private Node[] centralNodes;
     private Node[] decentralNodes;
     private RandEnvGenerator randEnvGen;
+    private Set<Integer> usedFeatures;
     private JSONParser jsonParser;
 
     public Parser() {
         randEnvGen = RandEnvGenerator.getInstance();
         jsonParser = new JSONParser();
+        usedFeatures = new HashSet<>();
     }
 
     /**
@@ -102,6 +105,7 @@ public class Parser {
                     //master node always the first node, aka node with id = 1
                     MasterNode masterNode = (MasterNode) centralNodes[1];
                     SlaveNode slaveNode = (SlaveNode) genNodeFromSocial(socialNode, NodeType.SLAVE);
+                    slaveNode.setMaster(masterNode);
                     centralNodes[i] = slaveNode;
                     masterNode.addSlaveNode(slaveNode);
                 }
@@ -196,6 +200,9 @@ public class Parser {
      */
     public SocialNode genSocialNode(int id, JSONArray featuresArr, Iterator<JSONObject> relationships) {
         Integer[] features = featureJsonToArr(featuresArr);
+        for (int feature: features) {
+        	usedFeatures.add(feature);
+        }
         SocialNode srcNode = (SocialNode) getOrCreateNode(socialNodes, NodeType.SOCIAL, id, features);
         while (relationships.hasNext()) {
             JSONObject jsonNode = relationships.next();
@@ -262,6 +269,10 @@ public class Parser {
 
     public RandEnvGenerator getRandEnvGen() {
         return randEnvGen;
+    }
+    
+    public Set<Integer> getFeatures() {
+    	return usedFeatures;
     }
 
     public void sortByRelationshipDiversity() {

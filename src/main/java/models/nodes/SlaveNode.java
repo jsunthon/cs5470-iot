@@ -16,6 +16,7 @@ public class SlaveNode extends Node {
 	
 	@Override
 	public Search discover(Integer feature) {
+		if (master == null) System.out.println("master is null");
 		return master.discover(feature);
 	}
 
