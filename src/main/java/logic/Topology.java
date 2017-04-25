@@ -1,6 +1,5 @@
 package logic;
 
-import models.Bandwidth;
 import models.Search;
 import models.nodes.Node;
 
@@ -72,7 +71,6 @@ public class Topology<T extends Node> {
 		if (source == null) System.out.println("src is null");
 		Search search = source.discover(feature);
 		searches.add(search);
-		System.out.println("Src id: " + source.getId());
 		System.out.println(search);
 		System.out.println(search.getNodes());
 		return search;

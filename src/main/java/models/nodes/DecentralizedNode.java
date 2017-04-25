@@ -50,8 +50,7 @@ public class DecentralizedNode extends Node {
 
         while (!nodeQueue.isEmpty()) {
             DecentralizedNode current = nodeQueue.poll();
-            if (search.hasFailed()) {
-            	search.setSuccess(false);
+            if (search.hasExceedLimit()) {
             	break;
             }
             // Don't check the same node twice!
@@ -122,8 +121,7 @@ public class DecentralizedNode extends Node {
 
         while (!nodeQueue.isEmpty()) {
             DecentralizedNode current = nodeQueue.poll();
-            if (search.hasFailed()) {
-            	search.setSuccess(false);
+            if (search.hasExceedLimit()) {
             	break;
             }
             // Don't check the same node twice!

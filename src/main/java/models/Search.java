@@ -37,7 +37,7 @@ public class Search {
     /* Limit feature search result by this value */
     private static int DEFAULT_LIMIT = 3;
     private int limit;
-    
+
     private String failureReason = "";
 
 
@@ -145,35 +145,44 @@ public class Search {
     public int getLimit() {
         return limit;
     }
-    
+
     public long getCurrentTime() {
-    	return System.currentTimeMillis() - start;
+        return System.currentTimeMillis() - start;
     }
-    
+
     public boolean hasTimeOuted() {
-    	return getCurrentTime() > DEFAULT_TIMEOUT;
+        return getCurrentTime() > DEFAULT_TIMEOUT;
     }
-    
-    public boolean hasFailed() {
-    	boolean bandwidthExceeded = bandwidth > MAX_BANDWIDTH;
-    	if (hasTimeOuted() && bandwidthExceeded) {
-    		failureReason = "timeout and bandwidth exceed";
-    	} else if (hasTimeOuted()) {
-    		failureReason = "timeout exceeeded";
-    	} else if (bandwidthExceeded) {
-    		failureReason = "bandwidth exceeded";
-    	}
-    	return (bandwidth > MAX_BANDWIDTH || hasTimeOuted());
+
+
+    public boolean hasExceedLimit() {
+        boolean bandwidthExceeded = bandwidth > MAX_BANDWIDTH;
+        if (hasTimeOuted() && bandwidthExceeded) {
+            failureReason = "timeout and bandwidth exceed";
+        } else if (hasTimeOuted()) {
+            failureReason = "timeout exceeeded";
+        } else if (bandwidthExceeded) {
+            failureReason = "bandwidth exceeded";
+        }
+        return (bandwidth > MAX_BANDWIDTH || hasTimeOuted());
     }
-    
+
     public void addAllNodes(List<Node> nodesToAdd) {
-    	nodes.addAll(nodesToAdd);
+        nodes.addAll(nodesToAdd);
     }
 
     @Override
     public String toString() {
-        return "{totalTime:" + getTotalTime() + ", bandwidth:" + bandwidth
-                + ", success:" + success + ", feature:" + feature + ", node:" + node
-                + ", failReason: " + failureReason + "}";
+        if (success) {
+            return
+                    "{totalTime:" + getTotalTime() + ", bandwidth:" + bandwidth
+                            + ", success:" + success + ", feature:" + feature + ", node:" + node
+                            + "}";
+        } else {
+            return
+                    "{totalTime:" + getTotalTime() + ", bandwidth:" + bandwidth
+                            + ", success:" + success + ", feature:" + feature + ", node:" + node
+                            + ", failReason: " + failureReason + "}";
+        }
     }
 }

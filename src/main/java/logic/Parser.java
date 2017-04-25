@@ -4,11 +4,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.json.simple.JSONArray;
@@ -200,8 +198,8 @@ public class Parser {
      */
     public SocialNode genSocialNode(int id, JSONArray featuresArr, Iterator<JSONObject> relationships) {
         Integer[] features = featureJsonToArr(featuresArr);
-        for (int feature: features) {
-        	usedFeatures.add(feature);
+        for (int feature : features) {
+            usedFeatures.add(feature);
         }
         SocialNode srcNode = (SocialNode) getOrCreateNode(socialNodes, NodeType.SOCIAL, id, features);
         while (relationships.hasNext()) {
@@ -270,9 +268,9 @@ public class Parser {
     public RandEnvGenerator getRandEnvGen() {
         return randEnvGen;
     }
-    
+
     public Set<Integer> getFeatures() {
-    	return usedFeatures;
+        return usedFeatures;
     }
 
     public void sortByRelationshipDiversity() {
