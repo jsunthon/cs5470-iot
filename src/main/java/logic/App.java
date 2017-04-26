@@ -35,16 +35,16 @@ public class App {
         socialTest.start(55, 10, 45, 500, 700, 200, 104, 5);
         System.out.println("-----------");
         socialTest.printBandwidth();
-        logger.info("Central Test");
-        centralTest.start(55, 10, 45, 500, 700, 200, 104, 5);
+//        logger.info("Central Test");
+//        centralTest.start(55, 10, 45, 500, 700, 200, 104, 5);
         System.out.println("-----------");
         logger.info("Decentralized Test");
         decentralTest.start(55, 10, 45, 500, 700, 200, 104, 5);
         decentralTest.printBandwidth();
         
-        centralTest.start(1, 1, 15);
-        decentralTest.start(1, 1, 15);
-        socialTest.start(1, 1, 15);
+//        centralTest.start(1, 1, 15);
+//        decentralTest.start(1, 1, 15);
+//        socialTest.start(1, 1, 15);
 
     }
 }

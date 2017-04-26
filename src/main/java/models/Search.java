@@ -7,6 +7,12 @@ import java.util.*;
 public class Search {
     private long start;
     private long end;
+
+    // The current time when the first node is discovered
+    // Subtract this from Search.start to get the total time in ms to discover
+    // the first node.
+    private long firstNodeTime;
+
     private static final long DEFAULT_TIMEOUT = 5;
     private static final int MAX_BANDWIDTH = 500;
 
@@ -26,7 +32,7 @@ public class Search {
 
     /* Other nodes resulted from discovery by feature which does not include the
      * "first" main node. Used to avoid conflict with existing code */
-    private List<Node> nodes;
+    private Set<Node> nodes;
 
     /* First discovered node, "main node" */
     private Node node;
@@ -49,7 +55,7 @@ public class Search {
             this.feature = search;
 
             nodeVisited = new LinkedList<>();
-            nodes = new ArrayList<Node>();
+            nodes = new HashSet<>();
             limit = DEFAULT_LIMIT;
         } else {
             this.start = start;
@@ -88,6 +94,14 @@ public class Search {
         return end - start;
     }
 
+    public long getFirstNodeTime() {
+        if (success) {
+            return firstNodeTime - start;
+        } else {
+            return -1;
+        }
+    }
+
     public void addVisited(Node node) {
         nodeVisited.add(node);
     }
@@ -106,12 +120,11 @@ public class Search {
 
     public void setSuccess(Node node) {
         this.node = node;
+        firstNodeTime = System.currentTimeMillis();
     }
 
-    public void addSuccess(Node node) {
-        if (!nodes.contains(node)) {
-            nodes.add(node);
-        }
+    public void addSuccess(Node successNode) {
+        nodes.add(successNode);
     }
 
     public void addBandwidth() {
@@ -138,7 +151,7 @@ public class Search {
         return node;
     }
 
-    public List<Node> getNodes() {
+    public Set<Node> getNodes() {
         return nodes;
     }
 
@@ -156,7 +169,7 @@ public class Search {
 
 
     public boolean hasExceedLimit() {
-        boolean bandwidthExceeded = bandwidth > MAX_BANDWIDTH;
+        boolean bandwidthExceeded = totalBandwidth > MAX_BANDWIDTH;
         if (hasTimeOuted() && bandwidthExceeded) {
             failureReason = "timeout and bandwidth exceed";
         } else if (hasTimeOuted()) {
@@ -164,25 +177,50 @@ public class Search {
         } else if (bandwidthExceeded) {
             failureReason = "bandwidth exceeded";
         }
-        return (bandwidth > MAX_BANDWIDTH || hasTimeOuted());
+        return (totalBandwidth > MAX_BANDWIDTH || hasTimeOuted());
     }
 
     public void addAllNodes(List<Node> nodesToAdd) {
         nodes.addAll(nodesToAdd);
     }
 
+
     @Override
     public String toString() {
         if (success) {
-            return
-                    "{totalTime:" + getTotalTime() + ", bandwidth:" + bandwidth
-                            + ", success:" + success + ", feature:" + feature + ", node:" + node
-                            + "}";
+            return "{" +
+                    "firstNodeTime: " + getFirstNodeTime() + " "
+                    + "totalTime:" + getTotalTime() + ", "
+                    + "bandwidth:" + bandwidth + ", "
+                    + "total_bandwidth:" + totalBandwidth + ", "
+                    + "success:" + success + ", "
+                    + "feature:" + feature + ", "
+                    + "node:" + node + ", "
+                    + "nodes:" + getNodesStringId()
+                    + "}";
         } else {
-            return
-                    "{totalTime:" + getTotalTime() + ", bandwidth:" + bandwidth
-                            + ", success:" + success + ", feature:" + feature + ", node:" + node
-                            + ", failReason: " + failureReason + "}";
+            return "{" +
+                    "firstNodeTime: " + getFirstNodeTime() + " "
+                    + "totalTime:" + getTotalTime() + ", "
+                    + "bandwidth:" + bandwidth + ", "
+                    + "total_bandwidth:" + totalBandwidth + ", "
+                    + "success:" + success + ", "
+                    + "feature:" + feature + ", "
+                    + "node:" + node + ", "
+                    + "nodes:" + getNodesStringId() + ", "
+                    + "failReason:" + failureReason
+                    + "}";
         }
+    }
+
+    // Return a string of Search.nodes' id
+    private String getNodesStringId() {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (Node node : nodes) {
+            stringBuilder.append(node.getId());
+            stringBuilder.append(",");
+        }
+        return stringBuilder.toString();
     }
 }
