@@ -169,15 +169,11 @@ public class Search {
 
 
     public boolean hasExceedLimit() {
-        boolean bandwidthExceeded = totalBandwidth > MAX_BANDWIDTH;
-        if (hasTimeOuted() && bandwidthExceeded) {
-            failureReason = "timeout and bandwidth exceed";
-        } else if (hasTimeOuted()) {
+        if (hasTimeOuted()) {
             failureReason = "timeout exceeeded";
-        } else if (bandwidthExceeded) {
-            failureReason = "bandwidth exceeded";
         }
-        return (totalBandwidth > MAX_BANDWIDTH || hasTimeOuted());
+
+        return hasTimeOuted();
     }
 
     public void addAllNodes(List<Node> nodesToAdd) {
