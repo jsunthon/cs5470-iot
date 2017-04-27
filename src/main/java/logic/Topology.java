@@ -9,18 +9,19 @@ import java.util.List;
 
 public class Topology<T extends Node> {
     private T[] nodes;
-    private int successes;
-    private int failures;
-    private int minBand = Integer.MAX_VALUE;
-    private int maxBand = Integer.MIN_VALUE;
-    private int avgBand = 0;
-    private int totalBand = 0;
-    private long totalPerformance;
     private List<Search> searches;
     private DecimalFormat df;
 
     private String title;
     private String filename;
+
+    private int totalBand;
+    private double avgBand;
+    private long totalPerformance;
+    private int successes;
+    private int failures;
+
+    public static boolean DISPLAY_SEARCHES = true;
 
     public Topology(T[] nodes, String title, String filename) {
         this.nodes = nodes;
@@ -34,28 +35,10 @@ public class Topology<T extends Node> {
         for (int feature : features) {
             doSearch(nodes[srcId], feature);
         }
-        finish(srcId);
+        finish();
     }
 
-    public void finish(int srcId) {
-        for (Search search : searches) {
-            int currBandwidth = search.getTotalBandwidth();
-            totalBand += currBandwidth;
-            if (currBandwidth <= minBand) {
-                minBand = currBandwidth;
-            }
-            if (currBandwidth >= maxBand) {
-                maxBand = currBandwidth;
-            }
-            if (search.isSuccess()) {
-                successes++;
-            } else {
-                failures++;
-            }
-            totalPerformance += search.getTotalTime();
-        }
-        avgBand = totalBand / searches.size();
-        printResult(srcId);
+    public void finish() {
     }
 
     public Search doSearch(T source, Integer feature) {
@@ -81,38 +64,44 @@ public class Topology<T extends Node> {
         this.searches = searches;
     }
 
-    public int getSuccesses() {
-        return successes;
-    }
-
-    public int getFailures() {
-        return failures;
-    }
-
-    public long getTotalPerformance() {
-        return totalPerformance;
-    }
-
     public List<Search> getSearches() {
         return searches;
     }
 
-    public void printBandwidth() {
-        System.out.println("{min: " + minBand + ", max: " + maxBand + ", avg: " + avgBand + "}");
-    }
+    public void printResult() {
+        updateMetrics();
 
-    public void printResult(int srcId) {
         System.out.println("Title:" + title);
         System.out.println("Filename:" + filename);
-        System.out.println("Node ID: " + srcId);
-        for (Search search : searches) {
-            System.out.println(search);
-        }
+        System.out.println("Searches:" + searches.size());
         System.out.println("avg bandwidth: " + avgBand);
         System.out.println("success rate:" + successRate());
         System.out.println("avg performance:" + performance());
 
         System.out.println();
-
     }
+
+    public void updateMetrics() {
+        totalBand = 0;
+        totalPerformance = 0;
+        successes = 0;
+        failures = 0;
+        avgBand = 0;
+
+        for (Search search : searches) {
+            totalBand += search.getTotalBandwidth();
+            totalPerformance += search.getTotalTime();
+            if (search.isSuccess()) {
+                successes++;
+            } else {
+                failures++;
+            }
+
+            if (DISPLAY_SEARCHES) {
+                System.out.println(search);
+            }
+        }
+        avgBand = totalBand / searches.size();
+    }
+
 }

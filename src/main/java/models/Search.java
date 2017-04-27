@@ -13,7 +13,7 @@ public class Search {
     // the first node.
     private long firstNodeTime;
 
-    private static final long DEFAULT_TIMEOUT = 5;
+    public static long DEFAULT_TIMEOUT = 5;
     private static final int MAX_BANDWIDTH = 500;
 
     /* Number of nodes contacted to discover the FIRST node*/
@@ -41,7 +41,7 @@ public class Search {
     private List<Node> nodeVisited;
 
     /* Limit feature search result by this value */
-    private static int DEFAULT_LIMIT = 3;
+    public static int DEFAULT_LIMIT = 3;
     private int limit;
 
     private String failureReason = "";

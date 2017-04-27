@@ -300,4 +300,12 @@ public class Parser {
     public int getRandomNodeId() {
         return centralNodes[random(1, centralNodes.length - 1)].getId();
     }
+
+    public Set<Integer> getRandomNodeIdSet(int numberOfNodes) {
+        Set<Integer> randomSet = new HashSet<>();
+        while (randomSet.size() < numberOfNodes) {
+            randomSet.add(getRandomNodeId());
+        }
+        return randomSet;
+    }
 }

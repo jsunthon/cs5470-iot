@@ -143,6 +143,10 @@ public class DecentralizedNode extends Node {
             // Add all the relationship on to the queue if it has
             // not been visited before
             for (DecentralizedNode node : current.neighbors) {
+                if (search.hasExceedLimit()) {
+                    nodeQueue.clear();
+                    break;
+                }
                 if (!visited.contains(node)) {
                     nodeQueue.offer(node);
                 }

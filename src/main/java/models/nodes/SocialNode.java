@@ -165,6 +165,10 @@ public class SocialNode extends Node {
             /* Add the all the relationship on to the queue if it has
             * not been visited before */
             for (Edge edge : current.sortedEdges) {
+                if (search.hasExceedLimit()) {
+                    nodeQueue.clear();
+                    break;
+                }
                 if (!visited.contains(edge.getDest())) {
                     nodeQueue.offer(edge.getDest());
                 }

@@ -1,7 +1,10 @@
 package logic;
 
 
+import models.Search;
 import models.nodes.Node;
+
+import java.util.Set;
 
 public class App {
     private String[] filenames = {
@@ -31,30 +34,45 @@ public class App {
      * Initialize the environment and node topologies from json files.
      */
     public void start() {
-        String filename = filenames[0];
 
-        RandEnvGenerator randEnvGen = RandEnvGenerator.getInstance();
-        randEnvGen.genManufacturers(10, 4);
-        randEnvGen.genOwners(2);
-        Parser parser = new Parser();
-        parser.parseAndGenSocial(directory + filename);
-        parser.genCentral();
-        parser.genDecentral();
+        Search.DEFAULT_TIMEOUT = 5;
+        Search.DEFAULT_LIMIT = 3;
 
-        parser.setupRandomFeatures(10);
-        Integer[] randomFeatureArray = parser.getRandomFeatArr();
-        Integer randomNodeId = parser.getRandomNodeId();
+        for (String filename : filenames) {
 
-        Topology<Node> socialTest =
-                new Topology<>(parser.getSocialNodes(), "Social", filename);
-        Topology<Node> centralTest =
-                new Topology<>(parser.getCentralNodes(), "Central", filename);
-        Topology<Node> decentralTest =
-                new Topology<>(parser.getDecentralNodes(), "Decentralized", filename);
+            RandEnvGenerator randEnvGen = RandEnvGenerator.getInstance();
+            randEnvGen.genManufacturers(10, 4);
+            randEnvGen.genOwners(2);
 
-        socialTest.start(randomNodeId, randomFeatureArray);
-        centralTest.start(randomNodeId, randomFeatureArray);
-        decentralTest.start(randomNodeId, randomFeatureArray);
+            Parser parser = new Parser();
+            parser.parseAndGenSocial(directory + filename);
+            parser.genCentral();
+            parser.genDecentral();
+            parser.setupRandomFeatures(10);
 
+            Integer[] randomFeatureArray = parser.getRandomFeatArr();
+            Set<Integer> randomIdSet = parser.getRandomNodeIdSet(100);
+
+            // Central test are not insightful thus will be ignored.
+//        Topology<Node> centralTest =
+//                new Topology<>(parser.getCentralNodes(), "Central", filename);
+//         centralTest.start(randomNodeId, randomFeatureArray);
+
+            Topology.DISPLAY_SEARCHES = false;
+            Topology<Node> socialTest =
+                    new Topology<>(parser.getSocialNodes(), "Social", filename);
+            Topology<Node> decentralTest =
+                    new Topology<>(parser.getDecentralNodes(), "Decentralized", filename);
+
+            for (Integer randomNodeId : randomIdSet) {
+                socialTest.start(randomNodeId, randomFeatureArray);
+            }
+            socialTest.printResult();
+
+            for (Integer randomNodeId : randomIdSet) {
+                decentralTest.start(randomNodeId, randomFeatureArray);
+            }
+            decentralTest.printResult();
+        }
     }
 }
