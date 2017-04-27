@@ -63,6 +63,7 @@ public class Parser {
             // Centrality and diversity score of each edge is not
             // accurate after parsing, quick fix (hack solution)
             sortByRelationshipDiversity();
+            fileReader.close();
         } catch (IOException | ParseException e) {
             logger.error(e.getMessage());
         }

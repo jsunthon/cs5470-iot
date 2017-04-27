@@ -9,7 +9,7 @@ config.NUM_OF_NODES = 20000;
 config.LOWER_RELATIONSHIP = 1;
 config.UPPER_RELATIONSHIP = 10;
 
-config.NUM_FEATURES = 1000;
+config.NUM_FEATURES = 6000;
 
 // The number of features that a single feature can be group with it
 // e.g. feature 2 tends to have nodes with feature 5, 6, 7, and 8;
@@ -27,4 +27,4 @@ config.NUM_FEATURES_PER_NODE = 2;
 
 //--------------------------------------------------
 //------------------------- main --------------------
-writer.writeToFile('nodes-20000.json');
+writer.writeToFile('node-20k-feat-6k.json');

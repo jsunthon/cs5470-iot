@@ -20,12 +20,14 @@ public class Topology<T extends Node> {
     private DecimalFormat df;
 
     private String title;
+    private String filename;
 
-    public Topology(T[] nodes, String title) {
+    public Topology(T[] nodes, String title, String filename) {
         this.nodes = nodes;
         this.searches = new ArrayList<>();
         this.df = new DecimalFormat("0.00");
         this.title = title;
+        this.filename = filename;
     }
 
     public void start(int srcId, Integer... features) {
@@ -100,7 +102,8 @@ public class Topology<T extends Node> {
     }
 
     public void printResult(int srcId) {
-        System.out.println(title);
+        System.out.println("Title:" + title);
+        System.out.println("Filename:" + filename);
         System.out.println("Node ID: " + srcId);
         for (Search search : searches) {
             System.out.println(search);
