@@ -1,14 +1,7 @@
 package logic;
 
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
+import models.*;
+import models.nodes.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -16,18 +9,10 @@ import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import models.Edge;
-import models.Manufacturer;
-import models.Owner;
-import models.Relationship;
-import models.Role;
-import models.TimeToLive;
-import models.nodes.DecentralizedNode;
-import models.nodes.MasterNode;
-import models.nodes.Node;
-import models.nodes.NodeType;
-import models.nodes.SlaveNode;
-import models.nodes.SocialNode;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Parser {
     private static final Integer NODE_FEATURE_COUNT = 3;
@@ -40,10 +25,16 @@ public class Parser {
     private Set<Integer> usedFeatures;
     private JSONParser jsonParser;
 
+    private List<Integer> featureList;
+    private List<Integer> randomFeatureList;
+
     public Parser() {
         randEnvGen = RandEnvGenerator.getInstance();
         jsonParser = new JSONParser();
         usedFeatures = new HashSet<>();
+
+        featureList = new ArrayList<>();
+        randomFeatureList = new ArrayList<>();
     }
 
     /**
@@ -192,7 +183,6 @@ public class Parser {
      * Generate a social node with relationships
      *
      * @param id
-     * @param feature
      * @param relationships
      * @return
      */
@@ -223,7 +213,6 @@ public class Parser {
      * @param nodes
      * @param nodeType
      * @param id
-     * @param feature
      * @return
      */
     public Node getOrCreateNode(Node[] nodes, NodeType nodeType, int id, Integer[] features) {
@@ -250,7 +239,34 @@ public class Parser {
         for (int i = 0; i < featuresJSON.size(); i++) {
             features[i] = ((Long) featuresJSON.get(i)).intValue();
         }
+        featureList.addAll(Arrays.asList(features));
         return features;
+    }
+
+    public void setupRandomFeatures(int numberOfFeatures) {
+        if (numberOfFeatures > featureList.size()) {
+            return;
+        }
+
+        randomFeatureList.clear();
+
+        while (randomFeatureList.size() < numberOfFeatures) {
+            int randomIndex = random(0, featureList.size());
+            int randomFeature = (Integer) featureList.toArray()[randomIndex];
+            randomFeatureList.add(randomFeature);
+        }
+    }
+
+    public Integer[] getRandomFeatArr() {
+        Integer[] array = new Integer[randomFeatureList.size()];
+        for (int i = 0; i < randomFeatureList.size(); i++) {
+            array[i] = randomFeatureList.get(i);
+        }
+        return array;
+    }
+
+    private int random(int min, int max) {
+        return ThreadLocalRandom.current().nextInt(min, max + 1);
     }
 
     public Node[] getSocialNodes() {
@@ -278,5 +294,9 @@ public class Parser {
             SocialNode socialNode = (SocialNode) socialNodes[i];
             socialNode.resortEdges();
         }
+    }
+
+    public int getRandomNodeId() {
+        return centralNodes[random(1, centralNodes.length - 1)].getId();
     }
 }
