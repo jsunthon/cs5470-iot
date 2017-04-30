@@ -208,6 +208,158 @@ public class SocialNodeTest {
 
         System.out.println(relationships);
     }
+    
+    @Test
+    /**
+     * Test clustering coeffiency when all the neighbors of some node
+     * do not themselves share a link, yielding the smallest possible
+     * clustering coeffiency = 0
+     */
+    public void testGetClusteringCoeffiencyNoNeighborLinks() {
+       	SocialNode sn0 = getTestSocialNode(0);
+        SocialNode sn15 = node15With4Relationship(
+                SocialRelationship.ACQUAINTANCE, SocialRelationship.CO_WORKER,
+                SocialRelationship.FAMILY, SocialRelationship.FRIEND
+        );
+        SocialNode sn20 = node20With4Relationship(
+                SocialRelationship.ACQUAINTANCE, SocialRelationship.ACQUAINTANCE,
+                SocialRelationship.CO_WORKER, SocialRelationship.FAMILY
+        );
+        SocialNode sn7 = node7With3Relationship(
+                SocialRelationship.ACQUAINTANCE, SocialRelationship.CO_WORKER,
+                SocialRelationship.FAMILY);
+        SocialNode sn11 = node11With3Relationship(
+                SocialRelationship.ACQUAINTANCE, SocialRelationship.CO_WORKER,
+                SocialRelationship.FAMILY);
+        sn0.addRelationship(sn15, SocialRelationship.ACQUAINTANCE);
+        sn0.addRelationship(sn20, SocialRelationship.CO_WORKER);
+        sn0.addRelationship(sn7, SocialRelationship.FAMILY);
+        sn0.addRelationship(sn11, SocialRelationship.FRIEND);
+    	Assert.assertEquals(0, sn0.getClusteringCoeffiency(), 0.0);
+    }
+    
+    @Test
+    /**
+     * Test clustering coeffiency when each neighbhr of a node is connected
+     * to every other neighbor. This yields the maximal clustering coeffiency = 1
+     */
+    public void testGetClusteringCoeffiencyAllNeighborLinks() {
+    	SocialNode sn0 = getTestSocialNode(0);
+        SocialNode sn15 = node15With4Relationship(
+                SocialRelationship.ACQUAINTANCE, SocialRelationship.CO_WORKER,
+                SocialRelationship.FAMILY, SocialRelationship.FRIEND
+        );
+        SocialNode sn20 = node20With4Relationship(
+                SocialRelationship.ACQUAINTANCE, SocialRelationship.ACQUAINTANCE,
+                SocialRelationship.CO_WORKER, SocialRelationship.FAMILY
+        );
+        SocialNode sn7 = node7With3Relationship(
+                SocialRelationship.ACQUAINTANCE, SocialRelationship.CO_WORKER,
+                SocialRelationship.FAMILY);
+        SocialNode sn11 = node11With3Relationship(
+                SocialRelationship.ACQUAINTANCE, SocialRelationship.CO_WORKER,
+                SocialRelationship.FAMILY);
+        
+        sn15.addRelationship(sn20, SocialRelationship.ACQUAINTANCE);
+        sn15.addRelationship(sn7, SocialRelationship.FAMILY);
+        sn15.addRelationship(sn11, SocialRelationship.CO_WORKER);
+        
+        sn20.addRelationship(sn15, SocialRelationship.ACQUAINTANCE);
+        sn20.addRelationship(sn7, SocialRelationship.CO_WORKER);
+        sn20.addRelationship(sn11, SocialRelationship.FAMILY);
+        
+        sn7.addRelationship(sn15, SocialRelationship.ACQUAINTANCE);
+        sn7.addRelationship(sn11, SocialRelationship.CO_WORKER);
+        sn7.addRelationship(sn20, SocialRelationship.FAMILY);
+        
+        sn11.addRelationship(sn15, SocialRelationship.ACQUAINTANCE);
+        sn11.addRelationship(sn20, SocialRelationship.FAMILY);
+        sn11.addRelationship(sn7, SocialRelationship.CO_WORKER);
+        
+        sn0.addRelationship(sn15, SocialRelationship.ACQUAINTANCE);
+        sn0.addRelationship(sn20, SocialRelationship.CO_WORKER);
+        sn0.addRelationship(sn7, SocialRelationship.FAMILY);
+        sn0.addRelationship(sn11, SocialRelationship.FRIEND);
+        Assert.assertEquals(1, sn0.getClusteringCoeffiency(), 0.0);
+    }
+    
+    @Test
+    /**
+     * Test clustering coeffiency when there are common neighbor links
+     * such that clustering coeff = .25
+     */
+    public void testGetClusteringCoeffiency25Percent() {
+    	SocialNode sn0 = getTestSocialNode(0);
+        SocialNode sn15 = node15With4Relationship(
+                SocialRelationship.ACQUAINTANCE, SocialRelationship.CO_WORKER,
+                SocialRelationship.FAMILY, SocialRelationship.FRIEND
+        );
+        SocialNode sn20 = node20With4Relationship(
+                SocialRelationship.ACQUAINTANCE, SocialRelationship.ACQUAINTANCE,
+                SocialRelationship.CO_WORKER, SocialRelationship.FAMILY
+        );
+        SocialNode sn7 = node7With3Relationship(
+                SocialRelationship.ACQUAINTANCE, SocialRelationship.CO_WORKER,
+                SocialRelationship.FAMILY);
+        SocialNode sn11 = node11With3Relationship(
+                SocialRelationship.ACQUAINTANCE, SocialRelationship.CO_WORKER,
+                SocialRelationship.FAMILY);
+        sn20.addRelationship(sn15, SocialRelationship.ACQUAINTANCE);
+        sn20.addRelationship(sn7, SocialRelationship.CO_WORKER);
+        sn20.addRelationship(sn11, SocialRelationship.FAMILY);
+        
+        sn0.addRelationship(sn15, SocialRelationship.ACQUAINTANCE);
+        sn0.addRelationship(sn20, SocialRelationship.CO_WORKER);
+        sn0.addRelationship(sn7, SocialRelationship.FAMILY);
+        sn0.addRelationship(sn11, SocialRelationship.FRIEND);
+        Assert.assertEquals(.25, sn0.getClusteringCoeffiency(), 0.0);
+    }
+    
+    @Test
+    /**
+     * Test clustering coeffiency when there are common neighbor links
+     * such that clustering coeff = .50
+     */
+    public void testGetClusteringCoeffiency50Percent() {
+    	SocialNode sn0 = getTestSocialNode(0);
+        SocialNode sn15 = node15With4Relationship(
+                SocialRelationship.ACQUAINTANCE, SocialRelationship.CO_WORKER,
+                SocialRelationship.FAMILY, SocialRelationship.FRIEND
+        );
+        SocialNode sn20 = node20With4Relationship(
+                SocialRelationship.ACQUAINTANCE, SocialRelationship.ACQUAINTANCE,
+                SocialRelationship.CO_WORKER, SocialRelationship.FAMILY
+        );
+        SocialNode sn7 = node7With3Relationship(
+                SocialRelationship.ACQUAINTANCE, SocialRelationship.CO_WORKER,
+                SocialRelationship.FAMILY);
+        SocialNode sn11 = node11With3Relationship(
+                SocialRelationship.ACQUAINTANCE, SocialRelationship.CO_WORKER,
+                SocialRelationship.FAMILY);
+        sn20.addRelationship(sn15, SocialRelationship.ACQUAINTANCE);
+        sn20.addRelationship(sn7, SocialRelationship.CO_WORKER);
+        sn20.addRelationship(sn11, SocialRelationship.FAMILY);
+        
+        sn7.addRelationship(sn15, SocialRelationship.ACQUAINTANCE);
+        sn7.addRelationship(sn11, SocialRelationship.CO_WORKER);
+        sn7.addRelationship(sn20, SocialRelationship.FAMILY);
+        
+        sn0.addRelationship(sn15, SocialRelationship.ACQUAINTANCE);
+        sn0.addRelationship(sn20, SocialRelationship.CO_WORKER);
+        sn0.addRelationship(sn7, SocialRelationship.FAMILY);
+        sn0.addRelationship(sn11, SocialRelationship.FRIEND);
+        Assert.assertEquals(.50, sn0.getClusteringCoeffiency(), 0.0);
+    }
+    
+    @Test
+    /**
+     * Test the clustering coeffiency when a node is connected to no other nodes
+     */
+    public void testGetClusteringCoeffiency0Centrality() {
+    	SocialNode sn0 = getTestSocialNode(0);
+    	Assert.assertEquals(0.0, sn0.getClusteringCoeffiency(), 0.0);
+    }
+    
     /* ******************************************* */
     /* *************** SET UP DATA *************** */
     /* ******************************************* */
