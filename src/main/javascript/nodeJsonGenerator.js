@@ -88,7 +88,7 @@ function writeToFile(fileName) {
   const nodes = randomNodes(config.NUM_OF_NODES);
   generateRelationship(nodes, config.FEATURE_RELATIONSHIP_CHANCE, featureObj);
 
-  const json = {nodes};
+  const json = {config, nodes};
   fs.writeFile(fileName, JSON.stringify(json, null, 2), 'utf8', () => {
     console.log('done');
   });

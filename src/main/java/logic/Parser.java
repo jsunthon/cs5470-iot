@@ -28,6 +28,10 @@ public class Parser {
     private List<Integer> featureList;
     private List<Integer> randomFeatureList;
 
+    // Use -1 to indicate a problem with the parsing;
+    public int numOfNodes = -1;
+    public int numOfFeatures = -1;
+
     public Parser() {
         randEnvGen = RandEnvGenerator.getInstance();
         jsonParser = new JSONParser();
@@ -48,6 +52,12 @@ public class Parser {
             Object object = jsonParser.parse(fileReader);
             JSONObject jsonObject = (JSONObject) object;
             JSONArray jsonArray = (JSONArray) jsonObject.get("nodes");
+
+            // Get configuration data
+            JSONObject config = (JSONObject) jsonObject.get("config");
+            numOfNodes = Math.toIntExact((Long) config.get("NUM_OF_NODES"));
+            numOfFeatures = Math.toIntExact((Long) config.get("NUM_FEATURES"));
+
             initNodeArrays(jsonArray.size());
             Iterator<JSONObject> iterator = jsonArray.iterator();
             while (iterator.hasNext()) {

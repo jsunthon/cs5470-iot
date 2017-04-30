@@ -46,6 +46,14 @@ public class Search {
     // The path to the first node discovered
     private Stack<Edge> firstNodePaths;
 
+    // The node the search begins on
+    private Node rootNode;
+
+    public Search(Node rootNode, Integer search, long start, boolean byFeature) {
+        this(search, start, byFeature);
+        this.rootNode = rootNode;
+    }
+
     public Search(Integer search, long start, boolean byFeature) {
         if (byFeature) {
             this.start = start;
@@ -67,6 +75,7 @@ public class Search {
 
         firstNodePaths = new Stack<>();
     }
+
 
     public void setEnd(long end) {
         this.end = end;
@@ -213,7 +222,7 @@ public class Search {
         return firstNodePaths;
     }
 
-    private int getFirstNodeLatency() {
+    public int getFirstNodeLatency() {
         int latency = 0;
 
         for (Edge edge : firstNodePaths) {
@@ -237,5 +246,9 @@ public class Search {
                 }
             }
         }
+    }
+
+    public Node getRootNode() {
+        return rootNode;
     }
 }

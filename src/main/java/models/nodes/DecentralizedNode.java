@@ -36,7 +36,7 @@ public class DecentralizedNode extends Node {
         }
 
         // Initialized the search meta data
-        Search search = new Search(feature, System.currentTimeMillis(), true);
+        Search search = new Search(this, feature, System.currentTimeMillis(), true);
         history.push(search);
 
         // Keep Track of the queue and the visited nodes
@@ -114,7 +114,7 @@ public class DecentralizedNode extends Node {
         }
 
         // Initialized the search meta data
-        Search search = new Search(id, System.currentTimeMillis(), false);
+        Search search = new Search(this, id, System.currentTimeMillis(), false);
         history.push(search);
 
         // Keep Track of the queue and the visited nodes

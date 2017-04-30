@@ -3,10 +3,6 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "dependencies": {
-    "chai": "^3.5.0",
-    "mocha": "^3.2.0"
-  },
   "scripts": {
     "test": "mocha"
   },
@@ -20,5 +16,12 @@
   "bugs": {
     "url": "https://github.com/jsunthon/cs5470-iot/issues"
   },
-  "homepage": "https://github.com/jsunthon/cs5470-iot#readme"
+  "homepage": "https://github.com/jsunthon/cs5470-iot#readme",
+  "devDependencies": {
+    "chav": "0.0.1",
+    "mocha": "^3.3.0"
+  },
+  "dependencies": {
+    "yargs": "^7.1.0"
+  }
 }

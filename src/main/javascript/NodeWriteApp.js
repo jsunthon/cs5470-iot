@@ -1,3 +1,4 @@
+const yargs  = require('yargs');
 const writer = require('./nodeJsonGenerator');
 const config = writer.config;
 
@@ -27,4 +28,31 @@ config.NUM_FEATURES_PER_NODE = 2;
 
 //--------------------------------------------------
 //------------------------- main --------------------
-writer.writeToFile('node-20k-feat-6k.json');
+const flags = yargs.usage("Nodes Generator")
+    .options('n', {
+      alias   : 'nodes',
+      describe: 'number of nodes to generate',
+      choices : [20000, 50000],
+      require : true
+    })
+    .options('f', {
+      alias   : 'features',
+      describe: 'number of features to generate',
+      choices : [
+        2000, 4000, 6000, 8000, 10000,
+        5000, 10000, 15000, 20000, 25000],
+      require : true
+    })
+    .options('t', {
+      alias   : 'title',
+      describe: 'filename (e.g. nodes-20k-feat-2k)',
+      require : true
+    })
+    .argv;
+
+if (flags['f'] < flags['n']) {
+  config.NUM_OF_NODES = flags['nodes'];
+  config.NUM_FEATURES = flags['features'];
+
+  writer.writeToFile(`${flags['title']}.json`)
+}
