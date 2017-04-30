@@ -255,11 +255,18 @@ public class SocialNode extends Node {
             int centralityDest2 = e2.getDest().getCentrality();
 
             int diff = centralityDest2 - centralityDest1;
+            //if centrality is same, break tie with diversity
             if (diff == 0) {
-                /* Use diversity score for tie breaker/ but if the
-                * score are equal, pick whatever ... for now */
+            	//if diversity is same, break tie with clustering coeffiency
                 if (e2.getDiversityScore() == e1.getDiversityScore()) {
-                    return 1;
+                    double clusteringCoeffiencyDiff = e2.getDest().getClusteringCoeffiency() 
+                    		- e1.getDest().getClusteringCoeffiency();
+                	//if clustering coeffiency is 0, then pick whichever edge was added first
+                    if (clusteringCoeffiencyDiff == 0) {
+                    	return 1;
+                    } else {
+                    	return (int) clusteringCoeffiencyDiff;
+                    }
                 } else {
                     return e2.getDiversityScore() - e1.getDiversityScore();
                 }
