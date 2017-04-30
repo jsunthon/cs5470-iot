@@ -39,6 +39,7 @@ public class Topology<T extends Node> {
     }
 
     public void finish() {
+        updateMetrics();
     }
 
     public Search doSearch(T source, Integer feature) {
@@ -104,4 +105,11 @@ public class Topology<T extends Node> {
         avgBand = totalBand / searches.size();
     }
 
+    public int getSuccesses() {
+        return successes;
+    }
+
+    public int getFailures() {
+        return failures;
+    }
 }

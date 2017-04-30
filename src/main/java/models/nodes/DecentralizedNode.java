@@ -1,16 +1,14 @@
 package models.nodes;
 
-import models.Manufacturer;
-import models.Role;
-import models.Search;
-import models.TimeToLive;
+import models.*;
 import models.history.History;
 
 import java.util.*;
 
 public class DecentralizedNode extends Node {
 
-    private Set<DecentralizedNode> neighbors;
+    // Each neighbor is an edge where src=this, dest=the neighboring node
+    private Set<Neighbor> neighbors;
     private History history;
     public static Integer DEFAULT_MAX_HISTORY_SIZE = 10;
 
@@ -21,7 +19,7 @@ public class DecentralizedNode extends Node {
     }
 
     public void addNeighbor(DecentralizedNode node) {
-        neighbors.add(node);
+        neighbors.add(new Neighbor(this, node));
     }
 
     public boolean hasFeature(Integer feature) {
@@ -38,7 +36,7 @@ public class DecentralizedNode extends Node {
         }
 
         // Initialized the search meta data
-        Search search = new Search(feature, System.currentTimeMillis(), true);
+        Search search = new Search(this, feature, System.currentTimeMillis(), true);
         history.push(search);
 
         // Keep Track of the queue and the visited nodes
@@ -48,10 +46,15 @@ public class DecentralizedNode extends Node {
         // Dummy values: add self to the queue (first one)
         nodeQueue.offer(this);
 
+        // All the edge explored to discover the firstNode.
+        // Used later to calculate the latency from this node
+        // to the discovered firstNode
+        Stack<Edge> paths = new Stack<>();
+
         while (!nodeQueue.isEmpty()) {
             DecentralizedNode current = nodeQueue.poll();
             if (search.hasExceedLimit()) {
-            	break;
+                break;
             }
             // Don't check the same node twice!
             if (visited.contains(current)) {
@@ -90,13 +93,15 @@ public class DecentralizedNode extends Node {
 
             // Add the all the relationship on to the queue if it has
             // not been visited before
-            for (DecentralizedNode node : current.neighbors) {
-                if (!visited.contains(node)) {
-                    nodeQueue.offer(node);
+            for (Neighbor neighbor : current.neighbors) {
+                if (!visited.contains(neighbor.getDest())) {
+                    nodeQueue.offer((DecentralizedNode) neighbor.getDest());
+                    paths.push(neighbor);
                 }
             }
         }
         search.setEnd(System.currentTimeMillis());
+        search.generatePaths(paths);
         return search;
     }
 
@@ -109,7 +114,7 @@ public class DecentralizedNode extends Node {
         }
 
         // Initialized the search meta data
-        Search search = new Search(id, System.currentTimeMillis(), false);
+        Search search = new Search(this, id, System.currentTimeMillis(), false);
         history.push(search);
 
         // Keep Track of the queue and the visited nodes
@@ -119,10 +124,15 @@ public class DecentralizedNode extends Node {
         // Dummy values: add self to the queue (first one)
         nodeQueue.offer(this);
 
+        // All the edge explored to discover the node
+        // Used later to calculate the latency from this node
+        // to the discovered node
+        Stack<Edge> paths = new Stack<>();
+
         while (!nodeQueue.isEmpty()) {
             DecentralizedNode current = nodeQueue.poll();
             if (search.hasExceedLimit()) {
-            	break;
+                break;
             }
             // Don't check the same node twice!
             if (visited.contains(current)) {
@@ -142,21 +152,23 @@ public class DecentralizedNode extends Node {
 
             // Add all the relationship on to the queue if it has
             // not been visited before
-            for (DecentralizedNode node : current.neighbors) {
+            for (Neighbor neighbor : current.neighbors) {
                 if (search.hasExceedLimit()) {
                     nodeQueue.clear();
                     break;
                 }
-                if (!visited.contains(node)) {
-                    nodeQueue.offer(node);
+                if (!visited.contains(neighbor.getDest())) {
+                    nodeQueue.offer((DecentralizedNode) neighbor.getDest());
+                    paths.push(neighbor);
                 }
             }
         }
         search.setEnd(System.currentTimeMillis());
+        search.generatePaths(paths);
         return search;
     }
-    
-    public Set<DecentralizedNode> getNeighbors() {
-    	return neighbors;
+
+    public Set<Neighbor> getNeighbors() {
+        return neighbors;
     }
 }

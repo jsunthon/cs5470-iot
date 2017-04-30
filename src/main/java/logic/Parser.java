@@ -28,6 +28,10 @@ public class Parser {
     private List<Integer> featureList;
     private List<Integer> randomFeatureList;
 
+    // Use -1 to indicate a problem with the parsing;
+    public int numOfNodes = -1;
+    public int numOfFeatures = -1;
+
     public Parser() {
         randEnvGen = RandEnvGenerator.getInstance();
         jsonParser = new JSONParser();
@@ -48,6 +52,12 @@ public class Parser {
             Object object = jsonParser.parse(fileReader);
             JSONObject jsonObject = (JSONObject) object;
             JSONArray jsonArray = (JSONArray) jsonObject.get("nodes");
+
+            // Get configuration data
+            JSONObject config = (JSONObject) jsonObject.get("config");
+            numOfNodes = Math.toIntExact((Long) config.get("NUM_OF_NODES"));
+            numOfFeatures = Math.toIntExact((Long) config.get("NUM_FEATURES"));
+
             initNodeArrays(jsonArray.size());
             Iterator<JSONObject> iterator = jsonArray.iterator();
             while (iterator.hasNext()) {
@@ -117,9 +127,9 @@ public class Parser {
                 SocialNode socialSrc = (SocialNode) socialNodes[i];
                 if (socialSrc == null) return false;
                 DecentralizedNode decenSrc = (DecentralizedNode) getOrCreateDecenNode(socialSrc);
-                List<Edge> shuffledEdges = shuffleSortedEdges(socialSrc.getSortedEdges());
-                for (Edge relationEdge : shuffledEdges) {
-                    SocialNode socialNeighbor = relationEdge.getDest();
+                List<Relationship> shuffledRelationships = shuffleSortedEdges(socialSrc.getSortedRelationships());
+                for (Relationship relationRelationship : shuffledRelationships) {
+                    SocialNode socialNeighbor = relationRelationship.getDest();
                     DecentralizedNode decenNeighbor = (DecentralizedNode) getOrCreateDecenNode(socialNeighbor);
                     decenSrc.addNeighbor(decenNeighbor);
                 }
@@ -133,14 +143,14 @@ public class Parser {
     /**
      * Takes a set of edges, and shuffles them to make sure they're not longer sorted.
      *
-     * @param sortedEdges
+     * @param sortedRelationships
      * @return
      */
-    public List<Edge> shuffleSortedEdges(Set<Edge> sortedEdges) {
-        List<Edge> unshuffledEdges = new ArrayList<>();
-        unshuffledEdges.addAll(sortedEdges);
-        Collections.shuffle(unshuffledEdges);
-        return unshuffledEdges;
+    public List<Relationship> shuffleSortedEdges(Set<Relationship> sortedRelationships) {
+        List<Relationship> unshuffledRelationships = new ArrayList<>();
+        unshuffledRelationships.addAll(sortedRelationships);
+        Collections.shuffle(unshuffledRelationships);
+        return unshuffledRelationships;
     }
 
     /**
@@ -202,7 +212,7 @@ public class Parser {
             Long longType = (Long) jsonNode.get("type");
             int intType = longType.intValue();
             SocialNode neighbor = (SocialNode) getOrCreateNode(socialNodes, NodeType.SOCIAL, intId, neighborFeatArr);
-            srcNode.addRelationship(neighbor, Relationship.getRelationship(intType));
+            srcNode.addRelationship(neighbor, SocialRelationship.getRelationship(intType));
         }
         return srcNode;
     }

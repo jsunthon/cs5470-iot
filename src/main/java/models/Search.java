@@ -14,7 +14,6 @@ public class Search {
     private long firstNodeTime;
 
     public static long DEFAULT_TIMEOUT = 5;
-    private static final int MAX_BANDWIDTH = 500;
 
     /* Number of nodes contacted to discover the FIRST node*/
     private int bandwidth;
@@ -44,8 +43,16 @@ public class Search {
     public static int DEFAULT_LIMIT = 3;
     private int limit;
 
-    private String failureReason = "";
+    // The path to the first node discovered
+    private Stack<Edge> firstNodePaths;
 
+    // The node the search begins on
+    private Node rootNode;
+
+    public Search(Node rootNode, Integer search, long start, boolean byFeature) {
+        this(search, start, byFeature);
+        this.rootNode = rootNode;
+    }
 
     public Search(Integer search, long start, boolean byFeature) {
         if (byFeature) {
@@ -57,6 +64,7 @@ public class Search {
             nodeVisited = new LinkedList<>();
             nodes = new HashSet<>();
             limit = DEFAULT_LIMIT;
+
         } else {
             this.start = start;
             this.success = false;
@@ -64,7 +72,10 @@ public class Search {
             this.idToSearch = search;
             nodeVisited = new LinkedList<>();
         }
+
+        firstNodePaths = new Stack<>();
     }
+
 
     public void setEnd(long end) {
         this.end = end;
@@ -167,12 +178,7 @@ public class Search {
         return getCurrentTime() > DEFAULT_TIMEOUT;
     }
 
-
     public boolean hasExceedLimit() {
-        if (hasTimeOuted()) {
-            failureReason = "timeout exceeeded";
-        }
-
         return hasTimeOuted();
     }
 
@@ -183,40 +189,66 @@ public class Search {
 
     @Override
     public String toString() {
-        if (success) {
-            return "{" +
-                    "firstNodeTime: " + getFirstNodeTime() + " "
-                    + "totalTime:" + getTotalTime() + ", "
-                    + "bandwidth:" + bandwidth + ", "
-                    + "total_bandwidth:" + totalBandwidth + ", "
-                    + "success:" + success + ", "
-                    + "feature:" + feature + ", "
-                    + "node:" + node + ", "
-                    + "nodes:" + getNodesStringId()
-                    + "}";
-        } else {
-            return "{" +
-                    "firstNodeTime: " + getFirstNodeTime() + " "
-                    + "totalTime:" + getTotalTime() + ", "
-                    + "bandwidth:" + bandwidth + ", "
-                    + "total_bandwidth:" + totalBandwidth + ", "
-                    + "success:" + success + ", "
-                    + "feature:" + feature + ", "
-                    + "node:" + node + ", "
-                    + "nodes:" + getNodesStringId() + ", "
-                    + "failReason:" + failureReason
-                    + "}";
-        }
+        return "{"
+                + "firstNodeTime: " + getFirstNodeTime() + " "
+                + "firstNodeLatency:" + getFirstNodeLatency() + " "
+                + "totalTime:" + getTotalTime() + ", "
+                + "bandwidth:" + bandwidth + ", "
+                + "total_bandwidth:" + totalBandwidth + ", "
+                + "success:" + success + ", "
+                + "feature:" + feature + ", "
+                + "node:" + node + ", "
+                + "nodes:" + getNodesStringId()
+                + "}";
     }
 
     // Return a string of Search.nodes' id
     private String getNodesStringId() {
-        StringBuilder stringBuilder = new StringBuilder();
+        if (nodes == null || nodes.isEmpty()) return "";
 
+        StringBuilder stringBuilder = new StringBuilder();
         for (Node node : nodes) {
             stringBuilder.append(node.getId());
             stringBuilder.append(",");
         }
         return stringBuilder.toString();
+    }
+
+    public void addFirstNodePath(Edge edge) {
+        firstNodePaths.push(edge);
+    }
+
+    public Stack<Edge> getFirstNodePaths() {
+        return firstNodePaths;
+    }
+
+    public int getFirstNodeLatency() {
+        int latency = 0;
+
+        for (Edge edge : firstNodePaths) {
+            latency += edge.getMs();
+        }
+
+        // One way, multiply value by 2 to get round-trip
+        return latency;
+    }
+
+    public void generatePaths(Stack<Edge> paths) {
+        if (isSuccess()) {
+            Node node = getNode();
+
+            while (!paths.isEmpty()) {
+                Edge path = paths.pop();
+
+                if (path.getDest() == node) {
+                    addFirstNodePath(path);
+                    node = getFirstNodePaths().peek().getSrc();
+                }
+            }
+        }
+    }
+
+    public Node getRootNode() {
+        return rootNode;
     }
 }

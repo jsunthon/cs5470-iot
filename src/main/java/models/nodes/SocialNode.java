@@ -10,9 +10,9 @@ import java.util.*;
 public class SocialNode extends Node {
     private static final Logger logger = LoggerFactory.getLogger(SocialNode.class);
 
-    private Set<Edge> sortedEdges;
+    private Set<Relationship> sortedRelationships;
 
-    private Map<Relationship, LinkedList<Edge>> relationshipMap;
+    private Map<SocialRelationship, LinkedList<Relationship>> relationshipMap;
     private History history;
 
     public static Integer NODE_ID_COUNTER = 0;
@@ -20,31 +20,32 @@ public class SocialNode extends Node {
 
     public SocialNode(Integer id, Manufacturer manufacturer, Role role, TimeToLive timeToLive) {
         super(id, manufacturer, role, timeToLive);
-        relationshipMap = new HashMap<Relationship, LinkedList<Edge>>();
+        relationshipMap = new HashMap<SocialRelationship, LinkedList<Relationship>>();
         history = new History(SocialNode.DEFAULT_MAX_HISTORY_SIZE);
-        sortedEdges = new TreeSet<>(new NodeEdgeCentrality()); //sorted edges
+        sortedRelationships = new TreeSet<>(new NodeEdgeCentrality()); //sorted edges
     }
 
-    public Map<Relationship, LinkedList<Edge>> getRelationshipMap() {
+    public Map<SocialRelationship, LinkedList<Relationship>> getRelationshipMap() {
         return relationshipMap;
     }
 
-    public void addRelationship(SocialNode node, Relationship relationship) {
+    public void addRelationship(SocialNode node, SocialRelationship socialRelationship) {
         if (edgeExists(node)) return;
-        Edge edge = new Edge(this, node, relationship);
-        if (relationshipMap.containsKey(relationship)) {
-            relationshipMap.get(relationship).add(edge);
+
+        Relationship relationship = new Relationship(this, node, socialRelationship);
+        if (relationshipMap.containsKey(socialRelationship)) {
+            relationshipMap.get(socialRelationship).add(relationship);
         } else {
-            LinkedList<Edge> edges = new LinkedList<>();
-            edges.add(edge);
-            relationshipMap.put(relationship, edges);
+            LinkedList<Relationship> relationships = new LinkedList<>();
+            relationships.add(relationship);
+            relationshipMap.put(socialRelationship, relationships);
         }
-        sortedEdges.add(edge);
+        sortedRelationships.add(relationship);
     }
 
     public boolean edgeExists(SocialNode dest) {
-        for (Edge edge : sortedEdges) {
-            if (edge.getDest().equals(dest)) {
+        for (Relationship relationship : sortedRelationships) {
+            if (relationship.getDest().equals(dest)) {
                 return true;
             }
         }
@@ -52,9 +53,9 @@ public class SocialNode extends Node {
     }
 
     public boolean edgeExists(int id, Set<Integer> features, int type) {
-        for (Edge edge : sortedEdges) {
-            if (edge.getRelationship().equals(Relationship.getRelationship(type))) {
-                Node node = edge.getDest();
+        for (Relationship relationship : sortedRelationships) {
+            if (relationship.getSocialRelationship().equals(SocialRelationship.getRelationship(type))) {
+                Node node = relationship.getDest();
                 if (node.getId() == id &&
                         node.getFeatures().equals(features)) {
                     return true;
@@ -72,9 +73,9 @@ public class SocialNode extends Node {
      */
     public int getCentrality() {
         int centrality = 0;
-        for (Map.Entry<Relationship, LinkedList<Edge>> entry : relationshipMap.entrySet()) {
-            LinkedList<Edge> edges = entry.getValue();
-            centrality += edges.size();
+        for (Map.Entry<SocialRelationship, LinkedList<Relationship>> entry : relationshipMap.entrySet()) {
+            LinkedList<Relationship> relationships = entry.getValue();
+            centrality += relationships.size();
         }
         return centrality;
     }
@@ -86,12 +87,12 @@ public class SocialNode extends Node {
 
 	/* ================================================== */
 
-    public Set<Edge> getSortedEdges() {
-        return sortedEdges;
+    public Set<Relationship> getSortedRelationships() {
+        return sortedRelationships;
     }
 
-    public void setSortedEdges(Set<Edge> sortedEdges) {
-        this.sortedEdges = sortedEdges;
+    public void setSortedRelationships(Set<Relationship> sortedRelationships) {
+        this.sortedRelationships = sortedRelationships;
     }
 
     /**
@@ -110,7 +111,7 @@ public class SocialNode extends Node {
         }
 
         /* Initialized the search meta data */
-        Search search = new Search(feature, System.currentTimeMillis(), true);
+        Search search = new Search(this, feature, System.currentTimeMillis(), true);
         history.push(search);
 
         /* Keep Track of the queue and the visited nodes */
@@ -120,10 +121,15 @@ public class SocialNode extends Node {
         /* Dummy values: add self to the queue (first one) */
         nodeQueue.offer(this);
 
+        // All the edge explored to discover the firstNode.
+        // Used later to calculate the latency from this node
+        // to the discovered firstNode
+        Stack<Edge> paths = new Stack<>();
+
         while (!nodeQueue.isEmpty()) {
             SocialNode current = nodeQueue.poll();
             if (search.hasExceedLimit()) {
-               break;
+                break;
             }
 
             /* Don't check the same node twice! */
@@ -164,17 +170,19 @@ public class SocialNode extends Node {
 
             /* Add the all the relationship on to the queue if it has
             * not been visited before */
-            for (Edge edge : current.sortedEdges) {
+            for (Relationship relationship : current.sortedRelationships) {
                 if (search.hasExceedLimit()) {
                     nodeQueue.clear();
                     break;
                 }
-                if (!visited.contains(edge.getDest())) {
-                    nodeQueue.offer(edge.getDest());
+                if (!visited.contains(relationship.getDest())) {
+                    nodeQueue.offer(relationship.getDest());
+                    paths.push(relationship);
                 }
             }
         }
         search.setEnd(System.currentTimeMillis());
+        search.generatePaths(paths);
         return search;
     }
 
@@ -190,7 +198,7 @@ public class SocialNode extends Node {
         }
 
         /* Initialized the search meta data */
-        Search search = new Search(id, System.currentTimeMillis(), false);
+        Search search = new Search(this, id, System.currentTimeMillis(), false);
         history.push(search);
 
         /* Keep Track of the queue and the visited nodes */
@@ -200,10 +208,15 @@ public class SocialNode extends Node {
         /* Dummy values: add self to the queue (first one) */
         nodeQueue.offer(this);
 
+        // All the edge explored to discover the firstNode.
+        // Used later to calculate the latency from this node
+        // to the discovered firstNode
+        Stack<Edge> paths = new Stack<>();
+
         while (!nodeQueue.isEmpty()) {
             SocialNode current = nodeQueue.poll();
             if (search.hasExceedLimit()) {
-            	break;
+                break;
             }
             /* Don't check the same node twice! */
             if (visited.contains(current)) {
@@ -223,19 +236,21 @@ public class SocialNode extends Node {
 
             /* Add all the relationship on to the queue if it has
             * not been visited before */
-            for (Edge edge : current.sortedEdges) {
-                if (!visited.contains(edge.getDest())) {
-                    nodeQueue.offer(edge.getDest());
+            for (Relationship relationship : current.sortedRelationships) {
+                if (!visited.contains(relationship.getDest())) {
+                    nodeQueue.offer(relationship.getDest());
+                    paths.push(relationship);
                 }
             }
         }
         search.setEnd(System.currentTimeMillis());
+        search.generatePaths(paths);
         return search;
     }
 
-    private class NodeEdgeCentrality implements Comparator<Edge> {
+    private class NodeEdgeCentrality implements Comparator<Relationship> {
         @Override
-        public int compare(Edge e1, Edge e2) {
+        public int compare(Relationship e1, Relationship e2) {
             int centralityDest1 = e1.getDest().getCentrality();
             int centralityDest2 = e2.getDest().getCentrality();
 
@@ -256,9 +271,9 @@ public class SocialNode extends Node {
 
     // Used after parsing nodes. Hacky solution
     public void resortEdges() {
-        Set<Edge> setEdges = new TreeSet<>(new NodeEdgeCentrality()); //sorted edges
-        setEdges.addAll(sortedEdges);
-        sortedEdges = setEdges;
+        Set<Relationship> setRelationships = new TreeSet<>(new NodeEdgeCentrality()); //sorted edges
+        setRelationships.addAll(sortedRelationships);
+        sortedRelationships = setRelationships;
     }
 
 }

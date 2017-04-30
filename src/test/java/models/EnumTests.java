@@ -14,19 +14,19 @@ public class EnumTests {
 
     @Test
     public void TestRandomRelationship() {
-        Assert.assertNotNull(Relationship.randomRelationship());
+        Assert.assertNotNull(SocialRelationship.randomRelationship());
     }
     
     @Test
     public void TestTargetRelationship() {
-    	Relationship relationship1 = Relationship.getRelationship(1);
-    	Assert.assertEquals(Relationship.ACQUAINTANCE, relationship1);
-    	Relationship relationship2 = Relationship.getRelationship(2);
-    	Assert.assertEquals(Relationship.CO_WORKER,  relationship2);
-    	Relationship relationship3 = Relationship.getRelationship(3);
-    	Assert.assertEquals(Relationship.FAMILY, relationship3);
-    	Relationship relationship4 = Relationship.getRelationship(4);
-    	Assert.assertEquals(Relationship.FRIEND, relationship4);
+    	SocialRelationship socialRelationship1 = SocialRelationship.getRelationship(1);
+    	Assert.assertEquals(SocialRelationship.ACQUAINTANCE, socialRelationship1);
+    	SocialRelationship socialRelationship2 = SocialRelationship.getRelationship(2);
+    	Assert.assertEquals(SocialRelationship.CO_WORKER, socialRelationship2);
+    	SocialRelationship socialRelationship3 = SocialRelationship.getRelationship(3);
+    	Assert.assertEquals(SocialRelationship.FAMILY, socialRelationship3);
+    	SocialRelationship socialRelationship4 = SocialRelationship.getRelationship(4);
+    	Assert.assertEquals(SocialRelationship.FRIEND, socialRelationship4);
     }
 
     @Test

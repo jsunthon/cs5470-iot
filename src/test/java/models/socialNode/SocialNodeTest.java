@@ -22,7 +22,7 @@ public class SocialNodeTest {
     public void centralityTest2() throws Exception {
         SocialNode sn0 = getTestSocialNode(0);
         SocialNode sn1 = getTestSocialNode(1);
-        sn0.addRelationship(sn1, Relationship.FRIEND);
+        sn0.addRelationship(sn1, SocialRelationship.FRIEND);
 
         Assert.assertEquals(1, sn0.getCentrality());
     }
@@ -33,8 +33,8 @@ public class SocialNodeTest {
         SocialNode sn0 = getTestSocialNode(0);
         SocialNode sn1 = getTestSocialNode(1);
         SocialNode sn2 = getTestSocialNode(2);
-        sn0.addRelationship(sn1, Relationship.FRIEND);
-        sn0.addRelationship(sn2, Relationship.FRIEND);
+        sn0.addRelationship(sn1, SocialRelationship.FRIEND);
+        sn0.addRelationship(sn2, SocialRelationship.FRIEND);
 
         Assert.assertEquals(2, sn0.getCentrality());
     }
@@ -46,14 +46,14 @@ public class SocialNodeTest {
 
         SocialNode sn1 = getTestSocialNode(1);
         SocialNode sn2 = getTestSocialNode(2);
-        sn1.addRelationship(sn2, Relationship.FAMILY);
+        sn1.addRelationship(sn2, SocialRelationship.FAMILY);
 
         SocialNode sn3 = getTestSocialNode(3);
         SocialNode sn4 = getTestSocialNode(4);
-        sn3.addRelationship(sn4, Relationship.FRIEND);
+        sn3.addRelationship(sn4, SocialRelationship.FRIEND);
 
-        sn0.addRelationship(sn1, Relationship.FRIEND);
-        sn0.addRelationship(sn4, Relationship.FAMILY);
+        sn0.addRelationship(sn1, SocialRelationship.FRIEND);
+        sn0.addRelationship(sn4, SocialRelationship.FAMILY);
 
         Assert.assertEquals(2, sn0.getCentrality());
     }
@@ -66,14 +66,14 @@ public class SocialNodeTest {
 
         SocialNode sn1 = getTestSocialNode(1);
         SocialNode sn2 = getTestSocialNode(2);
-        sn1.addRelationship(sn2, Relationship.FRIEND);
+        sn1.addRelationship(sn2, SocialRelationship.FRIEND);
 
         SocialNode sn3 = getTestSocialNode(3);
         SocialNode sn4 = getTestSocialNode(4);
-        sn3.addRelationship(sn4, Relationship.FRIEND);
+        sn3.addRelationship(sn4, SocialRelationship.FRIEND);
 
-        sn0.addRelationship(sn1, Relationship.FRIEND);
-        sn0.addRelationship(sn4, Relationship.FAMILY);
+        sn0.addRelationship(sn1, SocialRelationship.FRIEND);
+        sn0.addRelationship(sn4, SocialRelationship.FAMILY);
 
         Assert.assertEquals(2, sn0.getCentrality());
     }
@@ -87,17 +87,17 @@ public class SocialNodeTest {
         SocialNode sn1 = getTestSocialNode(1);
         SocialNode sn2 = getTestSocialNode(2);
         SocialNode sn3 = getTestSocialNode(3);
-        sn1.addRelationship(sn2, Relationship.FRIEND);
-        sn1.addRelationship(sn3, Relationship.FAMILY);
+        sn1.addRelationship(sn2, SocialRelationship.FRIEND);
+        sn1.addRelationship(sn3, SocialRelationship.FAMILY);
 
         SocialNode sn4 = getTestSocialNode(4);
         SocialNode sn5 = getTestSocialNode(5);
         SocialNode sn6 = getTestSocialNode(5);
-        sn4.addRelationship(sn5, Relationship.FRIEND);
-        sn4.addRelationship(sn6, Relationship.FRIEND);
+        sn4.addRelationship(sn5, SocialRelationship.FRIEND);
+        sn4.addRelationship(sn6, SocialRelationship.FRIEND);
 
-        sn0.addRelationship(sn1, Relationship.FRIEND);
-        sn0.addRelationship(sn4, Relationship.FRIEND);
+        sn0.addRelationship(sn1, SocialRelationship.FRIEND);
+        sn0.addRelationship(sn4, SocialRelationship.FRIEND);
 
         Assert.assertEquals("should be 2", 2, sn0.getCentrality());
     }
@@ -113,37 +113,37 @@ public class SocialNodeTest {
 
         // Two relationships
         SocialNode sn1 = node1With2Relationship(
-                Relationship.ACQUAINTANCE, Relationship.FAMILY);
+                SocialRelationship.ACQUAINTANCE, SocialRelationship.FAMILY);
         SocialNode sn4 = node4With2Relationship(
-                Relationship.ACQUAINTANCE, Relationship.FAMILY);
+                SocialRelationship.ACQUAINTANCE, SocialRelationship.FAMILY);
 
         // Three relationships
         SocialNode sn7 = node7With3Relationship(
-                Relationship.ACQUAINTANCE, Relationship.CO_WORKER,
-                Relationship.FAMILY);
+                SocialRelationship.ACQUAINTANCE, SocialRelationship.CO_WORKER,
+                SocialRelationship.FAMILY);
         SocialNode sn11 = node11With3Relationship(
-                Relationship.ACQUAINTANCE, Relationship.CO_WORKER,
-                Relationship.FAMILY);
+                SocialRelationship.ACQUAINTANCE, SocialRelationship.CO_WORKER,
+                SocialRelationship.FAMILY);
 
         // Four relationships
         SocialNode sn15 = node15With4Relationship(
-                Relationship.ACQUAINTANCE, Relationship.CO_WORKER,
-                Relationship.FAMILY, Relationship.FRIEND
+                SocialRelationship.ACQUAINTANCE, SocialRelationship.CO_WORKER,
+                SocialRelationship.FAMILY, SocialRelationship.FRIEND
         );
         SocialNode sn20 = node20With4Relationship(
-                Relationship.ACQUAINTANCE, Relationship.ACQUAINTANCE,
-                Relationship.CO_WORKER, Relationship.FAMILY
+                SocialRelationship.ACQUAINTANCE, SocialRelationship.ACQUAINTANCE,
+                SocialRelationship.CO_WORKER, SocialRelationship.FAMILY
         );
 
-        sn0.addRelationship(sn1, Relationship.CO_WORKER);
-        sn0.addRelationship(sn4, Relationship.ACQUAINTANCE);
-        sn0.addRelationship(sn7, Relationship.FAMILY);
-        sn0.addRelationship(sn11, Relationship.FRIEND);
-        sn0.addRelationship(sn15, Relationship.FRIEND);
-        sn0.addRelationship(sn20, Relationship.FRIEND);
+        sn0.addRelationship(sn1, SocialRelationship.CO_WORKER);
+        sn0.addRelationship(sn4, SocialRelationship.ACQUAINTANCE);
+        sn0.addRelationship(sn7, SocialRelationship.FAMILY);
+        sn0.addRelationship(sn11, SocialRelationship.FRIEND);
+        sn0.addRelationship(sn15, SocialRelationship.FRIEND);
+        sn0.addRelationship(sn20, SocialRelationship.FRIEND);
 
-        TreeSet<Edge> edges = (TreeSet<Edge>) sn0.getSortedEdges();
-        List<Edge> list = new ArrayList<>(edges);
+        TreeSet<Relationship> relationships = (TreeSet<Relationship>) sn0.getSortedRelationships();
+        List<Relationship> list = new ArrayList<>(relationships);
 
         Assert.assertEquals(15, list.get(0).getDest().getId());
         Assert.assertEquals(20, list.get(1).getDest().getId());
@@ -152,7 +152,7 @@ public class SocialNodeTest {
         Assert.assertEquals(1, list.get(4).getDest().getId());
         Assert.assertEquals(4, list.get(5).getDest().getId());
 
-        System.out.println(edges);
+        System.out.println(relationships);
     }
 
     @Test
@@ -165,39 +165,39 @@ public class SocialNodeTest {
 
         // Two relationships
         SocialNode sn1 = node1With2Relationship(
-                Relationship.ACQUAINTANCE, Relationship.FAMILY);
+                SocialRelationship.ACQUAINTANCE, SocialRelationship.FAMILY);
         SocialNode sn4 = node4With2Relationship(
-                Relationship.ACQUAINTANCE, Relationship.FAMILY);
+                SocialRelationship.ACQUAINTANCE, SocialRelationship.FAMILY);
 
         // Three relationships
         SocialNode sn7 = node7With3Relationship(
-                Relationship.ACQUAINTANCE, Relationship.CO_WORKER,
-                Relationship.FAMILY);
+                SocialRelationship.ACQUAINTANCE, SocialRelationship.CO_WORKER,
+                SocialRelationship.FAMILY);
         SocialNode sn11 = node11With3Relationship(
-                Relationship.ACQUAINTANCE, Relationship.CO_WORKER,
-                Relationship.FAMILY);
+                SocialRelationship.ACQUAINTANCE, SocialRelationship.CO_WORKER,
+                SocialRelationship.FAMILY);
 
         // Four relationships
         SocialNode sn15 = node15With4Relationship(
-                Relationship.ACQUAINTANCE, Relationship.CO_WORKER,
-                Relationship.FAMILY, Relationship.FRIEND
+                SocialRelationship.ACQUAINTANCE, SocialRelationship.CO_WORKER,
+                SocialRelationship.FAMILY, SocialRelationship.FRIEND
         );
         SocialNode sn20 = node20With4Relationship(
-                Relationship.ACQUAINTANCE, Relationship.ACQUAINTANCE,
-                Relationship.CO_WORKER, Relationship.FAMILY
+                SocialRelationship.ACQUAINTANCE, SocialRelationship.ACQUAINTANCE,
+                SocialRelationship.CO_WORKER, SocialRelationship.FAMILY
         );
 
-        sn0.addRelationship(sn1, Relationship.CO_WORKER);     // 2
-        sn0.addRelationship(sn20, Relationship.FRIEND);       // 4
+        sn0.addRelationship(sn1, SocialRelationship.CO_WORKER);     // 2
+        sn0.addRelationship(sn20, SocialRelationship.FRIEND);       // 4
 
-        sn0.addRelationship(sn15, Relationship.FRIEND);       // 4
-        sn0.addRelationship(sn11, Relationship.FRIEND);       // 3
+        sn0.addRelationship(sn15, SocialRelationship.FRIEND);       // 4
+        sn0.addRelationship(sn11, SocialRelationship.FRIEND);       // 3
 
-        sn0.addRelationship(sn7, Relationship.FAMILY);        // 3
-        sn0.addRelationship(sn4, Relationship.ACQUAINTANCE);  // 2
+        sn0.addRelationship(sn7, SocialRelationship.FAMILY);        // 3
+        sn0.addRelationship(sn4, SocialRelationship.ACQUAINTANCE);  // 2
 
-        TreeSet<Edge> edges = (TreeSet<Edge>) sn0.getSortedEdges();
-        List<Edge> list = new ArrayList<>(edges);
+        TreeSet<Relationship> relationships = (TreeSet<Relationship>) sn0.getSortedRelationships();
+        List<Relationship> list = new ArrayList<>(relationships);
 
         Assert.assertEquals(15, list.get(0).getDest().getId());
         Assert.assertEquals(20, list.get(1).getDest().getId());
@@ -206,7 +206,7 @@ public class SocialNodeTest {
         Assert.assertEquals(1, list.get(4).getDest().getId());
         Assert.assertEquals(4, list.get(5).getDest().getId());
 
-        System.out.println(edges);
+        System.out.println(relationships);
     }
     /* ******************************************* */
     /* *************** SET UP DATA *************** */
@@ -222,7 +222,7 @@ public class SocialNodeTest {
         return mf;
     }
 
-    public SocialNode node1With2Relationship(Relationship r1, Relationship r2) {
+    public SocialNode node1With2Relationship(SocialRelationship r1, SocialRelationship r2) {
         SocialNode sn1 = getTestSocialNode(1);
 
         SocialNode sn2 = getTestSocialNode(2);
@@ -234,7 +234,7 @@ public class SocialNodeTest {
         return sn1;
     }
 
-    public SocialNode node4With2Relationship(Relationship r1, Relationship r2) {
+    public SocialNode node4With2Relationship(SocialRelationship r1, SocialRelationship r2) {
         SocialNode sn4 = getTestSocialNode(4);
 
         SocialNode sn5 = getTestSocialNode(5);
@@ -246,8 +246,8 @@ public class SocialNodeTest {
         return sn4;
     }
 
-    public SocialNode node7With3Relationship(Relationship r1, Relationship r2,
-                                             Relationship r3) {
+    public SocialNode node7With3Relationship(SocialRelationship r1, SocialRelationship r2,
+                                             SocialRelationship r3) {
         SocialNode sn7 = getTestSocialNode(7);
 
         SocialNode sn8 = getTestSocialNode(8);
@@ -261,8 +261,8 @@ public class SocialNodeTest {
         return sn7;
     }
 
-    public SocialNode node11With3Relationship(Relationship r1, Relationship r2,
-                                              Relationship r3) {
+    public SocialNode node11With3Relationship(SocialRelationship r1, SocialRelationship r2,
+                                              SocialRelationship r3) {
         SocialNode sn11 = getTestSocialNode(11);
 
         SocialNode sn12 = getTestSocialNode(12);
@@ -276,8 +276,8 @@ public class SocialNodeTest {
         return sn11;
     }
 
-    public SocialNode node15With4Relationship(Relationship r1, Relationship r2,
-                                              Relationship r3, Relationship r4) {
+    public SocialNode node15With4Relationship(SocialRelationship r1, SocialRelationship r2,
+                                              SocialRelationship r3, SocialRelationship r4) {
 
         SocialNode sn15 = getTestSocialNode(15);
 
@@ -294,8 +294,8 @@ public class SocialNodeTest {
         return sn15;
     }
 
-    public SocialNode node20With4Relationship(Relationship r1, Relationship r2,
-                                              Relationship r3, Relationship r4) {
+    public SocialNode node20With4Relationship(SocialRelationship r1, SocialRelationship r2,
+                                              SocialRelationship r3, SocialRelationship r4) {
 
         SocialNode sn20 = getTestSocialNode(20);
 
