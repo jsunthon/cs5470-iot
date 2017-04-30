@@ -20,13 +20,13 @@ public class DiscoverTestById {
         SocialNode f1f1 = getFeatureNode(10, -4);
         SocialNode f1f2 = getFeatureNode(11, -5);
 
-        friend1.addRelationship(f1f1, Relationship.ACQUAINTANCE);
-        f1f1.addRelationship(getFeatureNode(100, -6), Relationship.ACQUAINTANCE);
-        f1f1.addRelationship(getFeatureNode(101, -6), Relationship.ACQUAINTANCE);
+        friend1.addRelationship(f1f1, SocialRelationship.ACQUAINTANCE);
+        f1f1.addRelationship(getFeatureNode(100, -6), SocialRelationship.ACQUAINTANCE);
+        f1f1.addRelationship(getFeatureNode(101, -6), SocialRelationship.ACQUAINTANCE);
 
-        friend1.addRelationship(f1f2, Relationship.ACQUAINTANCE);
-        f1f2.addRelationship(getFeatureNode(110, -7), Relationship.ACQUAINTANCE);
-        f1f2.addRelationship(getFeatureNode(111, -5), Relationship.FRIEND);
+        friend1.addRelationship(f1f2, SocialRelationship.ACQUAINTANCE);
+        f1f2.addRelationship(getFeatureNode(110, -7), SocialRelationship.ACQUAINTANCE);
+        f1f2.addRelationship(getFeatureNode(111, -5), SocialRelationship.FRIEND);
 
         // Friend 2 and his nested relationship
         // depth = 1
@@ -35,30 +35,30 @@ public class DiscoverTestById {
         SocialNode f2f2 = getFeatureNode(21, -8);
 
         // depth = 2
-        friend2.addRelationship(f2f1, Relationship.ACQUAINTANCE);
-        friend2.addRelationship(f2f2, Relationship.CO_WORKER);
+        friend2.addRelationship(f2f1, SocialRelationship.ACQUAINTANCE);
+        friend2.addRelationship(f2f2, SocialRelationship.CO_WORKER);
 
         // depth = 3
-        f2f1.addRelationship(getFeatureNode(200, -9), Relationship.ACQUAINTANCE);
-        f2f1.addRelationship(getFeatureNode(201, -3), Relationship.ACQUAINTANCE);
+        f2f1.addRelationship(getFeatureNode(200, -9), SocialRelationship.ACQUAINTANCE);
+        f2f1.addRelationship(getFeatureNode(201, -3), SocialRelationship.ACQUAINTANCE);
 
         SocialNode f2f2f1 = getFeatureNode(210, -8);
         SocialNode f2f2f2 = getFeatureNode(211, -6);
 
         // depth = 3, again
-        f2f2.addRelationship(f2f2f1, Relationship.FRIEND);
-        f2f2.addRelationship(f2f2f2, Relationship.CO_WORKER);
+        f2f2.addRelationship(f2f2f1, SocialRelationship.FRIEND);
+        f2f2.addRelationship(f2f2f2, SocialRelationship.CO_WORKER);
 
         SocialNode f2f2f2f1 = getFeatureNode(21100, -2);
         SocialNode f2f2f2f2 = getFeatureNode(21101, -5);
 
         // depth = 4
-        f2f2f2.addRelationship(f2f2f2f1, Relationship.ACQUAINTANCE);
-        f2f2f2.addRelationship(f2f2f2f2, Relationship.CO_WORKER);
+        f2f2f2.addRelationship(f2f2f2f1, SocialRelationship.ACQUAINTANCE);
+        f2f2f2.addRelationship(f2f2f2f2, SocialRelationship.CO_WORKER);
 
         // Add friends to main
-        main.addRelationship(friend1, Relationship.FRIEND);
-        main.addRelationship(friend2, Relationship.FRIEND);
+        main.addRelationship(friend1, SocialRelationship.FRIEND);
+        main.addRelationship(friend2, SocialRelationship.FRIEND);
 
         // The searched featured
         Search searchResult = main.discoverById(21101);
@@ -81,13 +81,13 @@ public class DiscoverTestById {
         SocialNode f1f1 = getFeatureNode(10, -4);
         SocialNode f1f2 = getFeatureNode(11, -10);
 
-        friend1.addRelationship(f1f1, Relationship.ACQUAINTANCE);
-        f1f1.addRelationship(getFeatureNode(100, -6), Relationship.ACQUAINTANCE);
-        f1f1.addRelationship(getFeatureNode(101, -6), Relationship.ACQUAINTANCE);
+        friend1.addRelationship(f1f1, SocialRelationship.ACQUAINTANCE);
+        f1f1.addRelationship(getFeatureNode(100, -6), SocialRelationship.ACQUAINTANCE);
+        f1f1.addRelationship(getFeatureNode(101, -6), SocialRelationship.ACQUAINTANCE);
 
-        friend1.addRelationship(f1f2, Relationship.ACQUAINTANCE);
-        f1f2.addRelationship(getFeatureNode(110, -7), Relationship.ACQUAINTANCE);
-        f1f2.addRelationship(getFeatureNode(111, -11), Relationship.FRIEND);
+        friend1.addRelationship(f1f2, SocialRelationship.ACQUAINTANCE);
+        f1f2.addRelationship(getFeatureNode(110, -7), SocialRelationship.ACQUAINTANCE);
+        f1f2.addRelationship(getFeatureNode(111, -11), SocialRelationship.FRIEND);
 
         // Friend 2 and his nested relationship
         // depth = 1
@@ -96,30 +96,30 @@ public class DiscoverTestById {
         SocialNode f2f2 = getFeatureNode(21, -8);
 
         // depth = 2
-        friend2.addRelationship(f2f1, Relationship.ACQUAINTANCE);
-        friend2.addRelationship(f2f2, Relationship.CO_WORKER);
+        friend2.addRelationship(f2f1, SocialRelationship.ACQUAINTANCE);
+        friend2.addRelationship(f2f2, SocialRelationship.CO_WORKER);
 
         // depth = 3
-        f2f1.addRelationship(getFeatureNode(200, -9), Relationship.ACQUAINTANCE);
-        f2f1.addRelationship(getFeatureNode(201, -3), Relationship.ACQUAINTANCE);
+        f2f1.addRelationship(getFeatureNode(200, -9), SocialRelationship.ACQUAINTANCE);
+        f2f1.addRelationship(getFeatureNode(201, -3), SocialRelationship.ACQUAINTANCE);
 
         SocialNode f2f2f1 = getFeatureNode(210, -8);
         SocialNode f2f2f2 = getFeatureNode(211, -6);
 
         // depth = 3, again
-        f2f2.addRelationship(f2f2f1, Relationship.FRIEND);
-        f2f2.addRelationship(f2f2f2, Relationship.CO_WORKER);
+        f2f2.addRelationship(f2f2f1, SocialRelationship.FRIEND);
+        f2f2.addRelationship(f2f2f2, SocialRelationship.CO_WORKER);
 
         SocialNode f2f2f2f1 = getFeatureNode(21100, -2);
         SocialNode f2f2f2f2 = getFeatureNode(21101, -9);
 
         // depth = 4
-        f2f2f2.addRelationship(f2f2f2f1, Relationship.ACQUAINTANCE);
-        f2f2f2.addRelationship(f2f2f2f2, Relationship.CO_WORKER);
+        f2f2f2.addRelationship(f2f2f2f1, SocialRelationship.ACQUAINTANCE);
+        f2f2f2.addRelationship(f2f2f2f2, SocialRelationship.CO_WORKER);
 
         // Add friends to main
-        main.addRelationship(friend1, Relationship.FRIEND);
-        main.addRelationship(friend2, Relationship.FRIEND);
+        main.addRelationship(friend1, SocialRelationship.FRIEND);
+        main.addRelationship(friend2, SocialRelationship.FRIEND);
 
         // The searched featured
         Search searchResult = main.discoverById(9999);
@@ -141,13 +141,13 @@ public class DiscoverTestById {
         SocialNode f1f1 = getFeatureNode(10, -4);
         SocialNode f1f2 = getFeatureNode(11, -5);
 
-        friend1.addRelationship(f1f1, Relationship.ACQUAINTANCE);
-        f1f1.addRelationship(getFeatureNode(100, -6), Relationship.ACQUAINTANCE);
-        f1f1.addRelationship(getFeatureNode(101, -6), Relationship.ACQUAINTANCE);
+        friend1.addRelationship(f1f1, SocialRelationship.ACQUAINTANCE);
+        f1f1.addRelationship(getFeatureNode(100, -6), SocialRelationship.ACQUAINTANCE);
+        f1f1.addRelationship(getFeatureNode(101, -6), SocialRelationship.ACQUAINTANCE);
 
-        friend1.addRelationship(f1f2, Relationship.ACQUAINTANCE);
-        f1f2.addRelationship(getFeatureNode(110, -7), Relationship.ACQUAINTANCE);
-        f1f2.addRelationship(getFeatureNode(111, -5), Relationship.FRIEND);
+        friend1.addRelationship(f1f2, SocialRelationship.ACQUAINTANCE);
+        f1f2.addRelationship(getFeatureNode(110, -7), SocialRelationship.ACQUAINTANCE);
+        f1f2.addRelationship(getFeatureNode(111, -5), SocialRelationship.FRIEND);
 
         // Friend 2 and his nested relationship
         // depth = 1
@@ -156,30 +156,30 @@ public class DiscoverTestById {
         SocialNode f2f2 = getFeatureNode(21, -8);
 
         // depth = 2
-        friend2.addRelationship(f2f1, Relationship.ACQUAINTANCE);
-        friend2.addRelationship(f2f2, Relationship.CO_WORKER);
+        friend2.addRelationship(f2f1, SocialRelationship.ACQUAINTANCE);
+        friend2.addRelationship(f2f2, SocialRelationship.CO_WORKER);
 
         // depth = 3
-        f2f1.addRelationship(getFeatureNode(200, -9), Relationship.ACQUAINTANCE);
-        f2f1.addRelationship(getFeatureNode(201, -3), Relationship.ACQUAINTANCE);
+        f2f1.addRelationship(getFeatureNode(200, -9), SocialRelationship.ACQUAINTANCE);
+        f2f1.addRelationship(getFeatureNode(201, -3), SocialRelationship.ACQUAINTANCE);
 
         SocialNode f2f2f1 = getFeatureNode(210, -8);
         SocialNode f2f2f2 = getFeatureNode(211, -6);
 
         // depth = 3, again
-        f2f2.addRelationship(f2f2f1, Relationship.FRIEND);
-        f2f2.addRelationship(f2f2f2, Relationship.CO_WORKER);
+        f2f2.addRelationship(f2f2f1, SocialRelationship.FRIEND);
+        f2f2.addRelationship(f2f2f2, SocialRelationship.CO_WORKER);
 
         SocialNode f2f2f2f1 = getFeatureNode(21100, -2);
         SocialNode f2f2f2f2 = getFeatureNode(21101, -5);
 
         // depth = 4
-        f2f2f2.addRelationship(f2f2f2f1, Relationship.ACQUAINTANCE);
-        f2f2f2.addRelationship(f2f2f2f2, Relationship.CO_WORKER);
+        f2f2f2.addRelationship(f2f2f2f1, SocialRelationship.ACQUAINTANCE);
+        f2f2f2.addRelationship(f2f2f2f2, SocialRelationship.CO_WORKER);
 
         // Add friends to main
-        main.addRelationship(friend1, Relationship.FRIEND);
-        main.addRelationship(friend2, Relationship.FRIEND);
+        main.addRelationship(friend1, SocialRelationship.FRIEND);
+        main.addRelationship(friend2, SocialRelationship.FRIEND);
 
         // The searched featured
         Search searchResult = main.discoverById(11);

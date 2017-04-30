@@ -351,6 +351,7 @@ public class DiscoverTestsByFeature {
         Search searchResult = main.discover(-999);
         System.out.println(searchResult);
         System.out.println(searchResult.getNodeVisited());
+        System.out.println(searchResult.getFirstNodePaths());
 
         // Tests
         Assert.assertTrue(searchResult.isSuccess());

@@ -77,6 +77,10 @@ public abstract class Node {
         return role;
     }
 
+    public boolean hasFeature(Integer feature) {
+        return features.contains(feature);
+    }
+
     @Override
     public String toString() {
         return "{id:" + id + "}";

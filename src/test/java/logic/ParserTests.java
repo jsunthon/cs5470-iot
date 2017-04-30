@@ -2,21 +2,12 @@ package logic;
 
 import java.util.*;
 
+import models.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import logic.App;
-import models.Edge;
-import models.Feature;
-import models.Manufacturer;
-import models.Owner;
-import models.Relationship;
-import models.Role;
-import models.TimeToLive;
 import models.nodes.MasterNode;
 import models.nodes.Node;
 import models.nodes.NodeType;
@@ -25,7 +16,7 @@ import models.nodes.SocialNode;
 import models.nodes.DecentralizedNode;
 
 public class ParserTests {
-	
+
 	@Test
 	public void testGetOrCreateNode() {
 		Parser parser = initParser();
@@ -42,7 +33,7 @@ public class ParserTests {
 		Assert.assertTrue(node3.getFeatures().contains(5));
 		Assert.assertFalse(node3.getFeatures().contains(3));
 	}
-	
+
 	@Test
 	public void testGenSocialNode() {
 		Parser parser = initParser();
@@ -70,25 +61,22 @@ public class ParserTests {
 		testRelations(node1, relations.iterator());
 		testRelations(node2, relations.iterator());
 	}
-	
+
 	@Test
 	public void testParseAndGenSocial() {
 		Parser parser = initParser();
-		parser.parseAndGenSocial("./src/main/javascript/nodes-1.json");
+		parser.parseAndGenSocial("./src/main/javascript/node-20k-feat-1k.json");
 		Node[] nodes = parser.getSocialNodes();
 		Assert.assertEquals(20001, nodes.length);
 		Assert.assertNotNull(nodes[20000]);
 		Assert.assertNotNull(nodes[1]);
 		Assert.assertNull(nodes[0]);
-		Assert.assertTrue(((SocialNode) nodes[1]).getFeatures().contains(716));
-		Assert.assertTrue(((SocialNode) nodes[1]).getFeatures().contains(524));
-		Assert.assertTrue(((SocialNode) nodes[9021]).getFeatures().contains(728));
-		Assert.assertTrue(((SocialNode) nodes[9021]).getFeatures().contains(27));
-		Assert.assertTrue(((SocialNode) nodes[16221]).getFeatures().contains(319));
-		Assert.assertTrue(((SocialNode) nodes[16221]).getFeatures().contains(525));
-		Assert.assertFalse(((SocialNode) nodes[16221]).getFeatures().contains(1));
+		Assert.assertTrue(((SocialNode) nodes[1]).getFeatures().contains(325));
+		Assert.assertTrue(((SocialNode) nodes[1]).getFeatures().contains(409));
+		Assert.assertTrue(((SocialNode) nodes[20000]).getFeatures().contains(163));
+		Assert.assertTrue(((SocialNode) nodes[20000]).getFeatures().contains(413));
 	}
-		
+
 	@Test
 	public void testGenNodeFromSocial() {
 		Parser parser = initParser();
@@ -102,11 +90,11 @@ public class ParserTests {
 		masterNode.addSlaveNode(slaveNode);
 		Assert.assertTrue(masterNode.hasSlaveNode(slaveNode));
 	}
-	
+
 	@Test
 	public void testGenCentral() {
 		Parser parser = initParser();
-		parser.parseAndGenSocial("./src/main/javascript/nodes-1.json");
+		parser.parseAndGenSocial("./src/main/javascript/node-20k-feat-1k.json");
 		Assert.assertTrue(parser.genCentral());
 		Node[] socialNodes = parser.getSocialNodes();
 		Node[] centralNodes = parser.getCentralNodes();
@@ -131,7 +119,7 @@ public class ParserTests {
 			}
 		}
 	}
-	
+
 	@Test
 	public void testGetOrCreateDecenNode() {
 		Parser parser = initParser();
@@ -160,11 +148,11 @@ public class ParserTests {
 		testSocialCopy(node2, decenNode2);
 		testSocialCopy(node10000, decenNode10000);
 	}
-	
+
 	@Test
 	public void testGenDecentral() {
 		Parser parser = initParser();
-		parser.parseAndGenSocial("./src/main/javascript/nodes-1.json");
+		parser.parseAndGenSocial("./src/main/javascript/node-20k-feat-1k.json");
 		Assert.assertTrue(parser.genDecentral());
 		Node[] socialNodes = parser.getSocialNodes();
 		Node[] decentralNodes = parser.getDecentralNodes();
@@ -177,7 +165,7 @@ public class ParserTests {
 			testDecentralSocialCopy(socialNode, decenNode);
 		}
 	}
-	
+
 	public void testRelations(SocialNode node, Iterator<JSONObject> relations) {
 		while (relations.hasNext()) {
 			JSONObject relation = relations.next();
@@ -187,7 +175,7 @@ public class ParserTests {
 			Assert.assertTrue(node.edgeExists(id, featArrToSet(features), type));
 		}
 	}
-	
+
 	private static void testSocialCopy(SocialNode socialNode, Node node) {
 		Assert.assertEquals(socialNode.getId(), node.getId());
 		Assert.assertEquals(socialNode.getFeatures(), node.getFeatures());
@@ -198,41 +186,41 @@ public class ParserTests {
 		Assert.assertEquals(socialNode.getTimeToLive(), node.getTimeToLive());
 		Assert.assertEquals(socialNode.getRole(), node.getRole());
 	}
-	
+
 	private static void testDecentralSocialCopy(SocialNode socialNode, DecentralizedNode node) {
-		Set<DecentralizedNode> decenNeighbors = node.getNeighbors();
-		Set<Edge> socialEdges = socialNode.getSortedEdges();
+		Set<Neighbor> decenNeighbors = node.getNeighbors();
+		Set<Relationship> socialEdges = socialNode.getSortedRelationships();
 		Assert.assertEquals(decenNeighbors.size(), socialEdges.size());
-		for (DecentralizedNode neighbor : decenNeighbors) {
+		for (Neighbor neighbor : decenNeighbors) {
 			Assert.assertTrue(socialEdgesContainsNeighbor(neighbor, socialEdges));
 		}
 		testSocialCopy(socialNode, node);
 	}
-	
-	private static boolean socialEdgesContainsNeighbor(DecentralizedNode neighbor, Set<Edge> socialEdges) {
+
+	private static boolean socialEdgesContainsNeighbor(Neighbor neighbor, Set<Relationship> socialEdges) {
 		if (neighbor != null) {
-			for (Edge socialEdge : socialEdges) {
+			for (Relationship socialEdge : socialEdges) {
 				SocialNode socialNode = socialEdge.getDest();
-				if (socialNode.getId() == neighbor.getId()) return true;
+				if (socialNode.getId() == neighbor.getDest().getId()) return true;
 			}
 		}
 		return false;
 	}
-	
+
 	private static SocialNode genSocialNode(
-			int id, 
+			int id,
 			Integer[] features,
-			String ownerName, 
+			String ownerName,
 			String manufName) {
 		RandEnvGenerator randEnvGen = RandEnvGenerator.getInstance();
 		Owner owner = new Owner(ownerName);
 		Manufacturer manuf = new Manufacturer(manufName);
-		SocialNode socialNode = (SocialNode) randEnvGen.genNode(NodeType.SOCIAL, 
+		SocialNode socialNode = (SocialNode) randEnvGen.genNode(NodeType.SOCIAL,
 				id, owner, manuf, Role.randomRole(), TimeToLive.randomTimeToLive(),
 				features, true);
 		return socialNode;
 	}
-	
+
 	private static Parser initParser() {
 		RandEnvGenerator randEnvGen = RandEnvGenerator.getInstance();
 		randEnvGen.reset();
@@ -240,7 +228,7 @@ public class ParserTests {
 		randEnvGen.genOwners(2);
 		return new Parser();
 	}
-	
+
 	private static JSONObject genRelationObj(int id, JSONArray features, int type) {
 		JSONObject relationObj = new JSONObject();
 		relationObj.put("id", new Long(id));
@@ -248,7 +236,7 @@ public class ParserTests {
 		relationObj.put("type", new Long(type));
 		return relationObj;
 	}
-	
+
 
 	private static JSONArray genFeatures(int i, int j, int k) {
 		JSONArray features = new JSONArray();
@@ -257,7 +245,7 @@ public class ParserTests {
 		features.add(new Long(k));
 		return features;
 	}
-	
+
 	private static Set<Integer> featArrToSet(JSONArray featArr) {
 		Set<Integer> features = new HashSet<>();
 		for (int i = 0; i < featArr.size(); i++) {
@@ -265,7 +253,7 @@ public class ParserTests {
 		}
 		return features;
 	}
-	
+
 	// @Test
 	// public void testCreateOrGetSocialNode() {
 	// RandEnvGenerator randEnvGen = RandEnvGenerator.getInstance();
@@ -330,26 +318,26 @@ public class ParserTests {
 	// SocialNode node0 = parser.createOrGetSocialNode(0);
 	// Assert.assertNotNull(node0);
 	// parser.formRelationship(node0, node0Neighbors.iterator());
-	// Map<Relationship, LinkedList<Edge>> map = node0.getRelationshipMap();
-	// Assert.assertNotNull(map.get(Relationship.CO_WORKER));
-	// Assert.assertNotNull(map.get(Relationship.FAMILY));
-	// LinkedList<Edge> coWorkers = map.get(Relationship.CO_WORKER);
-	// for (Edge edge : coWorkers) {
+	// Map<SocialRelationship, LinkedList<Relationship>> map = node0.getRelationshipMap();
+	// Assert.assertNotNull(map.get(SocialRelationship.CO_WORKER));
+	// Assert.assertNotNull(map.get(SocialRelationship.FAMILY));
+	// LinkedList<Relationship> coWorkers = map.get(SocialRelationship.CO_WORKER);
+	// for (Relationship edge : coWorkers) {
 	// SocialNode src = edge.getSrc();
 	// SocialNode dst = edge.getDest();
-	// Relationship relationship = edge.getRelationship();
+	// SocialRelationship relationship = edge.getSocialRelationship();
 	// Assert.assertEquals((Integer) 0, (Integer) src.getId());
 	// Assert.assertEquals((Integer) 1, (Integer) dst.getId());
-	// Assert.assertEquals(Relationship.CO_WORKER
+	// Assert.assertEquals(SocialRelationship.CO_WORKER
 	// , relationship);
 	// break;
 	// }
-	// LinkedList<Edge> family = map.get(Relationship.FAMILY);
-	// Edge edgeTarget = null;
-	// for (Edge edge : family) {
+	// LinkedList<Relationship> family = map.get(SocialRelationship.FAMILY);
+	// Relationship edgeTarget = null;
+	// for (Relationship edge : family) {
 	// if (edge.getSrc().getId() == 0
 	// && edge.getDest().getId() == 3
-	// && edge.getRelationship().equals(Relationship.FAMILY)) {
+	// && edge.getSocialRelationship().equals(SocialRelationship.FAMILY)) {
 	// edgeTarget = edge;
 	// break;
 	// }
@@ -357,10 +345,10 @@ public class ParserTests {
 	// Assert.assertNotNull(edgeTarget);
 	// edgeTarget = null;
 	// Assert.assertNull(edgeTarget);
-	// for (Edge edge : family) {
+	// for (Relationship edge : family) {
 	// if (edge.getSrc().getId() == 0
 	// && edge.getDest().getId() == 4
-	// && edge.getRelationship().equals(Relationship.FAMILY)) {
+	// && edge.getSocialRelationship().equals(SocialRelationship.FAMILY)) {
 	// edgeTarget = edge;
 	// break;
 	// }

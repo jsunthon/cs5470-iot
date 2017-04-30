@@ -11,7 +11,7 @@ import java.util.List;
 public class TopologyTest {
     @Test
     public void testFinish() {
-        Topology<Node> test = new Topology<Node>(new Node[1]);
+        Topology<Node> test = new Topology<Node>(new Node[1], "", "");
         List<Search> searches = new ArrayList<>();
         Search search1 = new Search(null, System.currentTimeMillis(), true);
         search1.setStart(0);

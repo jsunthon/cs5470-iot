@@ -117,9 +117,9 @@ public class Parser {
                 SocialNode socialSrc = (SocialNode) socialNodes[i];
                 if (socialSrc == null) return false;
                 DecentralizedNode decenSrc = (DecentralizedNode) getOrCreateDecenNode(socialSrc);
-                List<Edge> shuffledEdges = shuffleSortedEdges(socialSrc.getSortedEdges());
-                for (Edge relationEdge : shuffledEdges) {
-                    SocialNode socialNeighbor = relationEdge.getDest();
+                List<Relationship> shuffledRelationships = shuffleSortedEdges(socialSrc.getSortedRelationships());
+                for (Relationship relationRelationship : shuffledRelationships) {
+                    SocialNode socialNeighbor = relationRelationship.getDest();
                     DecentralizedNode decenNeighbor = (DecentralizedNode) getOrCreateDecenNode(socialNeighbor);
                     decenSrc.addNeighbor(decenNeighbor);
                 }
@@ -133,14 +133,14 @@ public class Parser {
     /**
      * Takes a set of edges, and shuffles them to make sure they're not longer sorted.
      *
-     * @param sortedEdges
+     * @param sortedRelationships
      * @return
      */
-    public List<Edge> shuffleSortedEdges(Set<Edge> sortedEdges) {
-        List<Edge> unshuffledEdges = new ArrayList<>();
-        unshuffledEdges.addAll(sortedEdges);
-        Collections.shuffle(unshuffledEdges);
-        return unshuffledEdges;
+    public List<Relationship> shuffleSortedEdges(Set<Relationship> sortedRelationships) {
+        List<Relationship> unshuffledRelationships = new ArrayList<>();
+        unshuffledRelationships.addAll(sortedRelationships);
+        Collections.shuffle(unshuffledRelationships);
+        return unshuffledRelationships;
     }
 
     /**
@@ -202,7 +202,7 @@ public class Parser {
             Long longType = (Long) jsonNode.get("type");
             int intType = longType.intValue();
             SocialNode neighbor = (SocialNode) getOrCreateNode(socialNodes, NodeType.SOCIAL, intId, neighborFeatArr);
-            srcNode.addRelationship(neighbor, Relationship.getRelationship(intType));
+            srcNode.addRelationship(neighbor, SocialRelationship.getRelationship(intType));
         }
         return srcNode;
     }

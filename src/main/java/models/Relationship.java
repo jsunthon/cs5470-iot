@@ -1,21 +1,40 @@
 package models;
 
-public enum Relationship {
+import models.nodes.SocialNode;
 
-    ACQUAINTANCE, CO_WORKER, FAMILY, FRIEND, ;
 
-    public static Relationship randomRelationship() {
-        int randInd = (int) (Math.random() * Relationship.values().length);
-        return Relationship.values() [randInd];
+public class Relationship extends Edge {
+    private SocialRelationship socialRelationship;
+
+    public Relationship(SocialNode src, SocialNode dest, SocialRelationship socialRelationship) {
+        super(src, dest);
+        this.socialRelationship = socialRelationship;
     }
-    
-    /**
-     * Returns a relationship located at index - 1, since relationship integers
-     * generated from the JSON value is not 0-based indexed.
-     * @param index
-     * @return
-     */
-    public static Relationship getRelationship(int index) {
-    	return Relationship.values()[--index];
+
+    public SocialNode getDest() {
+        return (SocialNode) super.getDest();
+    }
+
+    public SocialNode getSrc() {
+        return (SocialNode) super.getSrc();
+    }
+
+    public SocialRelationship getSocialRelationship() {
+        return socialRelationship;
+    }
+
+    public int getDiversityScore() {
+        return this.getDest().getRelationshipMap().size();
+    }
+
+    public String toString() {
+        return "{"
+                + "src:" + getSrc().getId() + ","
+                + "dest:" + getDest().getId() + ","
+                + "ms:" + getMs() + ","
+                + "rel:" + socialRelationship + ","
+                + "cen:" + getDest().getCentrality() + ","
+                + "div:" + getDiversityScore()
+                + "}";
     }
 }

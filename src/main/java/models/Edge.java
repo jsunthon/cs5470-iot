@@ -1,37 +1,46 @@
 package models;
 
-import models.nodes.SocialNode;
+import models.nodes.Node;
 
-public class Edge {
-    private SocialNode src;
-    private SocialNode dest;
-    private Relationship relationship;
+import java.util.concurrent.ThreadLocalRandom;
 
-    public Edge(SocialNode src, SocialNode dest, Relationship relationship) {
+public abstract class Edge {
+    private Node src;
+    private Node dest;
+    private int ms;
+
+    // Each edge, relationship, will be a random value between min and max
+    private static final int MIN_MS = 10;
+    private static final int MAX_MS = 50;
+
+    public Edge(Node src, Node dest) {
         this.src = src;
         this.dest = dest;
-        this.relationship = relationship;
+        this.ms = randomMs();
     }
 
-    public SocialNode getDest() {
-        return dest;
-    }
-
-    public SocialNode getSrc() {
+    public Node getSrc() {
         return src;
     }
 
-    public Relationship getRelationship() {
-        return relationship;
+    public Node getDest() {
+        return dest;
     }
 
-    public int getDiversityScore() {
-        return dest.getRelationshipMap().size();
+    public int getMs() {
+        return ms;
+    }
+
+    private int randomMs() {
+        // Add one to make MAX_MS "inclusive"
+        return ThreadLocalRandom.current().nextInt(MIN_MS, MAX_MS + 1);
     }
 
     public String toString() {
-        return "{src:" + src.getId() + ",dest:" + dest.getId() +
-                ",rel:" + relationship + ",cen:" + dest.getCentrality() +
-                ",div:" + getDiversityScore() + "}";
+        return "{"
+                + "src:" + src.getId() + ","
+                + "dest:" + dest.getId() + ","
+                + "ms:" + ms + ","
+                + "}";
     }
 }
