@@ -255,11 +255,18 @@ public class SocialNode extends Node {
             int centralityDest2 = e2.getDest().getCentrality();
 
             int diff = centralityDest2 - centralityDest1;
+            //if centrality is same, break tie with diversity
             if (diff == 0) {
-                /* Use diversity score for tie breaker/ but if the
-                * score are equal, pick whatever ... for now */
+            	//if diversity is same, break tie with clustering coeffiency
                 if (e2.getDiversityScore() == e1.getDiversityScore()) {
-                    return 1;
+                    double clusteringCoeffiencyDiff = e2.getDest().getClusteringCoeffiency() 
+                    		- e1.getDest().getClusteringCoeffiency();
+                	//if clustering coeffiency is 0, then pick whichever edge was added first
+                    if (clusteringCoeffiencyDiff == 0) {
+                    	return 1;
+                    } else {
+                    	return (int) clusteringCoeffiencyDiff;
+                    }
                 } else {
                     return e2.getDiversityScore() - e1.getDiversityScore();
                 }
@@ -276,4 +283,37 @@ public class SocialNode extends Node {
         sortedRelationships = setRelationships;
     }
 
+    /**
+     * Returns a value between 0 and 1 that demonstrates the clustering coeffiency
+     * of this node. The formula is C = (# of links between neighbors) / centrality ( centrality - 1)
+     * for a directed graph
+     */
+    public double getClusteringCoeffiency() {
+        //First, calculate the number of neighbors of this node
+        int centrality = this.getCentrality();
+        if (centrality == 0) return 0.0;
+        int sharedNeighborLinks = 0;
+        //get a integer list of unique neighbor ids
+        Set<Integer> neighborIds = getNeighborIds();
+        // O(n^2). wonder if we could get it to O(n)
+        for (Relationship relationship: getSortedRelationships()) {
+            SocialNode neighbor = relationship.getDest();
+            for (Relationship neighborsOfNeighbor : neighbor.getSortedRelationships()) {
+                SocialNode neighborOfNeighbor = neighborsOfNeighbor.getDest();
+                if (neighborIds.contains(neighborOfNeighbor.getId())) {
+                    sharedNeighborLinks++;
+                }
+            }
+        }
+        return sharedNeighborLinks / (1.0 * centrality * (centrality - 1));
+    }
+
+    public Set<Integer> getNeighborIds() {
+        Set<Integer> neighborIds = new HashSet<>();
+        for (Relationship relationship : getSortedRelationships()) {
+            SocialNode neighbor = relationship.getDest();
+            neighborIds.add(neighbor.getId());
+        }
+        return neighborIds;
+    }
 }
