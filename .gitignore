@@ -26,3 +26,6 @@ node_modules/
 .settings/
 .classpath
 .project
+
+
+src/main/javascript/resource/
