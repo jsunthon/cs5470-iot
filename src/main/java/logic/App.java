@@ -25,8 +25,9 @@ public class App {
     }
 
     public static void main(String[] args) {
-        App app = new App();
-        app.start();
+    	DatabaseClient client = DatabaseClient.getInstance();
+//        App app = new App();
+//        app.start();
     }
 
     /**
