@@ -8,7 +8,10 @@ import java.io.*;
 import java.util.List;
 
 public class App {
-    private String[] filenames20k = {
+    private File   file;
+    private Parser parser;
+
+    public static final String[] FILENAMES_20_K = {
             "node-20k-feat-2k",
             "node-20k-feat-4k",
             "node-20k-feat-6k",
@@ -16,7 +19,7 @@ public class App {
             "node-20k-feat-10k",
     };
 
-    private String[] filenames50k = {
+    public static final String[] FILENAMES_50_K = {
             "node-50k-feat-5k",
             "node-50k-feat-10k",
             "node-50k-feat-15k",
@@ -24,14 +27,10 @@ public class App {
             "node-50k-feat-25k",
     };
 
-    private String directory;
-    private String resultDirectory;
-    private File   file;
-    private Parser parser;
+    public static final String NETWORK_DIRECTORY = "./src/main/resources/random-networks/";
+    public static final String RESULT_DIRECTORY  = "./src/main/resources/results/searches/";
 
     private App() {
-        directory = "./src/main/resources/random-networks/";
-        resultDirectory = "./src/main/resources/results/searches/";
     }
 
     public static void main(String[] args) {
@@ -50,15 +49,15 @@ public class App {
         Search.DEFAULT_LIMIT = 3;
         Topology.DISPLAY_SEARCHES = false;
 
-        for (String filename : filenames50k) {
+        for (String filename : FILENAMES_50_K) {
 
-            file = new File(resultDirectory + filename + ".csv");
+            file = new File(RESULT_DIRECTORY + filename + ".csv");
             RandEnvGenerator randEnvGen = RandEnvGenerator.getInstance();
             randEnvGen.genManufacturers(10, 4);
             randEnvGen.genOwners(2);
 
             parser = new Parser();
-            parser.parseAndGenSocial(directory + (filename + ".json"));
+            parser.parseAndGenSocial(NETWORK_DIRECTORY + (filename + ".json"));
             parser.genCentral();
             parser.genDecentral();
             parser.setupRandomFeatures(NUMBER_OF_FEATURES);
