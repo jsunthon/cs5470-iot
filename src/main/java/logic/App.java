@@ -6,7 +6,6 @@ import models.nodes.Node;
 
 import java.io.*;
 import java.util.List;
-import java.util.Set;
 
 public class App {
     private String[] filenames = {
@@ -17,7 +16,7 @@ public class App {
             "node-20k-feat-10k.json",
     };
 
-    private String directory = "./src/main/javascript/";
+    private String directory = "./src/main/javascript/random-networks/";
     private File file;
     private Parser parser;
 
@@ -33,6 +32,9 @@ public class App {
      * Initialize the environment and node topologies from json files.
      */
     public void start() {
+        final int NUMBER_OF_NODES    = 1000;
+        final int NUMBER_OF_FEATURES = 1000;
+
         //Get file from resources folder
         file = new File("./src/main/resources/result.csv");
 
@@ -49,15 +51,10 @@ public class App {
             parser.parseAndGenSocial(directory + filename);
             parser.genCentral();
             parser.genDecentral();
-            parser.setupRandomFeatures(1);
+            parser.setupRandomFeatures(NUMBER_OF_FEATURES);
 
-            Integer[] randomFeatureArray = parser.getRandomFeatArr();
-            Set<Integer> randomIdSet = parser.getRandomNodeIdSet(1000);
-
-            // Central test are not insightful thus will be ignored.
-//        Topology<Node> centralTest =
-//                new Topology<>(parser.getCentralNodes(), "Central", filename);
-//         centralTest.start(randomNodeId, randomFeatureArray);
+            List<Integer> randomFeatures = parser.getRandomFeatureList();
+            List<Integer> randomNodesId  = parser.getRandomNodeIdSet(NUMBER_OF_NODES);
 
             Topology.DISPLAY_SEARCHES = false;
             Topology<Node> socialTest =
@@ -65,17 +62,14 @@ public class App {
             Topology<Node> decentralTest =
                     new Topology<>(parser.getDecentralNodes(), "Decentralized", filename);
 
-            for (Integer randomNodeId : randomIdSet) {
-                socialTest.start(randomNodeId, randomFeatureArray);
+            for (int i = 0; i < randomFeatures.size(); i++) {
+                socialTest.start(randomNodesId.get(i), randomFeatures.get(i));
+                decentralTest.start(randomNodesId.get(i), randomFeatures.get(i));
             }
-            socialTest.printResult();
 
-            for (Integer randomNodeId : randomIdSet) {
-                decentralTest.start(randomNodeId, randomFeatureArray);
-            }
+            socialTest.printResult();
             decentralTest.printResult();
 
-            // S = social, D = Decentralized
             appendSearchToFile("S", socialTest.getSearches());
             appendSearchToFile("D", decentralTest.getSearches());
         }

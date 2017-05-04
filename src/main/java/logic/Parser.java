@@ -268,6 +268,10 @@ public class Parser {
         }
     }
 
+    public List<Integer> getRandomFeatureList() {
+        return randomFeatureList;
+    }
+
     public Integer[] getRandomFeatArr() {
         Integer[] array = new Integer[randomFeatureList.size()];
         for (int i = 0; i < randomFeatureList.size(); i++) {
@@ -311,11 +315,14 @@ public class Parser {
         return centralNodes[random(1, centralNodes.length - 1)].getId();
     }
 
-    public Set<Integer> getRandomNodeIdSet(int numberOfNodes) {
-        Set<Integer> randomSet = new HashSet<>();
-        while (randomSet.size() < numberOfNodes) {
-            randomSet.add(getRandomNodeId());
+    public List<Integer> getRandomNodeIdSet(int numberOfNodes) {
+        List<Integer> list = new ArrayList<>();
+        while (list.size() < numberOfNodes) {
+            int randomId = getRandomNodeId();
+            if (!list.contains(randomId)) {
+                list.add(getRandomNodeId());
+            }
         }
-        return randomSet;
+        return list;
     }
 }

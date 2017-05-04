@@ -28,4 +28,5 @@ node_modules/
 .project
 
 
-src/main/javascript/resource/
+# store local random networks JSON files here
+src/main/javascript/random-networks/
