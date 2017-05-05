@@ -6,20 +6,29 @@ import models.nodes.Node;
 
 import java.io.*;
 import java.util.List;
-import java.util.Set;
 
 public class App {
-    private String[] filenames = {
-            "node-20k-feat-2k.json",
-            "node-20k-feat-4k.json",
-            "node-20k-feat-6k.json",
-            "node-20k-feat-8k.json",
-            "node-20k-feat-10k.json",
+    private File   file;
+    private Parser parser;
+
+    public static final String[] FILENAMES_20_K = {
+            "node-20k-feat-2k",
+            "node-20k-feat-4k",
+            "node-20k-feat-6k",
+            "node-20k-feat-8k",
+            "node-20k-feat-10k",
     };
 
-    private String directory = "./src/main/javascript/";
-    private File file;
-    private Parser parser;
+    public static final String[] FILENAMES_50_K = {
+            "node-50k-feat-5k",
+            "node-50k-feat-10k",
+            "node-50k-feat-15k",
+            "node-50k-feat-20k",
+            "node-50k-feat-25k",
+    };
+
+    public static final String NETWORK_DIRECTORY = "./src/main/resources/random-networks/";
+    public static final String RESULT_DIRECTORY  = "./src/main/resources/results/searches/";
 
     private App() {
     }
@@ -33,49 +42,42 @@ public class App {
      * Initialize the environment and node topologies from json files.
      */
     public void start() {
-        //Get file from resources folder
-        file = new File("./src/main/resources/result.csv");
+        final int NUMBER_OF_NODES    = 1000;
+        final int NUMBER_OF_FEATURES = 1000;
 
         Search.DEFAULT_TIMEOUT = 5;
         Search.DEFAULT_LIMIT = 3;
+        Topology.DISPLAY_SEARCHES = false;
 
-        for (String filename : filenames) {
+        for (String filename : FILENAMES_50_K) {
 
+            file = new File(RESULT_DIRECTORY + filename + ".csv");
             RandEnvGenerator randEnvGen = RandEnvGenerator.getInstance();
             randEnvGen.genManufacturers(10, 4);
             randEnvGen.genOwners(2);
 
             parser = new Parser();
-            parser.parseAndGenSocial(directory + filename);
+            parser.parseAndGenSocial(NETWORK_DIRECTORY + (filename + ".json"));
             parser.genCentral();
             parser.genDecentral();
-            parser.setupRandomFeatures(1);
+            parser.setupRandomFeatures(NUMBER_OF_FEATURES);
 
-            Integer[] randomFeatureArray = parser.getRandomFeatArr();
-            Set<Integer> randomIdSet = parser.getRandomNodeIdSet(1000);
+            List<Integer> randomFeatures = parser.getRandomFeatureList();
+            List<Integer> randomNodesId  = parser.getRandomNodeIdSet(NUMBER_OF_NODES);
 
-            // Central test are not insightful thus will be ignored.
-//        Topology<Node> centralTest =
-//                new Topology<>(parser.getCentralNodes(), "Central", filename);
-//         centralTest.start(randomNodeId, randomFeatureArray);
-
-            Topology.DISPLAY_SEARCHES = false;
             Topology<Node> socialTest =
                     new Topology<>(parser.getSocialNodes(), "Social", filename);
             Topology<Node> decentralTest =
                     new Topology<>(parser.getDecentralNodes(), "Decentralized", filename);
 
-            for (Integer randomNodeId : randomIdSet) {
-                socialTest.start(randomNodeId, randomFeatureArray);
+            for (int i = 0; i < randomFeatures.size(); i++) {
+                socialTest.start(randomNodesId.get(i), randomFeatures.get(i));
+                decentralTest.start(randomNodesId.get(i), randomFeatures.get(i));
             }
-            socialTest.printResult();
 
-            for (Integer randomNodeId : randomIdSet) {
-                decentralTest.start(randomNodeId, randomFeatureArray);
-            }
+            socialTest.printResult();
             decentralTest.printResult();
 
-            // S = social, D = Decentralized
             appendSearchToFile("S", socialTest.getSearches());
             appendSearchToFile("D", decentralTest.getSearches());
         }
