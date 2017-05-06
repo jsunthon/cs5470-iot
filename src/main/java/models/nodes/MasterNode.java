@@ -78,6 +78,8 @@ public class MasterNode extends Node {
 				//list of nodes that has that feature.
 				addSlaveNeighborsSuccess(search, slaveNodeList);
 			}
+		} else {
+			search.incrBandwidthVisited(this);
 		}
 	}
 	
