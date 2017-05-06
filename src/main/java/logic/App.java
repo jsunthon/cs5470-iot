@@ -69,17 +69,21 @@ public class App {
                     new Topology<>(parser.getSocialNodes(), "Social", filename);
             Topology<Node> decentralTest =
                     new Topology<>(parser.getDecentralNodes(), "Decentralized", filename);
-
+            Topology<Node> centralTest =
+            		new Topology<>(parser.getCentralNodes(), "Central", filename);
             for (int i = 0; i < randomFeatures.size(); i++) {
                 socialTest.start(randomNodesId.get(i), randomFeatures.get(i));
                 decentralTest.start(randomNodesId.get(i), randomFeatures.get(i));
+                centralTest.start(randomNodesId.get(i), randomFeatures.get(i));
             }
 
             socialTest.printResult();
             decentralTest.printResult();
+            centralTest.printResult();
 
             appendSearchToFile("S", socialTest.getSearches());
             appendSearchToFile("D", decentralTest.getSearches());
+            appendSearchToFile("C", centralTest.getSearches());
         }
     }
 

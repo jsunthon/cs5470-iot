@@ -137,6 +137,17 @@ public class Search {
     public void addSuccess(Node successNode) {
         nodes.add(successNode);
     }
+    
+    public void setSuccesses(boolean success, Node firstNodeSuccess) {
+    	setSuccess(success);
+    	setSuccess(firstNodeSuccess);    	
+    }
+    
+	public void incrBandwidthVisited(Node node) {
+		addBandwidth();
+		addTotalBandwidth();
+		addVisited(node);
+	}
 
     public void addBandwidth() {
         bandwidth++;
