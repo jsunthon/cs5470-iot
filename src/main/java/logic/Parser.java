@@ -105,7 +105,7 @@ public class Parser {
                     //master node always the first node, aka node with id = 1
                     MasterNode masterNode = (MasterNode) centralNodes[1];
                     SlaveNode slaveNode = (SlaveNode) genNodeFromSocial(socialNode, NodeType.SLAVE);
-                    slaveNode.setMaster(masterNode);
+                    slaveNode.addNeighbor(masterNode);
                     centralNodes[i] = slaveNode;
                     masterNode.addSlaveNode(slaveNode);
                 }
