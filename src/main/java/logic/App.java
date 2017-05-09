@@ -27,8 +27,8 @@ public class App {
             "node-50k-feat-25k",
     };
 
-    public static final String NETWORK_DIRECTORY = "./src/main/resources/random-networks/";
-    public static final String RESULT_DIRECTORY  = "./src/main/resources/results/searches/";
+    public static final String NETWORK_DIRECTORY = "./src/main/resources/networks/scale-free/";
+    public static final String RESULT_DIRECTORY  = "./src/main/resources/results/searches/scale-free/";
 
     private App() {
     }
