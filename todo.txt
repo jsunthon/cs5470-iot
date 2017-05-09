@@ -1,9 +1,9 @@
 
-* graph: hops vs # of searches
-* graph: nodesContacted vs feature (total number);
-* graph: successRate vs feature
-* graph: avgLatency vs feature
-* graph: onSuccess property vs features/nodes
+X* graph: hops vs # of searches
+X* graph: nodesContacted vs feature (total number);
+X* graph: successRate vs feature
+X* graph: avgLatency(on success) vs feature
+X* graph: onSuccess property vs features/nodes
 
 
 * central node
