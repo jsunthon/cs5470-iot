@@ -8,3 +8,13 @@ X* graph: onSuccess property vs features/nodes
 
 * central node
 * coefficient
+
+PAPERS:
+
+* methodology
+
+* results
+
+* challenges
+
+* conclusion
