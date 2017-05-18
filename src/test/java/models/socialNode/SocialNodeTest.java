@@ -241,14 +241,12 @@ public class SocialNodeTest {
 		TreeSet<Relationship> relationships = (TreeSet<Relationship>) sn0.getSortedRelationships();
 		List<Relationship> list = new ArrayList<>(relationships);
 
-		Assert.assertEquals(15, list.get(0).getDest().getId());
-		Assert.assertEquals(20, list.get(1).getDest().getId());
-		Assert.assertEquals(11, list.get(2).getDest().getId());
-		Assert.assertEquals(7, list.get(3).getDest().getId());
+		Assert.assertEquals(11, list.get(0).getDest().getId());
+		Assert.assertEquals(7, list.get(1).getDest().getId());
+		Assert.assertEquals(15, list.get(2).getDest().getId());
+		Assert.assertEquals(20, list.get(3).getDest().getId());
 		Assert.assertEquals(1, list.get(4).getDest().getId());
 		Assert.assertEquals(4, list.get(5).getDest().getId());
-
-		System.out.println(relationships);
 	}
 
 	@Test
@@ -367,6 +365,36 @@ public class SocialNodeTest {
 		sn0.addRelationship(sn7, SocialRelationship.FAMILY);
 		sn0.addRelationship(sn11, SocialRelationship.FRIEND);
 		Assert.assertEquals(.50, sn0.getClusteringCoeffiency(), 0.0);
+	}
+	
+	@Test
+	public void testGetClusteringCoefficiency75Percent() {
+		SocialNode sn0 = getTestSocialNode(0);
+		SocialNode sn15 = node15With4Relationship(SocialRelationship.ACQUAINTANCE, SocialRelationship.CO_WORKER,
+		        SocialRelationship.FAMILY, SocialRelationship.FRIEND);
+		SocialNode sn20 = node20With4Relationship(SocialRelationship.ACQUAINTANCE, SocialRelationship.ACQUAINTANCE,
+		        SocialRelationship.CO_WORKER, SocialRelationship.FAMILY);
+		SocialNode sn7 = node7With3Relationship(SocialRelationship.ACQUAINTANCE, SocialRelationship.CO_WORKER,
+		        SocialRelationship.FAMILY);
+		SocialNode sn11 = node11With3Relationship(SocialRelationship.ACQUAINTANCE, SocialRelationship.CO_WORKER,
+		        SocialRelationship.FAMILY);
+		sn20.addRelationship(sn15, SocialRelationship.ACQUAINTANCE);
+		sn20.addRelationship(sn7, SocialRelationship.CO_WORKER);
+		sn20.addRelationship(sn11, SocialRelationship.FAMILY);
+
+		sn7.addRelationship(sn15, SocialRelationship.ACQUAINTANCE);
+		sn7.addRelationship(sn11, SocialRelationship.CO_WORKER);
+		sn7.addRelationship(sn20, SocialRelationship.FAMILY);
+		
+		sn11.addRelationship(sn15, SocialRelationship.CO_WORKER);
+		sn11.addRelationship(sn7, SocialRelationship.ACQUAINTANCE);
+		sn11.addRelationship(sn20, SocialRelationship.FAMILY);
+
+		sn0.addRelationship(sn15, SocialRelationship.ACQUAINTANCE);
+		sn0.addRelationship(sn20, SocialRelationship.CO_WORKER);
+		sn0.addRelationship(sn7, SocialRelationship.FAMILY);
+		sn0.addRelationship(sn11, SocialRelationship.FRIEND);
+		Assert.assertEquals(.75, sn0.getClusteringCoeffiency(), 0.0);
 	}
 
 	@Test

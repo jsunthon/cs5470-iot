@@ -251,27 +251,24 @@ public class SocialNode extends Node {
     private class NodeEdgeCentrality implements Comparator<Relationship> {
         @Override
         public int compare(Relationship e1, Relationship e2) {
-            int centralityDest1 = e1.getDest().getCentrality();
-            int centralityDest2 = e2.getDest().getCentrality();
-
-            int diff = centralityDest2 - centralityDest1;
-            //if centrality is same, break tie with diversity
-            if (diff == 0) {
-            	//if diversity is same, break tie with clustering coeffiency
-                if (e2.getDiversityScore() == e1.getDiversityScore()) {
-                    double clusteringCoeffiencyDiff = e2.getDest().getClusteringCoeffiency() 
-                    		- e1.getDest().getClusteringCoeffiency();
-                	//if clustering coeffiency is 0, then pick whichever edge was added first
-                    if (clusteringCoeffiencyDiff == 0) {
-                    	return 1;
-                    } else {
-                    	return (int) clusteringCoeffiencyDiff;
-                    }
-                } else {
-                    return e2.getDiversityScore() - e1.getDiversityScore();
-                }
+        	int clusteringCoefficiency2 = (int) Math.round(e2.getDest().getClusteringCoeffiency() * 100);
+        	int clusteringCoefficiency1 = (int) Math.round(e1.getDest().getClusteringCoeffiency() * 100);
+            int clusteringCoeffiencyDiff = clusteringCoefficiency2 - clusteringCoefficiency1;
+            int centralityDiff = e2.getDest().getCentrality() - e1.getDest().getCentrality();
+            int diversityDiff = e2.getDiversityScore() - e1.getDiversityScore();
+            
+            if (clusteringCoeffiencyDiff == 0) {
+            	if (centralityDiff == 0) {
+            		if (diversityDiff == 0) {
+            			return 1;
+            		} else {
+            			return diversityDiff;
+            		}
+            	} else {
+            		return centralityDiff;
+            	}
             } else {
-                return diff;
+            	return clusteringCoeffiencyDiff;
             }
         }
     }
