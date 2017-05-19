@@ -16,7 +16,7 @@ public class SocialNode extends Node {
     private History history;
 
     public static Integer NODE_ID_COUNTER = 0;
-    public static Integer DEFAULT_MAX_HISTORY_SIZE = 10;
+    public static Integer DEFAULT_MAX_HISTORY_SIZE = 100;
 
     public SocialNode(Integer id, Manufacturer manufacturer, Role role, TimeToLive timeToLive) {
         super(id, manufacturer, role, timeToLive);
@@ -251,24 +251,24 @@ public class SocialNode extends Node {
     private class NodeEdgeCentrality implements Comparator<Relationship> {
         @Override
         public int compare(Relationship e1, Relationship e2) {
-        	int clusteringCoefficiency2 = (int) Math.round(e2.getDest().getClusteringCoeffiency() * 100);
-        	int clusteringCoefficiency1 = (int) Math.round(e1.getDest().getClusteringCoeffiency() * 100);
+            int clusteringCoefficiency2 = (int) Math.round(e2.getDest().getClusteringCoeffiency() * 100);
+            int clusteringCoefficiency1 = (int) Math.round(e1.getDest().getClusteringCoeffiency() * 100);
             int clusteringCoeffiencyDiff = clusteringCoefficiency2 - clusteringCoefficiency1;
             int centralityDiff = e2.getDest().getCentrality() - e1.getDest().getCentrality();
             int diversityDiff = e2.getDiversityScore() - e1.getDiversityScore();
-            
+
             if (clusteringCoeffiencyDiff == 0) {
-            	if (centralityDiff == 0) {
-            		if (diversityDiff == 0) {
-            			return 1;
-            		} else {
-            			return diversityDiff;
-            		}
-            	} else {
-            		return centralityDiff;
-            	}
+                if (centralityDiff == 0) {
+                    if (diversityDiff == 0) {
+                        return 1;
+                    } else {
+                        return diversityDiff;
+                    }
+                } else {
+                    return centralityDiff;
+                }
             } else {
-            	return clusteringCoeffiencyDiff;
+                return clusteringCoeffiencyDiff;
             }
         }
     }
@@ -293,7 +293,7 @@ public class SocialNode extends Node {
         //get a integer list of unique neighbor ids
         Set<Integer> neighborIds = getNeighborIds();
         // O(n^2). wonder if we could get it to O(n)
-        for (Relationship relationship: getSortedRelationships()) {
+        for (Relationship relationship : getSortedRelationships()) {
             SocialNode neighbor = relationship.getDest();
             for (Relationship neighborsOfNeighbor : neighbor.getSortedRelationships()) {
                 SocialNode neighborOfNeighbor = neighborsOfNeighbor.getDest();
